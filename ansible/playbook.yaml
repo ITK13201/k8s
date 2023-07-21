@@ -1,0 +1,11 @@
+---
+- hosts: k8s
+  become: true
+  tasks:
+    - name: Copy shell scripts for initialization
+      copy:
+        src: ./scripts/
+        dest: /home/{{ ansible_user_id }}/scripts/
+        mode: 
+    - name: Setup basic environment
+      shell: bash ~/scripts/setup_basic_environment

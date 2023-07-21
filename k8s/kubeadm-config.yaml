@@ -1,0 +1,3 @@
+kind: ClusterConfiguration
+apiVersion: kubeadm.k8s.io/v1beta3
+controlPlaneEndpoint: localhost:6443
