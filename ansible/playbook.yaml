@@ -1,11 +1,33 @@
 ---
 - hosts: k8s
   become: true
+  vars:
+    project_dir: "{{ playbook_dir }}/.."
   tasks:
+    - name: Create user
+      user:
+        name: k8s
+        state: present
+      become: true
+    - name: Create k8s directory
+      file:
+        path: "/k8s"
+        state: directory
+        owner: "k8s"
+        group: "k8s"
+        mode: "775"
     - name: Copy shell scripts for initialization
       copy:
-        src: ./scripts/
-        dest: /home/{{ ansible_user_id }}/scripts/
-        mode: 
+        src: "{{ project_dir }}/scripts/"
+        dest: /k8s/scripts/
+        owner: "k8s"
+        group: "k8s"
+        mode: "775"
     - name: Setup basic environment
-      shell: bash ~/scripts/setup_basic_environment
+      shell: bash /k8s/scripts/setup_basic_environment.sh
+    - name: Deploy SSH Public Key
+      authorized_key:
+        user: k8s
+        state: present
+        key: "{{ lookup('file', '/home/itk/.ssh/vagrant/k8s/id_rsa.pub') }}"
+      become: true
