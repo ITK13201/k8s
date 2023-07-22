@@ -9,22 +9,25 @@
         name: k8s
         state: present
       become: true
-    - name: Create k8s directory
+    - name: Create ansible directory
       file:
-        path: "/k8s"
+        path: "/ansible"
         state: directory
         owner: "k8s"
         group: "k8s"
         mode: "775"
     - name: Copy shell scripts for initialization
       copy:
-        src: "{{ project_dir }}/scripts/"
-        dest: /k8s/scripts/
+        src: "./scripts/"
+        dest: /ansible/scripts/
         owner: "k8s"
         group: "k8s"
         mode: "775"
     - name: Setup basic environment
       shell: bash /k8s/scripts/setup_basic_environment.sh
+      register: result
+      changed_when: result.rc == 1
+      failed_when: result.rc > 1
     - name: Deploy SSH Public Key
       authorized_key:
         user: k8s
