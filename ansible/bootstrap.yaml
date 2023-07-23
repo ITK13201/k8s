@@ -1,0 +1,68 @@
+---
+- hosts: k8s
+  vars:
+    project_dir: "{{ playbook_dir }}/.."
+  environment:
+    USER_K8S_PASSWORD: "{{ user_k8s_password }}"
+  tasks:
+    - name: Create user
+      ansible.builtin.user:
+        name: k8s
+        password: "{{ user_k8s_password | password_hash('sha512') }}"
+        state: present
+      become: true
+    - name: Grant sudo privileges to the k8s user
+      community.general.sudoers:
+        name: "k8s"
+        user: "k8s"
+        state: present
+        commands: ALL
+      become: true
+    - name: Deploy SSH Public Key
+      ansible.posix.authorized_key:
+        user: k8s
+        state: present
+        key: "{{ lookup('file', '/home/itk/.ssh/vagrant/k8s/id_rsa.pub') }}"
+      become: true
+    - name: Create ansible directory
+      ansible.builtin.file:
+        path: "/ansible"
+        state: directory
+        owner: "k8s"
+        group: "k8s"
+        mode: "775"
+      become: true
+    - name: Copy shell scripts for initialization
+      ansible.builtin.copy:
+        src: "./scripts/"
+        dest: "/ansible/scripts/"
+        owner: "k8s"
+        group: "k8s"
+        mode: "775"
+      become: true
+    - name: Setup basic environment
+      ansible.builtin.shell: bash /ansible/scripts/setup_basic_environment.sh
+      register: result
+      changed_when: result.rc == 1
+      failed_when: result.rc > 1
+      become: true
+    - name: Create k8s directory
+      ansible.builtin.file:
+        path: "/k8s"
+        state: directory
+        owner: "k8s"
+        group: "k8s"
+        mode: "777"
+      become: true
+    - name: Copy k8s files
+      ansible.builtin.copy:
+        src: "{{ project_dir }}/k8s/"
+        dest: "/k8s/"
+        owner: "k8s"
+        group: "k8s"
+        mode: "777"
+      become: true
+#    - name: Setup kubernetes nodes
+#      ansible.builtin.shell: bash /ansible/scripts/setup_k8s_nodes.sh
+#      become: true
+#      become_user: "k8s"

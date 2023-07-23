@@ -15,8 +15,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.provision "ansible" do |ansible|
     ansible.verbose = "v"
-    ansible.playbook = "./ansible/playbook.yaml"
-    ansible.inventory_path = "./ansible/hosts"
+    ansible.playbook = "./ansible/bootstrap.yaml"
+    ansible.inventory_path = "./ansible/local_hosts"
     ansible.limit = "all"
+    ansible.ask_vault_pass = true
   end
 end

@@ -1,3 +1,6 @@
 kind: ClusterConfiguration
 apiVersion: kubeadm.k8s.io/v1beta3
-controlPlaneEndpoint: localhost:6443
+networking:
+  serviceSubnet: '10.244.0.0/16'
+  podSubnet: '10.244.0.0/16'
+  advertiseAddress: "192.168.56.10"

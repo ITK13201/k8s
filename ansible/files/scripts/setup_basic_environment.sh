@@ -38,8 +38,28 @@ dnf remove -y docker \
 dnf install -y dnf-utils
 dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
 dnf install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+# Edit /etc/containerd/config.toml
+sed -i 's/^disabled_plugins \=/\#disabled_plugins \=/g' /etc/containerd/config.toml
+result_status=0
+grep -q "SystemdCgroup = true" /etc/containerd/config.toml || result_status=$?
+if [ ! "$result_status" = "0" ]; then
+  printf "\n" >> /etc/containerd/config.toml
+  cat <<EOF | tee -a /etc/containerd/config.toml
+[plugins]
+  [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc]
+    [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runc.options]
+      SystemdCgroup = true
+
+  [plugins."io.containerd.grpc.v1.cri"]
+    sandbox_image = "registry.k8s.io/pause:3.2"
+EOF
+fi
+# Setting crictl endpoint
+crictl config --set runtime-endpoint=unix:///run/containerd/containerd.sock --set image-endpoint=unix:///run/containerd/containerd.sock
 systemctl enable --now containerd
+systemctl restart containerd
 ###
+
 
 ### Install kubelet kubeadm kubectl ###
 cat <<EOF > /etc/yum.repos.d/kubernetes.repo
@@ -65,6 +85,13 @@ dnf install -y kubelet kubeadm kubectl --disableexcludes=kubernetes || result_st
 if [ ! "$result_status" = "0" ]; then
   dnf install -y kubelet kubeadm kubectl --disableexcludes=kubernetes --nogpgcheck
 fi
+
+result_status=0
+grep -q "cgroup-driver" /var/lib/kubelet/kubeadm-flags.env || result_status=$?
+if [ ! "$result_status" = "0" ]; then
+  echo 'KUBELET_EXTRA_ARGS=--cgroup-driver=systemd' >> /var/lib/kubelet/kubeadm-flags.env
+fi
+systemctl daemon-reload
 
 systemctl enable --now kubelet
 systemctl restart kubelet
