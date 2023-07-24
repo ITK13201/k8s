@@ -1,4 +1,4 @@
-# Local
+# Kubernetes (Local)
 
 ## Vagrant
 
@@ -14,11 +14,18 @@ vagrant up --provision
 vagrant reload
 ```
 
-## Provision
+### Provision
 
 ```shell
 vagrant provision
 ```
+
+### rsync
+
+```shell
+vagrant rsync-auto
+```
+
 
 ## Setup before `kubeadm init`
 

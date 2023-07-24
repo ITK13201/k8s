@@ -8,8 +8,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     v.cpus = 4
   end
 
-  config.vm.define "k8s" do |k8s|
-    k8s.vm.hostname = "k8s"
+  config.vm.define "k8s.local" do |k8s|
+    k8s.vm.hostname = "k8s.local"
     k8s.vm.network "private_network", ip: "192.168.56.10"
   end
 
@@ -20,4 +20,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     ansible.limit = "all"
     ansible.ask_vault_pass = true
   end
+
+  config.vm.synced_folder "./ansible/files/scripts", "/srv/ansible/scripts", type: "rsync"
+  config.vm.synced_folder "./k8s", "/srv/k8s", type: "rsync"
 end
