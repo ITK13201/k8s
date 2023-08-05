@@ -1,14 +1,36 @@
 # Kubernetes (Local)
 
-## Vagrant
+## Setup
 
-### Start VM
+### 1. Vagrant up with provision
 
 ```shell
 vagrant up --provision
 ```
 
-### Reload Vagrantfile
+### 2. Update VirtualBox Guest Additions
+
+```shell
+vagrant vbguest
+```
+
+### 3. Vagrant reload
+
+*When using the `rsync-auto` command, if the `reload` command is not executed, the user will remain at the initialization time.
+
+```shell
+IS_PROVISIONED=1 vagrant reload
+```
+
+## Vagrant
+
+### Start VM with provision
+
+```shell
+vagrant up --provision
+```
+
+### Reload
 
 ```shell
 IS_PROVISIONED=1 vagrant reload
@@ -20,13 +42,13 @@ IS_PROVISIONED=1 vagrant reload
 vagrant provision
 ```
 
-### rsync
+### Rsync
 
 ```shell
-IS_PROVISIONED=1 vagrant rsync-auto
+vagrant rsync-auto
 ```
 
-### Run Vbguest
+### Update VirtualBox Guest Additions
 
 ```shell
 vagrant vbguest
