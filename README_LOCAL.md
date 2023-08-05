@@ -11,7 +11,7 @@ vagrant up --provision
 ### Reload Vagrantfile
 
 ```shell
-vagrant reload
+IS_PROVISIONED=1 vagrant reload
 ```
 
 ### Provision
@@ -23,22 +23,11 @@ vagrant provision
 ### rsync
 
 ```shell
-vagrant rsync-auto
+IS_PROVISIONED=1 vagrant rsync-auto
 ```
 
-
-## Setup before `kubeadm init`
-
-add `node-ip` to `KUBELET_DNS_ARGS` in `/usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf`
-
-e.g.)
-```shell
-Environment="KUBELET_DNS_ARGS=--cluster-dns=10.244.0.10 --cluster-domain=cluster.local --node-ip=172.16.20.11"
-```
-
-after that
+### Run Vbguest
 
 ```shell
-systemctl daemon-reload
-systemctl restart kubelet
+vagrant vbguest
 ```

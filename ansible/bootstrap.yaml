@@ -10,80 +10,94 @@
         name: k8s
         password: "{{ user_k8s_password | password_hash('sha512') }}"
         state: present
-      become: true
+      become: yes
     - name: Grant sudo privileges to the k8s user
       community.general.sudoers:
         name: "k8s"
         user: "k8s"
         state: present
         commands: ALL
-      become: true
+      become: yes
     - name: Deploy SSH Public Key
       ansible.posix.authorized_key:
         user: k8s
         state: present
         key: "{{ lookup('file', '/home/itk/.ssh/vagrant/k8s/id_rsa.pub') }}"
-      become: true
-    - name: Create ansible directory
+      become: yes
+    - name: Create srv directory
       ansible.builtin.file:
-        path: "/srv/ansible"
+        path: "/srv"
         state: directory
         owner: "k8s"
         group: "k8s"
-        mode: "775"
-        recurse: true
-      become: true
+        mode: "0775"
+      become: yes
     - name: Copy shell scripts for ansible initialization
       ansible.builtin.copy:
         src: "./scripts/"
         dest: "/srv/ansible/scripts/"
         owner: "k8s"
         group: "k8s"
-        mode: "775"
-      become: true
+        mode: "0777"
+        directory_mode: "0775"
+      become: yes
     - name: Copy k8s files
       ansible.builtin.copy:
         src: "{{ project_dir }}/k8s/"
         dest: "/srv/k8s/"
         owner: "k8s"
         group: "k8s"
-        mode: "777"
-      become: true
+        mode: "0664"
+        directory_mode: "0775"
+      become: yes
     - name: Copy initial login shell script
       ansible.builtin.copy:
         src: "{{ project_dir }}/config/etc/profile.d/personal.sh"
         dest: "/etc/profile.d/personal.sh"
         owner: "k8s"
         group: "k8s"
-        mode: "777"
-      become: true
+        mode: "0777"
+        directory_mode: "0775"
+      become: yes
     - name: Setup basic environment
       ansible.builtin.shell: /bin/bash -l /srv/ansible/scripts/setup_basic_environment.sh
       register: result
       changed_when: result.rc == 1
       failed_when: result.rc > 1
-      become: true
+      become: yes
     - name: Copy k8s config files
       ansible.builtin.copy:
         src: "{{ project_dir }}/config/usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf"
         dest: "/usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf"
         owner: "k8s"
         group: "k8s"
-        mode: "777"
-      become: true
+        mode: "0777"
+        directory_mode: "0777"
+      become: yes
+    - name: Set the permissions
+      ansible.builtin.file:
+        dest: "/srv"
+        owner: "k8s"
+        group: "k8s"
+        recurse: yes
+      become: yes
     - name: Setup k8s nodes
       ansible.builtin.shell: /bin/bash -l /srv/ansible/scripts/setup_k8s_nodes.sh
-      become: true
+      become: yes
       become_user: "k8s"
-    - name: Wait for kube-system pods initialization
-      ansible.builtin.shell: /bin/bash -lc "kubectl get pods"
+    - name: Wait for kube-system nodes initialization
+      ansible.builtin.shell: /bin/bash -lc "kubectl get nodes"
       register: result
       until: result.rc == 0
       retries: 5
       delay: 10
-      become: true
+      become: yes
       become_user: "k8s"
-    - name: Deploy k8s pods
-      ansible.builtin.shell: /bin/bash -l /srv/ansible/scripts/deploy_k8s_pods.sh
-      become: true
-      become_user: "k8s"
+#    - name: Build kustomizations
+#      ansible.builtin.shell: /bin/bash -l /srv/ansible/scripts/build_kustomizations.sh
+#      become: yes
+#      become_user: "k8s"
+#    - name: Deploy k8s pods
+#      ansible.builtin.shell: /bin/bash -l /srv/ansible/scripts/deploy_k8s_pods.sh
+#      become: yes
+#      become_user: "k8s"

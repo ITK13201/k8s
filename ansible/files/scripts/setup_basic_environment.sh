@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 ### Versions ###
 CONTAINERD_VERSION=1.7.2
 RUNC_VERSION=1.1.8
@@ -15,7 +17,7 @@ GPGCHECK_EXTRA_ARGS=--nogpgcheck
 # upgrade dnf packages
 dnf upgrade -y
 # install netcat
-dnf install -y nmap-ncat.x86_64 wget.x86_64
+dnf install -y nmap-ncat.x86_64 wget.x86_64 git.x86_64
 
 ### Enable IPv4 forwarding to make bridged traffic visible from iptables ###
 cat <<EOF | tee /etc/modules-load.d/k8s.conf
@@ -84,14 +86,15 @@ rm -f flannel-v${FLANNEL_VERSION}-linux-amd64.tar.gz
 
 
 ### Install kubelet kubeadm kubectl ###
-cat <<EOF > /etc/yum.repos.d/kubernetes.repo
+cat <<EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
 [kubernetes]
 name=Kubernetes
-baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-\$basearch
 enabled=1
 gpgcheck=1
-repo_gpgcheck=1
-gpgkey=https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg
+       https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+exclude=kubelet-1.18.* kubelet-1.17.* kubelet-1.16.*
 EOF
 
 # Set SELinux to permissive mode (effectively disabling it)
@@ -113,5 +116,14 @@ systemctl enable --now kubelet
 systemctl restart kubelet
 ###
 
+### Install helm ###
+wget -O get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+chmod 700 get_helm.sh
+./get_helm.sh
+rm -f ./get_helm.sh
+###
+
 # delete unused packages
 dnf remove -y "$(package-cleanup --leaves ${GPGCHECK_EXTRA_ARGS})" ${GPGCHECK_EXTRA_ARGS}
+
+exit

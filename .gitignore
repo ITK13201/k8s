@@ -1,4 +1,16 @@
-# development
+### IntelliJ ###
 .idea/
+
+### VScode ###
+.vscode/
+
+### Helm ###
+charts/
+temp.yaml
+temp*.yaml
+
+### Vagrant ###
 .vagrant/
+
+### Developments ###
 *.log
