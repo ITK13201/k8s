@@ -1,9 +1,10 @@
-# Based on https://github.com/flannel-io/flannel/tree/v0.22.1#deploying-flannel-with-helm
-
 namespace: kube-system
+
+# Based on https://github.com/flannel-io/flannel/tree/v0.22.1#deploying-flannel-with-helm
 helmCharts:
   - name: flannel
     repo: https://flannel-io.github.io/flannel/
+    releaseName: prod
     namespace: flannel
     version: v0.22.1
     valuesFile: values.yaml

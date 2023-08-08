@@ -17,6 +17,13 @@ kubectl apply -f ${GENERATED_DEPLOYMENTS_DIR}/flannel.yaml
 echo "Wait for flannel pods initialization... (1 minute)"
 sleep 1m
 
+# Deploying sealed-secrets
+kubectl apply -f ${GENERATED_DEPLOYMENTS_DIR}/sealed-secrets.yaml
+
+# Wait for flannel pod initialization
+echo "Wait for sealed-secrets pods initialization... (1 minute)"
+sleep 1m
+
 # Deploying deployments
 for deployment in ${DEPLOYMENTS[*]}; do
   kubectl apply -f ${GENERATED_DEPLOYMENTS_DIR}/"${deployment}".yaml

@@ -9,6 +9,11 @@ charts/
 temp.yaml
 temp*.yaml
 
+### Credentials ###
+*-plain.yaml
+*.plain.yaml
+*.pem
+
 ### Vagrant ###
 .vagrant/
 

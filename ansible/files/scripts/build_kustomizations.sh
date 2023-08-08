@@ -7,6 +7,7 @@ GENERATED_DIR="/srv/k8s/generated"
 
 DEPLOYMENTS=(
   "flannel"
+  "sealed-secrets"
 )
 
 for deployment in ${DEPLOYMENTS[*]}; do

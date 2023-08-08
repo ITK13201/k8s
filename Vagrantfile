@@ -9,12 +9,12 @@ end
 
 if IS_PROVISIONED
   print "[INFO] Use 'k8s' as the SSH user.\n\n"
-  rsync_owner = "k8s"
-  rsync_group = "k8s"
+  sync_owner = "k8s"
+  sync_group = "k8s"
 else
   Warning.warn("[WARN] Use 'vagrant' as the SSH user because IS_PROVISIONED is not set.\n\n")
-  rsync_owner = "vagrant"
-  rsync_group = "vagrant"
+  sync_owner = "vagrant"
+  sync_group = "vagrant"
 end
 ###
 
@@ -48,7 +48,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     ansible.ask_vault_pass = true
   end
 
-  config.vm.synced_folder "./ansible/files/scripts", "/srv/ansible/scripts", type: "rsync", owner: rsync_owner, group: rsync_group
-  config.vm.synced_folder "./k8s", "/srv/k8s", type: "rsync", owner: rsync_owner, group: rsync_group
+  config.vm.synced_folder "./ansible/files/scripts", "/srv/ansible/scripts", type: "rsync", owner: sync_owner, group: sync_group
+  config.vm.synced_folder "./k8s", "/srv/k8s", type: "rsync", owner: sync_owner, group: sync_group
   config.vm.synced_folder "./kubelog", "/var/log/pods"
+  config.vm.synced_folder "./share", "/srv/share", owner: sync_owner, group: sync_group
 end

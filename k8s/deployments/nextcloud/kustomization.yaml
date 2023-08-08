@@ -1,0 +1,25 @@
+namespace: nextcloud
+
+resources:
+  - nextcloud-files-pvc.yaml
+  - nextcloud-secret.yaml
+  - mariadb-secret.yaml
+  - redis-secret.yaml
+
+# Based on https://github.com/nextcloud/helm/blob/nextcloud-3.5.21/charts/nextcloud/Chart.yaml
+helmCharts:
+  - name: nextcloud
+    repo: https://nextcloud.github.io/helm/
+    releaseName: prod
+    namespace: nextcloud
+    version: 3.5.21
+    valuesFile: values.yaml
+    valuesMerge: override
+
+images:
+  - name: nextcloud
+    newTag: 27.0.1-fpm
+  - name: docker.io/bitnami/mariadb
+    newTag: 11.0.2
+  - name: docker.io/bitnami/redis
+    newTag: 7.0.12

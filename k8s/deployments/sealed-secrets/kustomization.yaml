@@ -1,0 +1,12 @@
+namespace: kube-system
+
+# Based on https://github.com/bitnami-labs/sealed-secrets/blob/v0.23.0/helm/sealed-secrets/Chart.yaml
+helmCharts:
+  - name: sealed-secrets
+    version: 2.11.0
+    repo: https://bitnami-labs.github.io/sealed-secrets
+    releaseName: prod
+    namespace: sealed-secrets
+    valuesFile: values.yaml
+    valuesMerge: override
+    includeCRDs: true

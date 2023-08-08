@@ -8,6 +8,7 @@ RUNC_VERSION=1.1.8
 CNI_PLUGINS_VERSION=1.3.0
 FLANNEL_VERSION=0.22.0
 CRICTL_VERSION=1.27.1
+KUBESEAL_VERSION=0.23.0
 ###
 
 ### FLAGS ###
@@ -121,6 +122,13 @@ wget -O get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get
 chmod 700 get_helm.sh
 ./get_helm.sh
 rm -f ./get_helm.sh
+###
+
+### Install Kubeseal ###
+wget "https://github.com/bitnami-labs/sealed-secrets/releases/download/v${KUBESEAL_VERSION}/kubeseal-${KUBESEAL_VERSION}-linux-amd64.tar.gz"
+tar -xzvf kubeseal-${KUBESEAL_VERSION}-linux-amd64.tar.gz kubeseal
+install -m 755 kubeseal /usr/local/bin/kubeseal
+rm -rf ./kubeseal ./kubeseal-${KUBESEAL_VERSION}-linux-amd64.tar.gz
 ###
 
 # delete unused packages
