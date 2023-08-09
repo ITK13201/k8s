@@ -53,3 +53,11 @@ vagrant rsync-auto
 ```shell
 vagrant vbguest
 ```
+
+## Documentation
+
+### kubernetes Nodeports
+
+|  Service  | Nodeport |
+|:---------:|:--------:|
+| nextcloud |  11080   |

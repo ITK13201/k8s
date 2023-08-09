@@ -176,6 +176,12 @@ redis:
         matchLabels:
           target-app: nextcloud-redis
 
+service:
+  type: ClusterIP
+  port: 80
+  loadBalancerIP: nil
+  nodePort: 11080
+
 ## Enable persistence using Persistent Volume Claims
 ## ref: http://kubernetes.io/docs/user-guide/persistent-volumes/
 ##
