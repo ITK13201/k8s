@@ -1,0 +1,8 @@
+repos:
+  - repo: local
+    hooks:
+      - id: check-diff-of-same-kustomization
+        name: check-diff-of-same-kustomization
+        entry: bash ./scripts/check_diff_of_same_kustomization.sh
+        language: system
+        pass_filenames: false

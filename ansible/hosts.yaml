@@ -1,0 +1,9 @@
+---
+all:
+  children:
+    dev:
+      hosts:
+        192.168.56.10:
+#     prod:
+#       hosts:
+#         k8s.i-tk.dev:

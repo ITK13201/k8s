@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: nextcloud-mariadb-pv
+  labels:
+    target-app: nextcloud-mariadb
+spec:
+  capacity:
+    storage: 4Gi
+  local:
+    path: /srv/data/k8s/pv/nextcloud/mariadb

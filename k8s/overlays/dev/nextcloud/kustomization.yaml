@@ -1,3 +1,5 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
 namespace: nextcloud
 
 resources:
@@ -10,7 +12,7 @@ resources:
 helmCharts:
   - name: nextcloud
     repo: https://nextcloud.github.io/helm/
-    releaseName: prod
+    releaseName: nextcloud
     namespace: nextcloud
     version: 3.5.21
     valuesFile: values.yaml

@@ -19,3 +19,4 @@ temp*.yaml
 
 ### Developments ###
 *.log
+tmp/

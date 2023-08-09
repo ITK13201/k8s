@@ -1,5 +1,4 @@
 # Based on https://github.com/flannel-io/flannel/blob/v0.22.1/chart/kube-flannel/values.yaml
-
 ---
 
 # The IPv4 cidr pool to create on startup if none exists. Pod IPs will be
@@ -19,8 +18,6 @@ flannel:
   args:
   - "--ip-masq"
   - "--kube-subnet-mgr"
-  # network interface
-  - "--iface=eth1"
   # Backend for kube-flannel. Backend should not be changed
   # at runtime. (vxlan, host-gw, wireguard, udp)
   # Documentation at https://github.com/flannel-io/flannel/blob/master/Documentation/backends.md

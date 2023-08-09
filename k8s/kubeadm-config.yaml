@@ -9,3 +9,4 @@ kind: ClusterConfiguration
 networking:
   serviceSubnet: '10.96.0.0/12'
   podSubnet: '10.244.0.0/16'
+  dnsDomain: "k8s.i-tk.dev"
