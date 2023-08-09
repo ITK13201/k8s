@@ -1,14 +1,13 @@
-#!/bin/bash
+#!/bin/bash -eu
 
 set -eu
 
-### TO BE UPDATED ###
-FILENAMES=(
-  "nextcloud/nextcloud-secret"
-  "nextcloud/mariadb-secret"
-  "nextcloud/redis-secret"
-)
-###
+CURRENT_DIR="$( cd "$( dirname "$0" )" && pwd )"
+PROJECT_ROOT_PATH="${CURRENT_DIR}/.."
+BASE_PATH="${PROJECT_ROOT_PATH}/k8s/overlays"
+
+# import SECRET_FILENAMES
+source "${PROJECT_ROOT_PATH}"/scripts/vars/secret_filenames.sh
 
 usage() {
   echo "Usage: $0 [-m] [-p]" 1>&2
@@ -32,11 +31,7 @@ do
   esac
 done
 
-CURRENT_DIR="$( cd "$( dirname "$0" )" && pwd )"
-PROJECT_ROOT_PATH="${CURRENT_DIR}/.."
-BASE_PATH="${PROJECT_ROOT_PATH}/k8s/overlays"
-
-for filename in "${FILENAMES[@]}"; do
+for filename in "${SECRET_FILENAMES[@]}"; do
   kubeseal --format=yaml --cert="${public_key_path}" \
     < "${BASE_PATH}/${mode}/${filename}"-plain.yaml \
     > "${BASE_PATH}/${mode}/${filename}".yaml
