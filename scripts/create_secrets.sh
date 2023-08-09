@@ -14,16 +14,13 @@ usage() {
   echo "Usage: $0 [-m] [-p]" 1>&2
   echo "Options: " 1>&2
   echo "-m: Define mode (dev / prod)" 1>&2
-  echo "-p: Define public key path (e.g., cert.pub)" 1>&2
   exit 1
 }
 
-while getopts :m:p:h OPT
+while getopts :m:h OPT
 do
   case $OPT in
   m)  mode=${OPTARG}
-      ;;
-  p)  public_key_path=${OPTARG}
       ;;
   h)  usage
       ;;
@@ -34,12 +31,19 @@ done
 
 CURRENT_DIR="$( cd "$( dirname "$0" )" && pwd )"
 PROJECT_ROOT_PATH="${CURRENT_DIR}/.."
-BASE_PATH="${PROJECT_ROOT_PATH}/k8s/overlays"
+
+CREDENTIAL_BASE_PATH="${PROJECT_ROOT_PATH}/credentials"
+DEPLOYMENT_BASE_PATH="${PROJECT_ROOT_PATH}/k8s/overlays"
 
 for filename in "${FILENAMES[@]}"; do
-  kubeseal --format=yaml --cert="${public_key_path}" \
-    < "${BASE_PATH}/${mode}/${filename}"-plain.yaml \
-    > "${BASE_PATH}/${mode}/${filename}".yaml
+  namespace="$(echo ${filename} | cut -d'/' -f1)"
+  secret_name="$(echo ${filename} | cut -d'/' -f2)"
+  kubectl create secret generic ${secret_name} \
+    --dry-run=client \
+    --from-env-file="${CREDENTIAL_BASE_PATH}/${mode}/${filename}.env" \
+    -n "${namespace}" \
+    -o yaml \
+    > "${DEPLOYMENT_BASE_PATH}/${mode}/${filename}-plain.yaml"
 done
 
 exit

@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-set -e
+set -eu
 
 ### TO BE UPDATED ###
 FILES=(
