@@ -33,6 +33,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.define "k8s.local" do |k8s|
     k8s.vm.hostname = "k8s.local"
     k8s.vm.network "private_network", ip: "192.168.56.10"
+    k8s.vm.network "forwarded_port", guest: 31000, host: 31000 # nextcloud
   end
 
   if IS_PROVISIONED

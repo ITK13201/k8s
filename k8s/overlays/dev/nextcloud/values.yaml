@@ -26,7 +26,7 @@ phpClientHttpsFix:
   protocol: https
 
 nextcloud:
-  host: cloud.i-tk.dev
+  host: localhost
   ## Use an existing secret
   existingSecret:
     enabled: true
@@ -177,10 +177,10 @@ redis:
           target-app: nextcloud-redis
 
 service:
-  type: ClusterIP
+  type: NodePort
   port: 80
   loadBalancerIP: nil
-  nodePort: 11080
+  nodePort: 31000
 
 ## Enable persistence using Persistent Volume Claims
 ## ref: http://kubernetes.io/docs/user-guide/persistent-volumes/

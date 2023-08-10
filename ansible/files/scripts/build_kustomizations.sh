@@ -9,7 +9,7 @@ if [ "${mode}" != "dev" ] && [ "${mode}" != "prod" ]; then
 fi
 
 DEVELOPMENTS_DIR="/srv/k8s/overlays/${mode}"
-GENERATED_DIR="/srv/k8s/generated"
+GENERATED_DIR="/srv/tmp/k8s/generated"
 
 DEPLOYMENTS=(
   "namespaces"

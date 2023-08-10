@@ -16,7 +16,7 @@
 ### Create Secret
 
 ```shell
-kubectl create secret generic <SECRET_NAME> --dry-run=client --from-env-file=<ENV_FILE_PATH> -n <NAMESPACE> -o yaml > <OUTPUT_FILE_PATH>
+bash ./scripts/create_secrets.sh -m <dev/prod>
 ```
 
 ### Fetch public key from pod
@@ -30,5 +30,5 @@ kubeseal --fetch-cert > cert.pub
 ### Encrypt Secret
 
 ```shell
-./scripts/encrypt_secrets.sh -m <dev/prod> -p <PUBLIC_KEY_PATH>
+bash ./scripts/encrypt_secrets.sh -m <dev/prod> -p <PUBLIC_KEY_PATH>
 ```

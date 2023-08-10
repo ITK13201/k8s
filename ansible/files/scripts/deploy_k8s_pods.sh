@@ -2,7 +2,7 @@
 
 set -e
 
-GENERATED_DEPLOYMENTS_DIR="/srv/k8s/generated"
+GENERATED_DEPLOYMENTS_DIR="/srv/tmp/k8s/generated"
 DEPLOYMENTS=(
   "namespaces"
   "pv"

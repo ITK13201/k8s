@@ -81,6 +81,15 @@
       when: mode == "dev"
       become: yes
       become_user: "k8s"
+    - name: Create Kustomization generated dir
+      ansible.builtin.file:
+        path: "/srv/tmp/k8s/generated"
+        state: directory
+        owner: "k8s"
+        group: "k8s"
+        mode: "0775"
+        recurse: yes
+      become: yes
     - name: Set the permissions
       ansible.builtin.file:
         dest: "/srv"
@@ -100,11 +109,11 @@
       delay: 10
       become: yes
       become_user: "k8s"
-#    - name: Build kustomizations
-#      ansible.builtin.shell: /bin/bash -l /srv/ansible/scripts/build_kustomizations.sh ${MODE}
-#      become: yes
-#      become_user: "k8s"
-#    - name: Pre-deploy k8s pods
-#      ansible.builtin.shell: /bin/bash -l /srv/ansible/scripts/pre_deploy_k8s_pods.sh
-#      become: yes
-#      become_user: "k8s"
+    - name: Build kustomizations
+      ansible.builtin.shell: /bin/bash -l /srv/ansible/scripts/build_kustomizations.sh ${MODE}
+      become: yes
+      become_user: "k8s"
+    - name: Pre-deploy k8s pods
+      ansible.builtin.shell: /bin/bash -l /srv/ansible/scripts/pre_deploy_k8s_pods.sh
+      become: yes
+      become_user: "k8s"

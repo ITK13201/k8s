@@ -60,4 +60,4 @@ vagrant vbguest
 
 |  Service  | Nodeport |
 |:---------:|:--------:|
-| nextcloud |  11080   |
+| nextcloud |  31000   |
