@@ -12,7 +12,8 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   storageClassName: manual
   local:
-    path: /data/k8s/pv/nextcloud/mariadb
+    # path: /data/k8s/pv/nextcloud/mariadb
+    path: /mnt/hdd/data/k8s/pv/nextcloud/mariadb
   nodeAffinity:
     required:
       nodeSelectorTerms:

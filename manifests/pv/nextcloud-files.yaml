@@ -12,7 +12,8 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   storageClassName: manual
   local:
-    path: /data/k8s/pv/nextcloud/files
+    # path: /data/k8s/pv/nextcloud/files
+    path: /mnt/hdd/data/k8s/pv/nextcloud/files
   nodeAffinity:
     required:
       nodeSelectorTerms:

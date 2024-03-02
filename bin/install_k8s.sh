@@ -3,22 +3,21 @@
 set -e
 
 ### Versions ###
-CONTAINERD_VERSION=1.7.2
-RUNC_VERSION=1.1.8
-CNI_PLUGINS_VERSION=1.3.0
-FLANNEL_VERSION=0.22.0
-CRICTL_VERSION=1.27.1
-KUBESEAL_VERSION=0.23.0
+CONTAINERD_VERSION=1.7.11
+RUNC_VERSION=1.1.10
+CNI_PLUGINS_VERSION=1.4.0
+CRICTL_VERSION=1.29.0
 ###
 
-### FLAGS ###
-GPGCHECK_EXTRA_ARGS=--nogpgcheck
-###
+# add /usr/bin/local to PATH env (as sudo)
+export PATH="/usr/local/bin:$PATH"
 
-# upgrade dnf packages
-dnf upgrade -y
 # install netcat
-dnf install -y nmap-ncat.x86_64 wget.x86_64 git.x86_64
+dnf install -y nmap-ncat wget git
+
+# disable swap
+swapoff -a
+sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
 
 ### Enable IPv4 forwarding to make bridged traffic visible from iptables ###
 cat <<EOF | tee /etc/modules-load.d/k8s.conf
@@ -34,11 +33,6 @@ net.ipv4.ip_forward                 = 1
 EOF
 # Apply kernel parameters without rebooting
 sysctl --system
-# Ensure that the module is loaded
-lsmod | grep br_netfilter
-lsmod | grep overlay
-# Ensure kernel parameters are set to 1
-sysctl net.bridge.bridge-nf-call-iptables net.bridge.bridge-nf-call-ip6tables net.ipv4.ip_forward
 ###
 
 ### Install container runtime (containerd) ###
@@ -78,43 +72,25 @@ systemctl enable --now containerd
 systemctl restart containerd
 ###
 
-### Download Flanneld
-wget https://github.com/flannel-io/flannel/releases/download/v${FLANNEL_VERSION}/flannel-v${FLANNEL_VERSION}-linux-amd64.tar.gz
-mkdir -p /opt/bin
-tar -C /opt/bin -xzvf flannel-v${FLANNEL_VERSION}-linux-amd64.tar.gz flanneld
-rm -f flannel-v${FLANNEL_VERSION}-linux-amd64.tar.gz
-###
-
 
 ### Install kubelet kubeadm kubectl ###
-cat <<EOF | sudo tee /etc/yum.repos.d/kubernetes.repo
-[kubernetes]
-name=Kubernetes
-baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-\$basearch
-enabled=1
-gpgcheck=1
-gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg
-       https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
-exclude=kubelet-1.18.* kubelet-1.17.* kubelet-1.16.*
-EOF
-
-# Set SELinux to permissive mode (effectively disabling it)
+# Set SELinux in permissive mode (effectively disabling it)
 setenforce 0
 sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config
 
-# disable swap
-swapoff -a
-sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
+# This overwrites any existing configuration in /etc/yum.repos.d/kubernetes.repo
+cat <<EOF | tee /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=https://pkgs.k8s.io/core:/stable:/v1.29/rpm/
+enabled=1
+gpgcheck=1
+gpgkey=https://pkgs.k8s.io/core:/stable:/v1.29/rpm/repodata/repomd.xml.key
+exclude=kubelet kubeadm kubectl cri-tools kubernetes-cni
+EOF
 
-dnf install -y kubelet kubeadm kubectl --disableexcludes=kubernetes ${GPGCHECK_EXTRA_ARGS}
-
-mkdir -p /var/lib/kubelet
-echo 'KUBELET_EXTRA_ARGS=--cgroup-driver=systemd' > /var/lib/kubelet/kubeadm-flags.env
-
-systemctl daemon-reload
-
+dnf install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
 systemctl enable --now kubelet
-systemctl restart kubelet
 ###
 
 ### Install helm ###
@@ -124,14 +100,7 @@ chmod 700 get_helm.sh
 rm -f ./get_helm.sh
 ###
 
-### Install Kubeseal ###
-wget "https://github.com/bitnami-labs/sealed-secrets/releases/download/v${KUBESEAL_VERSION}/kubeseal-${KUBESEAL_VERSION}-linux-amd64.tar.gz"
-tar -xzvf kubeseal-${KUBESEAL_VERSION}-linux-amd64.tar.gz kubeseal
-install -m 755 kubeseal /usr/local/bin/kubeseal
-rm -rf ./kubeseal ./kubeseal-${KUBESEAL_VERSION}-linux-amd64.tar.gz
-###
-
 # delete unused packages
-dnf remove -y "$(package-cleanup --leaves ${GPGCHECK_EXTRA_ARGS})" ${GPGCHECK_EXTRA_ARGS}
+dnf remove -y "$(package-cleanup --leaves)"
 
 exit
