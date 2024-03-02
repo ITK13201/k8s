@@ -1,0 +1,95 @@
+nextcloud:
+  host: nextcloud.i-tk.dev
+  existingSecret:
+    enabled: true
+    secretName: nextcloud-secret
+    usernameKey: nextcloud-username
+    passwordKey: nextcloud-password
+    tokenKey: nextcloud-token
+
+nginx:
+  enabled: true
+  resources:
+    requests:
+      cpu: 250m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+internalDatabase:
+  enabled: false
+
+externalDatabase:
+  enabled: true
+  type: mysql
+  existingSecret:
+    enabled: true
+    secretName: mariadb-secret
+    usernameKey: mariadb-user
+    passwordKey: mariadb-password
+    hostKey: mariadb-host
+    databaseKey: mariadb-database
+
+mariadb:
+  enabled: true
+  auth:
+    existingSecret: mariadb-secret
+  architecture: standalone
+  primary:
+    resources:
+      requests:
+        cpu: 250m
+        memory: 256Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+    persistence:
+      enabled: true
+      storageClass: manual
+      accessMode:
+        - ReadWriteOnce
+      size: 4Gi
+      selector:
+        matchLabels:
+          target-app: nextcloud-mariadb
+
+redis:
+  enabled: true
+  auth:
+    enabled: true
+    existingSecret: redis-secret
+    existingSecretPasswordKey: redis-password
+  master:
+    resources:
+      requests:
+        cpu: 250m
+        memory: 256Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+    persistence:
+      enabled: true
+      storageClass: manual
+      accessModes:
+        - ReadWriteOnce
+      size: 2Gi
+      selector:
+        matchLabels:
+          target-app: nextcloud-redis
+
+service:
+  type: ClusterIP
+  port: 80
+
+persistence:
+  enabled: true
+  existingClaim: nextcloud-files-pvc
+
+resources:
+  requests:
+    cpu: 500m
+    memory: 512Mi
+  limits:
+    cpu: 1000m
+    memory: 1024Mi

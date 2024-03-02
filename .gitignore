@@ -20,3 +20,6 @@ temp*.yaml
 ### Developments ###
 *.log
 tmp/
+credentials/
+secrets/
+data/
