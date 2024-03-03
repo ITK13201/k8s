@@ -1,0 +1,37 @@
+resources:
+  requests:
+    cpu: 100m
+    memory: 200Mi
+  limits:
+    cpu: 2
+    memory: 200Mi
+
+protocolHttp: True
+
+service:
+  type: ClusterIP
+  externalPort: 80
+
+ingress:
+  enabled: false
+
+metricsScraper:
+  ## Wether to enable dashboard-metrics-scraper
+  enabled: true
+  resources: {}
+  ## SecurityContext especially for the kubernetes dashboard metrics scraper container
+  ## If not set, the global containterSecurityContext values will define these values
+  # containerSecurityContext:
+  #   allowPrivilegeEscalation: false
+  #   readOnlyRootFilesystem: true
+  #   runAsUser: 1001
+  #   runAsGroup: 2001
+#  args:
+#    - --log-level=info
+#    - --logtostderr=true
+
+metrics-server:
+  enabled: true
+  args:
+   - --kubelet-preferred-address-types=InternalIP
+   - --kubelet-insecure-tls
