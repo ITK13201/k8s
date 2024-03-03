@@ -11,4 +11,4 @@ helmCharts:
     valuesMerge: override
 
 resources:
-  - cluster-role-binding
+  - cluster-role-binding.yaml
