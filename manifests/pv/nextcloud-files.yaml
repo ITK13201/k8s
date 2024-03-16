@@ -14,9 +14,3 @@ spec:
   local:
     # path: /data/k8s/pv/nextcloud/files
     path: /mnt/hdd/data/k8s/pv/nextcloud/files
-  nodeAffinity:
-    required:
-      nodeSelectorTerms:
-      - matchExpressions:
-        - key: kubernetes.io/hostname
-          operator: Exists
