@@ -53,6 +53,19 @@ mariadb:
       selector:
         matchLabels:
           target-app: nextcloud-mariadb
+    podSecurityContext:
+      enabled: true
+      fsGroup: 1000
+    containerSecurityContext:
+      enabled: true
+      runAsUser: 1000
+  secondary:
+    podSecurityContext:
+      enabled: true
+      fsGroup: 1000
+    containerSecurityContext:
+      enabled: true
+      runAsUser: 1000
 
 redis:
   enabled: true
@@ -77,6 +90,19 @@ redis:
       selector:
         matchLabels:
           target-app: nextcloud-redis
+    podSecurityContext:
+      enabled: true
+      fsGroup: 1000
+    containerSecurityContext:
+      enabled: true
+      runAsUser: 1000
+  replica:
+    podSecurityContext:
+      enabled: true
+      fsGroup: 1000
+    containerSecurityContext:
+      enabled: true
+      runAsUser: 1000
 
 service:
   type: ClusterIP
