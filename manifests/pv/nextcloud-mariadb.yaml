@@ -14,3 +14,9 @@ spec:
   local:
     # path: /data/k8s/pv/nextcloud/mariadb
     path: /mnt/hdd/data/k8s/pv/nextcloud/mariadb
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: Exists
