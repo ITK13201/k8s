@@ -5,4 +5,3 @@ resources:
   - nextcloud.yaml
   - istio-system.yaml
   - kubernetes-dashboard.yaml
-  - cloudflared.yaml
