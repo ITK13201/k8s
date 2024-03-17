@@ -1,5 +1,5 @@
 nextcloud:
-  host: nextcloud.i-tk.dev
+  host: cloud.i-tk.dev
   existingSecret:
     enabled: true
     secretName: nextcloud-secret
