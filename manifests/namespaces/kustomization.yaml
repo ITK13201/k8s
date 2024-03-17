@@ -5,3 +5,5 @@ resources:
   - nextcloud.yaml
   - istio-system.yaml
   - kubernetes-dashboard.yaml
+  - ingress-nginx.yaml
+  - cert-manager.yaml
