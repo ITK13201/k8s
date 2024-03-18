@@ -6,7 +6,7 @@ resources:
     cpu: 2
     memory: 200Mi
 
-protocolHttp: True
+protocolHttp: true
 
 service:
   type: ClusterIP

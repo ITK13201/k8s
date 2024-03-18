@@ -18,7 +18,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: dashboard.k8s.i-tk.dev
+    - host: dashboard-k8s.i-tk.dev
       http:
         paths:
           - path: /
@@ -30,5 +30,5 @@ spec:
                   name: http
   tls:
     - hosts:
-      - dashboard.k8s.i-tk.dev
+      - dashboard-k8s.i-tk.dev
       secretName: dashboard-k8s-itk-dev-secret
