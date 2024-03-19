@@ -11,11 +11,16 @@ spec:
       port: 8211
       protocol: UDP
       targetPort: server
-      nodePort: 30821
+      nodePort: 30001
     - name: query
       port: 27015
       protocol: UDP
       targetPort: query
+      nodePort: 30002
+    - name: rcon
+      port: 25575
+      targetPort: rcon
+      nodePort: 30003
   selector:
     app: palworld-server
   type: NodePort

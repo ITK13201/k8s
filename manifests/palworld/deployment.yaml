@@ -37,6 +37,9 @@ spec:
             - containerPort: 27015
               name: query
               protocol: UDP
+            - containerPort: 25575
+              name: rcon
+              protocol: TCP
           env:
             - name: ADMIN_PASSWORD
               valueFrom:
