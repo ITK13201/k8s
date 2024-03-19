@@ -5,3 +5,4 @@ resources:
   - nextcloud-mariadb.yaml
   - nextcloud-redis-master.yaml
   - nextcloud-redis-replicas.yaml
+  - palworld.yaml
