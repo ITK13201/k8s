@@ -22,14 +22,14 @@ spec:
           image: thijsvanloef/palworld-server-docker
           imagePullPolicy: IfNotPresent
           resources:
-          requests:
-            cpu: "2"
-            memory: "8Gi"
-            ephemeral-storage: "1Gi"
-          limits:
-            cpu: "4"
-            memory: "16Gi"
-            ephemeral-storage: "20Gi"
+            requests:
+              cpu: "2"
+              memory: "8Gi"
+              ephemeral-storage: "1Gi"
+            limits:
+              cpu: "4"
+              memory: "16Gi"
+              ephemeral-storage: "20Gi"
           ports:
             - containerPort: 8211
               name: server
