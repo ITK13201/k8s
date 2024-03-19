@@ -16,6 +16,6 @@ spec:
   nodeAffinity:
     required:
       nodeSelectorTerms:
-      - matchExpressions:
-        - key: kubernetes.io/hostname
-          operator: Exists
+        - matchExpressions:
+            - key: kubernetes.io/hostname
+              operator: Exists

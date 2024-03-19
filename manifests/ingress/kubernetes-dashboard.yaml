@@ -30,5 +30,5 @@ spec:
                   name: http
   tls:
     - hosts:
-      - dashboard-k8s.i-tk.dev
+        - dashboard-k8s.i-tk.dev
       secretName: dashboard-k8s-itk-dev-secret

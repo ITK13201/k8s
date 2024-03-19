@@ -5,16 +5,12 @@ resources:
   limits:
     cpu: 2
     memory: 200Mi
-
 protocolHttp: true
-
 service:
   type: ClusterIP
   externalPort: 80
-
 ingress:
   enabled: false
-
 metricsScraper:
   ## Wether to enable dashboard-metrics-scraper
   enabled: true
@@ -33,5 +29,5 @@ metricsScraper:
 metrics-server:
   enabled: true
   args:
-   - --kubelet-preferred-address-types=InternalIP
-   - --kubelet-insecure-tls
+    - --kubelet-preferred-address-types=InternalIP
+    - --kubelet-insecure-tls

@@ -10,13 +10,12 @@ spec:
     server: https://acme-staging-v02.api.letsencrypt.org/directory
     preferredChain: "ISRG Root X2"
     solvers:
-    - dns01:
-        cloudflare:
-          apiKeySecretRef:
-            name: cloudflare-secret
-            key: API_KEY
-          email: tkik13201@gmail.com
-
+      - dns01:
+          cloudflare:
+            apiKeySecretRef:
+              name: cloudflare-secret
+              key: API_KEY
+            email: tkik13201@gmail.com
 ---
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
@@ -30,9 +29,9 @@ spec:
     server: https://acme-v02.api.letsencrypt.org/directory
     preferredChain: "ISRG Root X2"
     solvers:
-    - dns01:
-        cloudflare:
-          apiTokenSecretRef:
-            name: cloudflare-secret
-            key: API_KEY
-          email: tkik13201@gmail.com
+      - dns01:
+          cloudflare:
+            apiTokenSecretRef:
+              name: cloudflare-secret
+              key: API_KEY
+            email: tkik13201@gmail.com

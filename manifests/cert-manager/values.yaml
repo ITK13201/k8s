@@ -1,9 +1,7 @@
 global:
   leaderElection:
     namespace: "cert-manager"
-
 installCRDs: true
-
 resources:
   requests:
     cpu: 50m
@@ -11,7 +9,6 @@ resources:
   limits:
     cpu: 100m
     memory: 128Mi
-
 webhook:
   resources:
     requests:
@@ -20,7 +17,6 @@ webhook:
     limits:
       cpu: 100m
       memory: 128Mi
-
 cainjector:
   resources:
     requests:
@@ -29,7 +25,6 @@ cainjector:
     limits:
       cpu: 100m
       memory: 128Mi
-
 startupapicheck:
   resources:
     requests:

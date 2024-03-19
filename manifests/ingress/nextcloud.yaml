@@ -30,5 +30,5 @@ spec:
                   name: http
   tls:
     - hosts:
-      - cloud.i-tk.dev
+        - cloud.i-tk.dev
       secretName: cloud-itk-dev-secret

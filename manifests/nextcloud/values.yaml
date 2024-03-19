@@ -6,7 +6,6 @@ nextcloud:
     usernameKey: nextcloud-username
     passwordKey: nextcloud-password
     tokenKey: nextcloud-token
-
 nginx:
   enabled: true
   resources:
@@ -16,10 +15,8 @@ nginx:
     limits:
       cpu: 500m
       memory: 512Mi
-
 internalDatabase:
   enabled: false
-
 externalDatabase:
   enabled: true
   type: mysql
@@ -30,7 +27,6 @@ externalDatabase:
     passwordKey: mariadb-password
     hostKey: mariadb-host
     databaseKey: mariadb-database
-
 mariadb:
   enabled: true
   auth:
@@ -66,7 +62,6 @@ mariadb:
     containerSecurityContext:
       enabled: true
       runAsUser: 1000
-
 redis:
   enabled: true
   auth:
@@ -120,15 +115,12 @@ redis:
     containerSecurityContext:
       enabled: true
       runAsUser: 1000
-
 service:
   type: ClusterIP
   port: 80
-
 persistence:
   enabled: true
   existingClaim: nextcloud-files-pvc
-
 resources:
   requests:
     cpu: 500m
