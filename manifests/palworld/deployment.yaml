@@ -52,7 +52,7 @@ spec:
             - configMapRef:
                 name: palworld-cm
           volumeMounts:
-            - mountPath: /data/k8s/pv/palworld
+            - mountPath: /palworld
               name: datadir
       volumes:
         - name: datadir
