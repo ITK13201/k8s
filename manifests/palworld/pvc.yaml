@@ -6,11 +6,13 @@ metadata:
   name: palworld-server-datadir
   namespace: palworld
 spec:
-  accessModes:
-    - ReadWriteOnce
   resources:
     requests:
       storage: 100Gi
+  volumeMode: Filesystem
+  storageClassName: local-storage
+  accessModes:
+    - ReadWriteOnce
   selector:
     matchLabels:
       target-app: palworld
