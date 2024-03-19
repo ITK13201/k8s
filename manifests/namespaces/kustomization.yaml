@@ -6,3 +6,4 @@ resources:
   - kubernetes-dashboard.yaml
   - ingress-nginx.yaml
   - cert-manager.yaml
+  - palworld.yaml
