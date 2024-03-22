@@ -16,7 +16,7 @@ data:
     exec_rcon_cmd save
     sleep 30
     exec_rcon_cmd "Broadcast Backing_up_Server_Data..."
-    kubectl exec -n palworld -i pod/$cont backup
+    kubectl exec -n palworld -i pod/$cont -- backup
     sleep 30
 
     step = 5
