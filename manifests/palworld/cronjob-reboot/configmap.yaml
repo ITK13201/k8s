@@ -2,13 +2,14 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: restart-deployment-configmap
+  namespace: palworld
 data:
   restart-deployment.sh: |
     #!/bin/bash
     cont=$(kubectl -n palworld get pods -o=jsonpath='{.items[?(@.metadata.labels.app=="palworld-server")].metadata.name}')
 
     function exec_rcon_cmd() {
-      kubectl exec -n palworld -i pod/$cont rcon-cli "$1"
+      kubectl exec -n palworld -i pod/$cont -- rcon-cli "$1"
     }
 
     exec_rcon_cmd "Broadcast Saving_Server_Data..."
