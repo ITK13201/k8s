@@ -8,7 +8,7 @@ metadata:
 spec:
   resources:
     requests:
-      storage: 100Gi
+      storage: 1Ti
   volumeMode: Filesystem
   storageClassName: local-storage
   accessModes:

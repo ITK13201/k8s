@@ -6,7 +6,7 @@ metadata:
     target-app: nextcloud-files
 spec:
   capacity:
-    storage: 100Gi
+    storage: 1Ti
   accessModes:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Retain

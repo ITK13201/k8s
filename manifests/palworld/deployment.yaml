@@ -51,6 +51,11 @@ spec:
                 secretKeyRef:
                   name: palworld-secrets
                   key: server-password
+            - name: DISCORD_WEBHOOK_URL
+              valueFrom:
+                secretKeyRef:
+                  name: palworld-secrets
+                  key: discord-webhook-url
           envFrom:
             - configMapRef:
                 name: palworld-cm
