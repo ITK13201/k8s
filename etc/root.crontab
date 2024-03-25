@@ -1,0 +1,8 @@
+### Nextcloud ###
+# Full backup
+30  4   *   *   6   /bin/bash -l /usr/local/src/k8s/k8s/bin/cronjobs/nextcloud/full_backup.sh
+# Incremental backup
+30  4   *   *   1-5 /bin/bash -l /usr/local/src/k8s/k8s/bin/cronjobs/nextcloud/incremental_backup.sh
+
+### Palworld ###
+30  10  *   *   *   mv /data/k8s/pv/palworld/backups/* /mnt/hdd-backup/backups/k8s/pv/palworld

@@ -1,5 +1,0 @@
-### Nextcloud ###
-# Full backup
-30  4   *   *   6   root    COMMAND=bash -l /usr/local/src/k8s/k8s/bin/cronjobs/nextcloud/full_backup.sh
-# Incremental backup
-30  4   *   *   1-5 root    COMMAND=bash -l /usr/local/src/k8s/k8s/bin/cronjobs/nextcloud/incremental_backup.sh
