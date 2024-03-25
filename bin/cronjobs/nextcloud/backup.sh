@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -u
+set -u -o pipefail
 
 now=$(TZ="Asia/Tokyo" date --iso-8601=seconds)
 
@@ -17,7 +17,7 @@ if [[ ${status} = 0 ]]; then
 else
     echo "Backup failed."
     CODE_BLOCK_SEPARATOR="\`\`\`"
-    discord-bot-cli -c "${CHANNEL_ID}" -t "Backup" -d "failed.\n${CODE_BLOCK_SEPARATOR}${MESSAGE}${CODE_BLOCK_SEPARATOR}" -l "error"
+    discord-bot-cli -c "${CHANNEL_ID}" -t "Backup" -d "failed.${CODE_BLOCK_SEPARATOR}${MESSAGE}${CODE_BLOCK_SEPARATOR}" -l "error"
 fi
 
 exit ${status}
