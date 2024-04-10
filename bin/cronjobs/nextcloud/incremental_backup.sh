@@ -17,7 +17,7 @@ discord-bot-cli -c "nextcloud" -t "Incremental backup" -d "Incremental backup st
 ### INCREMENTAL BACKUP ###
 discord-bot-cli -c "nextcloud" -t "Incremental backup" -d "Taking a incremental backup..." -l "info"
 mkdir -p "${INCREMENTAL_BACKUP_DIR}"
-message=$(rsync -a --delete --link-dest="${LATEST_FULL_BACKUP_DIR}"/ ${TARGET_DIR}/ "${INCREMENTAL_BACKUP_DIR}"/)
+message=$(rsync -a --delete --link-dest="${LATEST_FULL_BACKUP_DIR}"/ ${TARGET_DIR}/ "${INCREMENTAL_BACKUP_DIR}"/ 2>&1 | tee /dev/tty)
 status=$?
 if [[ ${status} = 0 ]]; then
     echo "Incremental backup completed."

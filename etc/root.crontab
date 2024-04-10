@@ -1,3 +1,6 @@
+### System ###
+30  0  *   *   *    /bin/bash -l /usr/local/src/k8s/k8s/bin/cronjobs/system/system_report.sh
+
 ### Nextcloud ###
 # Full backup
 30  4   *   *   6   /bin/bash -l /usr/local/src/k8s/k8s/bin/cronjobs/nextcloud/full_backup.sh
