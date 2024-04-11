@@ -15,7 +15,7 @@ discord-bot-cli -c "nextcloud" -t "Full backup" -d "Full backup started." -l "in
 ### FULL BACKUP ###
 discord-bot-cli -c "nextcloud" -t "Full backup" -d "Taking a full backup..." -l "info"
 mkdir -p "${FULL_BACKUP_DIR}"
-message=$(rsync -a --delete ${TARGET_DIR}/ "${FULL_BACKUP_DIR}"/ 2>&1 | tee /dev/tty)
+message=$(rsync -a --delete ${TARGET_DIR}/ "${FULL_BACKUP_DIR}"/ 2>&1 | tee /dev/stdout)
 status=$?
 if [[ ${status} = 0 ]]; then
     echo "Full backup completed."

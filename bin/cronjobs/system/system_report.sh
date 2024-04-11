@@ -7,7 +7,7 @@ CODE_BLOCK_SEPARATOR="\`\`\`"
 # ===
 
 ### Space of File System ###
-message=$(df -h | grep -e /dev/mapper/cs-root -e /dev/sd 2>&1 | tee /dev/tty)
+message=$(df -h | grep -e /dev/mapper/cs-root -e /dev/sd 2>&1 | tee /dev/stdout)
 status=$?
 if [[ ${status} = 0 ]]; then
     level="info"
