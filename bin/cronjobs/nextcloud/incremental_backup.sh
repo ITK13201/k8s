@@ -11,13 +11,24 @@ INCREMENTAL_BACKUP_DIR="/mnt/hdd-backup/backups/k8s/pv/nextcloud/incremental/${n
 
 # ===
 
+### Create tmpfile ###
+tmpfile=$(mktemp)
+function rm_tmpfile {
+  [[ -f "$tmpfile" ]] && rm -f "$tmpfile"
+}
+trap rm_tmpfile EXIT
+trap 'trap - EXIT; rm_tmpfile; exit -1' INT PIPE TERM
+
+# ===
+
 ### START ###
 discord-bot-cli -c "nextcloud" -t "Incremental backup" -d "Incremental backup started." -l "info"
 
 ### INCREMENTAL BACKUP ###
 discord-bot-cli -c "nextcloud" -t "Incremental backup" -d "Taking a incremental backup..." -l "info"
 mkdir -p "${INCREMENTAL_BACKUP_DIR}"
-message=$(rsync -a --delete --link-dest="${LATEST_FULL_BACKUP_DIR}"/ ${TARGET_DIR}/ "${INCREMENTAL_BACKUP_DIR}"/ 2>&1 | tee /dev/stdout)
+rsync -a --delete --link-dest="${LATEST_FULL_BACKUP_DIR}"/ ${TARGET_DIR}/ "${INCREMENTAL_BACKUP_DIR}"/ 2>&1 | tee "${tmpfile}"
+message=$(cat "${tmpfile}")
 status=$?
 if [[ ${status} = 0 ]]; then
     echo "Incremental backup completed."

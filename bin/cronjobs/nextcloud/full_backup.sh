@@ -9,13 +9,24 @@ FULL_BACKUP_DIR="/mnt/hdd-backup/backups/k8s/pv/nextcloud/full/${now}"
 
 # ===
 
+### Create tmpfile ###
+tmpfile=$(mktemp)
+function rm_tmpfile {
+  [[ -f "$tmpfile" ]] && rm -f "$tmpfile"
+}
+trap rm_tmpfile EXIT
+trap 'trap - EXIT; rm_tmpfile; exit -1' INT PIPE TERM
+
+# ===
+
 ### START ###
 discord-bot-cli -c "nextcloud" -t "Full backup" -d "Full backup started." -l "info"
 
 ### FULL BACKUP ###
 discord-bot-cli -c "nextcloud" -t "Full backup" -d "Taking a full backup..." -l "info"
 mkdir -p "${FULL_BACKUP_DIR}"
-message=$(rsync -a --delete ${TARGET_DIR}/ "${FULL_BACKUP_DIR}"/ 2>&1 | tee /dev/stdout)
+rsync -a --delete ${TARGET_DIR}/ "${FULL_BACKUP_DIR}"/ 2>&1 | tee "${tmpfile}"
+message=$(cat "${tmpfile}")
 status=$?
 if [[ ${status} = 0 ]]; then
     echo "Full backup completed."
