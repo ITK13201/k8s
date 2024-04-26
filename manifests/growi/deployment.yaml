@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: growi
+  labels:
+    app: growi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: growi
+  template:
+    metadata:
+      labels:
+        app: growi
+    spec:
+      containers:
+        - name: growi
+          image: weseek/growi:7.0.2
+          imagePullPolicy: IfNotPresent
+          ports:
+          - name: http
+            containerPort: 3000
+            protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /_api/v3/healthcheck?connectToMiddlewares
+              port: http
+            initialDelaySeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /_api/v3/healthcheck?connectToMiddlewares
+              port: http
+            initialDelaySeconds: 10
+          envFrom:
+          - configMapRef:
+              name: growi-cm
+          - secretRef:
+              name: growi-secret
+          volumeMounts:
+          - name: uploads
+            mountPath: "/data/uploads"
+          resources:
+            requests:
+              cpu: 500m
+              memory: 512Mi
+            limits:
+              cpu: 1000m
+              memory: 1024Mi
+      volumes:
+        - name: uploads
+          persistentVolumeClaim:
+            claimName: growi-uploads-pvc

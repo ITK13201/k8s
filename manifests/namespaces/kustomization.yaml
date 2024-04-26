@@ -7,3 +7,4 @@ resources:
   - ingress-nginx.yaml
   - cert-manager.yaml
   - palworld.yaml
+  - growi.yaml

@@ -6,3 +6,7 @@ resources:
   - nextcloud-redis-master.yaml
   - nextcloud-redis-replicas.yaml
   - palworld.yaml
+  - growi-uploads.yaml
+  - growi-mongodb.yaml
+  - growi-elasticsearch-master.yaml
+  - growi-elasticsearch-data.yaml
