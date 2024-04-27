@@ -1,3 +1,5 @@
+plugins: "analysis-kuromoji,analysis-icu"
+
 image:
   registry: docker.io
   repository: bitnami/elasticsearch
@@ -13,8 +15,8 @@ master:
       memory: 512Mi
     limits:
       cpu: 500m
-      memory: 2Gi
-  heapSize: 1024m
+      memory: 1Gi
+  heapSize: 512m
   podSecurityContext:
     enabled: true
     fsGroup: 1000
@@ -37,8 +39,8 @@ data:
       memory: 512Mi
     limits:
       cpu: 500m
-      memory: 2Gi
-  heapSize: 1024m
+      memory: 1Gi
+  heapSize: 512m
   podSecurityContext:
     enabled: true
     fsGroupChangePolicy: Always
