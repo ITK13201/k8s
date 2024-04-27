@@ -3,3 +3,4 @@ kind: Kustomization
 resources:
   - nextcloud.yaml
   - kubernetes-dashboard.yaml
+  - growi.yaml

@@ -1,0 +1,16 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: growi-uploads-pvc
+  labels:
+    app: growi
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Gi
+  storageClassName: manual
+  selector:
+    matchLabels:
+      target-app: growi-uploads
