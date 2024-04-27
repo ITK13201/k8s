@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
   name: growi-cm
 data:
-  # APP_SITE_URL: growi.i-tk.dev
+  APP_SITE_URL: growi.i-tk.dev
   ELASTICSEARCH_URI: http://elasticsearch:9200/growi
   FILE_UPLOAD: local
   MATHJAX: "1"
