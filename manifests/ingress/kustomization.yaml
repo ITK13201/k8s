@@ -4,3 +4,4 @@ resources:
   - nextcloud.yaml
   - kubernetes-dashboard.yaml
   - growi.yaml
+  - rss-generator.yaml

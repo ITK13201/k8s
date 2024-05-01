@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rss-generator
+  labels:
+    app: rss-generator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rss-generator
+  template:
+    metadata:
+      labels:
+        app: rss-generator
+    spec:
+      containers:
+        - name: rss-generator
+          image: ghcr.io/itk13201/rss-generator:v0.0.0
+          imagePullPolicy: IfNotPresent
+          ports:
+          - name: http
+            containerPort: 80
+            protocol: TCP
+          envFrom:
+          - configMapRef:
+              name: rss-generator-cm
+          env:
+          - name: DATABASE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: rss-generator-secret
+                key: database-password
+          resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi

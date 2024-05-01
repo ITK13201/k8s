@@ -1,0 +1,34 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/tls-acme: "true"
+    cert-manager.io/cluster-issuer: "letsencrypt"
+    cert-manager.io/private-key-algorithm: "ECDSA"
+    cert-manager.io/private-key-size: "384"
+    nginx.ingress.kubernetes.io/proxy-body-size: "4g"
+    nginx.ingress.kubernetes.io/limit-connections: "100"
+    nginx.ingress.kubernetes.io/limit-rps: "100"
+    nginx.ingress.kubernetes.io/limit-rpm: "500"
+    nginx.ingress.kubernetes.io/limit-burst-multiplier: "10"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "X-Forwarded-For"
+  name: rss-generator-ingress
+  namespace: rss-generator
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: rss.i-tk.dev
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: rss-generator
+                port:
+                  name: http
+  tls:
+    - hosts:
+        - rss.i-tk.dev
+      secretName: rss-itk-dev-secret
