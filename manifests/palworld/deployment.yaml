@@ -1,3 +1,4 @@
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -18,51 +19,51 @@ spec:
         app: palworld-server
     spec:
       containers:
-        - name: palworld-server
-          image: thijsvanloef/palworld-server-docker
-          imagePullPolicy: IfNotPresent
-          resources:
-            requests:
-              cpu: "2"
-              memory: "4Gi"
-              ephemeral-storage: "1Gi"
-            limits:
-              cpu: "4"
-              memory: "20Gi"
-              ephemeral-storage: "20Gi"
-          ports:
-            - containerPort: 8211
-              name: server
-              protocol: UDP
-            - containerPort: 27015
-              name: query
-              protocol: UDP
-            - containerPort: 25575
-              name: rcon
-              protocol: TCP
-          env:
-            - name: ADMIN_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: palworld-secrets
-                  key: admin-password
-            - name: SERVER_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: palworld-secrets
-                  key: server-password
-            - name: DISCORD_WEBHOOK_URL
-              valueFrom:
-                secretKeyRef:
-                  name: palworld-secrets
-                  key: discord-webhook-url
-          envFrom:
-            - configMapRef:
-                name: palworld-cm
-          volumeMounts:
-            - mountPath: /palworld
-              name: datadir
+      - name: palworld-server
+        image: thijsvanloef/palworld-server-docker
+        imagePullPolicy: IfNotPresent
+        resources:
+          requests:
+            cpu: "2"
+            memory: "4Gi"
+            ephemeral-storage: "1Gi"
+          limits:
+            cpu: "4"
+            memory: "20Gi"
+            ephemeral-storage: "20Gi"
+        ports:
+        - containerPort: 8211
+          name: server
+          protocol: UDP
+        - containerPort: 27015
+          name: query
+          protocol: UDP
+        - containerPort: 25575
+          name: rcon
+          protocol: TCP
+        env:
+        - name: ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: palworld-secrets
+              key: admin-password
+        - name: SERVER_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: palworld-secrets
+              key: server-password
+        - name: DISCORD_WEBHOOK_URL
+          valueFrom:
+            secretKeyRef:
+              name: palworld-secrets
+              key: discord-webhook-url
+        envFrom:
+        - configMapRef:
+            name: palworld-cm
+        volumeMounts:
+        - mountPath: /palworld
+          name: datadir
       volumes:
-        - name: datadir
-          persistentVolumeClaim:
-            claimName: palworld-server-datadir
+      - name: datadir
+        persistentVolumeClaim:
+          claimName: palworld-server-datadir

@@ -1,3 +1,4 @@
+---
 resources:
   requests:
     cpu: 100m
@@ -29,5 +30,5 @@ metricsScraper:
 metrics-server:
   enabled: true
   args:
-    - --kubelet-preferred-address-types=InternalIP
-    - --kubelet-insecure-tls
+  - --kubelet-preferred-address-types=InternalIP
+  - --kubelet-insecure-tls

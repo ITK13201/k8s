@@ -1,31 +1,27 @@
+---
 image:
   registry: docker.io
   repository: bitnami/mongodb
   tag: 7.0.8-debian-12-r2
   pullPolicy: IfNotPresent
-
 auth:
   enabled: true
   rootUser: root
   usernames: ["growi"]
   databases: ["growi"]
   existingSecret: mongodb-secret
-
 replicaCount: 1
-
 podSecurityContext:
   enabled: true
   fsGroupChangePolicy: Always
   supplementalGroups: []
   fsGroup: 1000
-
 containerSecurityContext:
   enabled: true
   seLinuxOptions: {}
   runAsUser: 1000
   runAsGroup: 1000
   runAsNonRoot: true
-
 resources:
   requests:
     cpu: 250m
@@ -33,7 +29,6 @@ resources:
   limits:
     cpu: 500m
     memory: 512Mi
-
 persistence:
   enabled: true
   existingClaim: mongodb-pvc

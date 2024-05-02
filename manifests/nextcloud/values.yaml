@@ -1,3 +1,4 @@
+---
 nextcloud:
   host: cloud.i-tk.dev
   existingSecret:
@@ -44,7 +45,7 @@ mariadb:
       enabled: true
       storageClass: manual
       accessMode:
-        - ReadWriteOnce
+      - ReadWriteOnce
       size: 4Gi
       selector:
         matchLabels:
@@ -80,7 +81,7 @@ redis:
       enabled: true
       storageClass: manual
       accessModes:
-        - ReadWriteOnce
+      - ReadWriteOnce
       size: 2Gi
       selector:
         matchLabels:
@@ -104,7 +105,7 @@ redis:
       enabled: true
       storageClass: manual
       accessModes:
-        - ReadWriteOnce
+      - ReadWriteOnce
       size: 2Gi
       selector:
         matchLabels:

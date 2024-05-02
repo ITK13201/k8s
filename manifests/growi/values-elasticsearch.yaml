@@ -1,11 +1,10 @@
+---
 plugins: "analysis-kuromoji,analysis-icu"
-
 image:
   registry: docker.io
   repository: bitnami/elasticsearch
   tag: 8.13.2-debian-12-r2
   pullPolicy: IfNotPresent
-
 master:
   masterOnly: true
   replicaCount: 1
@@ -26,11 +25,9 @@ master:
     runAsUser: 1000
     runAsGroup: 1000
     runAsNonRoot: true
-
   persistence:
     enabled: true
     existingClaim: elasticsearch-master-pvc
-
 data:
   replicaCount: 1
   resources:
@@ -53,7 +50,6 @@ data:
     runAsUser: 1000
     runAsGroup: 1000
     runAsNonRoot: true
-  
   persistence:
     enabled: true
     existingClaim: elasticsearch-data-pvc

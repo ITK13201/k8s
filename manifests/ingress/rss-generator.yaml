@@ -1,3 +1,4 @@
+---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -18,17 +19,17 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: rss.i-tk.dev
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: rss-generator
-                port:
-                  name: http
+  - host: rss.i-tk.dev
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: rss-generator
+            port:
+              name: http
   tls:
-    - hosts:
-        - rss.i-tk.dev
-      secretName: rss-itk-dev-secret
+  - hosts:
+    - rss.i-tk.dev
+    secretName: rss-itk-dev-secret

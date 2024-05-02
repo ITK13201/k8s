@@ -1,0 +1,7 @@
+---
+formatter:
+  type: basic
+  include_document_start: true
+  indentless_arrays: true
+include: ["."]
+gitignore_excludes: true

@@ -1,3 +1,4 @@
+---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -18,17 +19,17 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: cloud.i-tk.dev
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: nextcloud
-                port:
-                  name: http
+  - host: cloud.i-tk.dev
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: nextcloud
+            port:
+              name: http
   tls:
-    - hosts:
-        - cloud.i-tk.dev
-      secretName: cloud-itk-dev-secret
+  - hosts:
+    - cloud.i-tk.dev
+    secretName: cloud-itk-dev-secret

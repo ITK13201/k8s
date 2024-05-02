@@ -1,3 +1,4 @@
+---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -18,17 +19,17 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: dashboard-k8s.i-tk.dev
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: kubernetes-dashboard
-                port:
-                  name: http
+  - host: dashboard-k8s.i-tk.dev
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: kubernetes-dashboard
+            port:
+              name: http
   tls:
-    - hosts:
-        - dashboard-k8s.i-tk.dev
-      secretName: dashboard-k8s-itk-dev-secret
+  - hosts:
+    - dashboard-k8s.i-tk.dev
+    secretName: dashboard-k8s-itk-dev-secret
