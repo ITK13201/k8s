@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: rss-generator
-          image: ghcr.io/itk13201/rss-generator:v0.0.0
+          image: ghcr.io/itk13201/rss-generator:v0.1.0
           imagePullPolicy: IfNotPresent
           ports:
           - name: http
