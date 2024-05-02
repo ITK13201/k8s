@@ -5,7 +5,7 @@ metadata:
   namespace: rss-generator
   name: update-rss-feeds
 spec:
-  schedule: "0 * * * *"
+  schedule: "*/10 * * * *"
   jobTemplate:
     spec:
       template:
