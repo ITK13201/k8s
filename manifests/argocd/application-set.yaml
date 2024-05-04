@@ -1,0 +1,29 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: k8s
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+  - git:
+      repoURL: https://github.com/ITK13201/k8s.git
+      revision: HEAD
+      directories:
+      - path: manifests/*
+  template:
+    metadata:
+      name: 'k8s-{{.path.basename}}'
+    spec:
+      project: k8s
+      source:
+        repoURL: https://github.com/ITK13201/k8s.git
+        targetRevision: HEAD
+        path: '{{.path.basename}}'
+      destination:
+        server: 'https://kubernetes.default.svc'
+        namespace: default
+      syncPolicy:
+        automated:
+          prune: true
