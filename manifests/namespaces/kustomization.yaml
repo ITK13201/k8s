@@ -10,3 +10,4 @@ resources:
 - palworld.yaml
 - growi.yaml
 - rss-generator.yaml
+- algocd.yaml
