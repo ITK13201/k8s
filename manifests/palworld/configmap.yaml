@@ -16,3 +16,4 @@ data:
   COMMUNITY: "false" # Enable this if you want your server to show up in the community servers tab, USE WITH SERVER_PASSWORD!
   SERVER_NAME: "GameLab Palworld"
   SERVER_DESCRIPTION: "GameLab's community Palworld server"
+  BASE_CAMP_WORKER_MAX_NUM: "20"
