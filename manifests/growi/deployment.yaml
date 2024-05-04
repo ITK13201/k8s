@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: growi
-        image: weseek/growi:7.0.2
+        image: weseek/growi:7.0.3
         imagePullPolicy: IfNotPresent
         ports:
         - name: http
