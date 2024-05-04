@@ -13,14 +13,14 @@ resources:
 helmCharts:
 - name: mongodb
   repo: https://charts.bitnami.com/bitnami
-  version: 15.1.5
+  version: 15.1.7
   releaseName: mongodb
   namespace: growi
   valuesFile: values-mongodb.yaml
   valuesMerge: override
 - name: elasticsearch
   repo: https://charts.bitnami.com/bitnami
-  version: 21.0.1
+  version: 21.0.2
   releaseName: elasticsearch
   namespace: growi
   valuesFile: values-elasticsearch.yaml
