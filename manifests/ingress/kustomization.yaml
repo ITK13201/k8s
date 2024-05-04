@@ -6,3 +6,4 @@ resources:
 - kubernetes-dashboard.yaml
 - growi.yaml
 - rss-generator.yaml
+- algocd.yaml
