@@ -14,22 +14,22 @@ metadata:
     nginx.ingress.kubernetes.io/limit-burst-multiplier: "10"
     nginx.ingress.kubernetes.io/enable-cors: "true"
     nginx.ingress.kubernetes.io/cors-allow-headers: "X-Forwarded-For"
-  name: algocd-ingress
-  namespace: algocd
+  name: argocd-ingress
+  namespace: argocd
 spec:
   ingressClassName: nginx
   rules:
-  - host: algocd.i-tk.dev
+  - host: argocd.i-tk.dev
     http:
       paths:
       - path: /
         pathType: Prefix
         backend:
           service:
-            name: algocd-server
+            name: argocd-server
             port:
               name: http
   tls:
   - hosts:
-    - algocd.i-tk.dev
-    secretName: algocd-itk-dev-secret
+    - argocd.i-tk.dev
+    secretName: argocd-itk-dev-secret
