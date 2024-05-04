@@ -5,7 +5,7 @@ namespace: kubernetes-dashboard
 helmCharts:
 - name: kubernetes-dashboard
   repo: https://kubernetes.github.io/dashboard/
-  version: 6.0.8
+  version: 7.3.2
   releaseName: kubernetes-dashboard
   namespace: kubernetes-dashboard
   valuesFile: values.yaml
