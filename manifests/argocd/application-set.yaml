@@ -20,7 +20,7 @@ spec:
       source:
         repoURL: https://github.com/ITK13201/k8s.git
         targetRevision: HEAD
-        path: '{{.path.basename}}'
+        path: '{{.path.path}}'
       destination:
         server: 'https://kubernetes.default.svc'
         namespace: default
