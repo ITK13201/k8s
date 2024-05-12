@@ -1,0 +1,17 @@
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: marp-builder-api-attachment-pvc
+  labels:
+    app: marp-builder-api
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Gi
+  storageClassName: manual
+  selector:
+    matchLabels:
+      target-app: marp-builder-api-attachment

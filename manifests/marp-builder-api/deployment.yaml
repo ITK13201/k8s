@@ -1,0 +1,53 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: marp-builder-api
+  labels:
+    app: marp-builder-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: marp-builder-api
+  template:
+    metadata:
+      labels:
+        app: marp-builder-api
+    spec:
+      containers:
+      - name: marp-builder-api
+        image: ghcr.io/itk13201/marp-builder-api:v0.0.2
+        imagePullPolicy: IfNotPresent
+        ports:
+        - name: http
+          containerPort: 80
+          protocol: TCP
+        envFrom:
+        - configMapRef:
+            name: marp-builder-api-cm
+        env:
+        - name: GROWI_API_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: marp-builder-api-secret
+              key: growi-api-token
+        - name: GROWI_API_URL
+          valueFrom:
+            secretKeyRef:
+              name: marp-builder-api-secret
+              key: growi-api-url
+        volumeMounts:
+        - name: attachment
+          mountPath: "/attachment"
+        resources:
+          requests:
+            cpu: 250m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+      volumes:
+      - name: attachment
+        persistentVolumeClaim:
+          claimName: marp-builder-api-attachment-pvc

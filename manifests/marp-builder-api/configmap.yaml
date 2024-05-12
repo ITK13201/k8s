@@ -1,0 +1,7 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: marp-builder-api-cm
+data:
+  PORT: "80"
