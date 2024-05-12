@@ -7,3 +7,4 @@ resources:
 - growi.yaml
 - rss-generator.yaml
 - argocd.yaml
+- marp-builder-api.yaml
