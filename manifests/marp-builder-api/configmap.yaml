@@ -4,4 +4,4 @@ kind: ConfigMap
 metadata:
   name: marp-builder-api-cm
 data:
-  PORT: "80"
+  PORT: "3000"

@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: marp-builder-api
-        image: ghcr.io/itk13201/marp-builder-api:v0.0.2
+        image: ghcr.io/itk13201/marp-builder-api:v0.0.3
         imagePullPolicy: IfNotPresent
         ports:
         - name: http
