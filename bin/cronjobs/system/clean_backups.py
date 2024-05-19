@@ -11,6 +11,7 @@ APPLICATIONS = [
 ]
 
 logger = logging.getLogger(__name__)
+JST = datetime.timezone(datetime.timedelta(hours=9), "JST")
 
 
 def log_and_send_to_discord(channel: str, title: str, description: str, level: str):
@@ -56,7 +57,7 @@ def clean_backups(app_name: str):
     for file in os.listdir(incremental_backup_dir):
         file_path = os.path.join(incremental_backup_dir, file)
         creation_time = datetime.datetime.fromisoformat(file)
-        now = datetime.datetime.now(tz=datetime.timezone("Asia/Tokyo"))
+        now = datetime.datetime.now(JST)
         if (now - creation_time).days > 30:
             os.remove(file_path)
             log_and_send_to_discord(
