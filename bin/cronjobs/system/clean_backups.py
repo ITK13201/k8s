@@ -15,15 +15,14 @@ logger = logging.getLogger(__name__)
 
 def log_and_send_to_discord(channel: str, title: str, description: str, level: str):
     log_message = "<{}> {}: {}".format(channel, title, description)
-    match level:
-        case "info":
-            logger.info(log_message)
-        case "warning":
-            logger.warning(log_message)
-        case "error":
-            logger.error(log_message)
-        case _:
-            logger.info(log_message)
+    if level == "info":
+        logger.info(log_message)
+    elif level == "warning":
+        logger.warning(log_message)
+    elif level == "error":
+        logger.error(log_message)
+    else:
+        logger.info(log_message)
 
     # Send to Discord
     return_code = subprocess.call(
