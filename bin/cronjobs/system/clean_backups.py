@@ -54,7 +54,7 @@ def clean_backups(app_name: str):
     for file in os.listdir(incremental_backup_dir):
         file_path = os.path.join(incremental_backup_dir, file)
         creation_time = datetime.datetime.fromisoformat(file)
-        now = datetime.datetime.now()
+        now = datetime.datetime.now(tz=datetime.timezone("Asia/Tokyo"))
         if (now - creation_time).days > 30:
             os.remove(file_path)
             log_and_send_to_discord(
