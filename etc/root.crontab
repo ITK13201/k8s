@@ -1,5 +1,6 @@
 ### System ###
 30  0  *   *   *    /bin/bash -l /usr/local/src/k8s/k8s/bin/cronjobs/system/system_report.sh
+30  5  *   *   *    /bin/bash -l -c "/usr/local/src/k8s/k8s/bin/cronjobs/system/clean_backups.py"
 
 ### Nextcloud ###
 # Full backup
