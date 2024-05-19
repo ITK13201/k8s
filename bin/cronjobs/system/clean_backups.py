@@ -45,7 +45,9 @@ def log_and_send_to_discord(channel: str, title: str, description: str, level: s
 
 
 def clean_backups(app_name: str):
-    incremental_backup_dir = "/mnt/hdd-backup/backups/k8s/pv/{}/incremental".format(app_name)
+    incremental_backup_dir = "/mnt/hdd-backup/backups/k8s/pv/{}/incremental".format(
+        app_name
+    )
     full_backup_dir = "/mnt/hdd-backup/backups/k8s/pv/{}/full".format(app_name)
     archive_dir = "/mnt/hdd-backup/backups/k8s/pv/{}/archive".format(app_name)
 
