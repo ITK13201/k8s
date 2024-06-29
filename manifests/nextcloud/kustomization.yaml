@@ -12,7 +12,7 @@ helmCharts:
   valuesMerge: override
 images:
 - name: nextcloud
-  newTag: 29.0.1-fpm
+  newTag: 29.0.3-fpm
 - name: docker.io/bitnami/mariadb
   newTag: 11.3.2
 - name: docker.io/bitnami/redis
