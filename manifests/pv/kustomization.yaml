@@ -11,6 +11,7 @@ resources:
 - growi-mongodb.yaml
 - growi-elasticsearch-master.yaml
 - growi-elasticsearch-data.yaml
+- growi-mongoexport-backup.yaml
 - rss-generator-mariadb-primary.yaml
 - rss-generator-mariadb-secondary.yaml
 - marp-builder-api-attachment.yaml
