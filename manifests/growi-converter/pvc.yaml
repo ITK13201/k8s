@@ -2,9 +2,9 @@
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: marp-builder-api-attachment-pvc
+  name: growi-converter-attachment-pvc
   labels:
-    app: marp-builder-api
+    app: growi-converter
 spec:
   accessModes:
   - ReadWriteOnce
@@ -14,4 +14,4 @@ spec:
   storageClassName: manual
   selector:
     matchLabels:
-      target-app: marp-builder-api-attachment
+      target-app: growi-converter-attachment

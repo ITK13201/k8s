@@ -13,4 +13,4 @@ resources:
 - growi-elasticsearch-data.yaml
 - rss-generator-mariadb-primary.yaml
 - rss-generator-mariadb-secondary.yaml
-- marp-builder-api-attachment.yaml
+- growi-converter-attachment.yaml

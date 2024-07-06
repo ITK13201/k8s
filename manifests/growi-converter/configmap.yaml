@@ -2,6 +2,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: marp-builder-api-cm
+  name: growi-converter-cm
 data:
   PORT: "3000"
+  GROWI_ATTACHMENT_DIR: "/attachment"

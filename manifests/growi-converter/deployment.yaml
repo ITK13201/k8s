@@ -2,22 +2,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: marp-builder-api
+  name: growi-converter
   labels:
-    app: marp-builder-api
+    app: growi-converter
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: marp-builder-api
+      app: growi-converter
   template:
     metadata:
       labels:
-        app: marp-builder-api
+        app: growi-converter
     spec:
       containers:
-      - name: marp-builder-api
-        image: ghcr.io/itk13201/marp-builder-api:v0.1.1
+      - name: growi-converter
+        image: ghcr.io/itk13201/growi-converter:v1.0.0
         imagePullPolicy: IfNotPresent
         ports:
         - name: http
@@ -25,17 +25,17 @@ spec:
           protocol: TCP
         envFrom:
         - configMapRef:
-            name: marp-builder-api-cm
+            name: growi-converter-cm
         env:
         - name: GROWI_API_TOKEN
           valueFrom:
             secretKeyRef:
-              name: marp-builder-api-secret
+              name: growi-converter-secret
               key: growi-api-token
         - name: GROWI_API_URL
           valueFrom:
             secretKeyRef:
-              name: marp-builder-api-secret
+              name: growi-converter-secret
               key: growi-api-url
         volumeMounts:
         - name: attachment
@@ -50,4 +50,4 @@ spec:
       volumes:
       - name: attachment
         persistentVolumeClaim:
-          claimName: marp-builder-api-attachment-pvc
+          claimName: growi-converter-attachment-pvc
