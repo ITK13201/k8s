@@ -14,22 +14,22 @@ metadata:
     nginx.ingress.kubernetes.io/limit-burst-multiplier: "10"
     nginx.ingress.kubernetes.io/enable-cors: "true"
     nginx.ingress.kubernetes.io/cors-allow-headers: "X-Forwarded-For"
-  name: marp-builder-api-ingress
-  namespace: marp-builder-api
+  name: growi-converter-ingress
+  namespace: growi-converter
 spec:
   ingressClassName: nginx
   rules:
-  - host: marp.i-tk.dev
+  - host: growi-converter.i-tk.dev
     http:
       paths:
       - path: /
         pathType: Prefix
         backend:
           service:
-            name: marp-builder-api
+            name: growi-converter
             port:
               name: http
   tls:
   - hosts:
-    - marp.i-tk.dev
-    secretName: marp-itk-dev-secret
+    - growi-converter.i-tk.dev
+    secretName: growi-converter-itk-dev-secret
