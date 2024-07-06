@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: growi-converter
-        image: ghcr.io/itk13201/growi-converter:v1.0.0
+        image: ghcr.io/itk13201/growi-converter:v1.1.2
         imagePullPolicy: IfNotPresent
         ports:
         - name: http
