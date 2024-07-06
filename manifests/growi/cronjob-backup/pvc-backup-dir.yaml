@@ -2,7 +2,7 @@
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: mongoexport-backup-pvc
+  name: backup-backup-dir-pvc
   labels:
     app: growi
 spec:
@@ -14,4 +14,4 @@ spec:
   storageClassName: manual
   selector:
     matchLabels:
-      target-app: growi-mongoexport-backup
+      target-app: growi-backup-backup-dir
