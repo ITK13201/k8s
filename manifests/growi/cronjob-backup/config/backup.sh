@@ -16,6 +16,19 @@ BACKUP_TARBALL_PATH=/backup/${TIMESTAMP}.tar.bz2
 
 echo "[$(date)] Started backup."
 
+# Install required packages
+echo "[$(date)] Installing required packages..."
+
+apt-get update
+apt-get install -y curl bzip2
+
+curl -OL https://github.com/ITK13201/growi-backup-tool/releases/download/v${GROWI_BACKUP_TOOL_VERSION}/growi-backup-tool_${GROWI_BACKUP_TOOL_VERSION}_linux_amd64.tar.gz
+tar -C /usr/local/bin -xzf growi-backup-tool_${GROWI_BACKUP_TOOL_VERSION}_linux_amd64.tar.gz
+chmod +x /usr/local/bin/growi-backup-tool
+rm -f growi-backup-tool_${GROWI_BACKUP_TOOL_VERSION}_linux_amd64.tar.gz
+
+echo "[$(date)] Installed required packages."
+
 # Create backup directories
 echo "[$(date)] Creating backup directories..."
 mkdir -p "${BACKUP_DIR}"
@@ -37,28 +50,21 @@ echo "[$(date)] Exporting MongoDB..."
 mongoexport \
     --uri="${MONGO_URI}" \
     --collection=pages \
-    --out="${BACKUP_DIR}"/pages.json
+    --out="${BACKUP_EXPORT_DIR}"/pages.json
 mongoexport \
     --uri="${MONGO_URI}" \
     --collection=revisions \
-    --out="${BACKUP_DIR}"/revisions.json
+    --out="${BACKUP_EXPORT_DIR}"/revisions.json
 mongoexport \
-    --uri=${MONGO_URI} \
+    --uri="${MONGO_URI}" \
     --collection=attachments \
-    --out="${BACKUP_DIR}"/attachments.json
+    --out="${BACKUP_EXPORT_DIR}"/attachments.json
 echo "[$(date)] Exported MongoDB."
 
 
 # Expand exprorted json files to markdown files
 echo "[$(date)] Expanding exported json files to markdown files..."
-
-wget https://github.com/ITK13201/growi-backup-tool/releases/download/v${GROWI_BACKUP_TOOL_VERSION}/growi-backup-tool_${GROWI_BACKUP_TOOL_VERSION}_linux_amd64.tar.gz
-tar -C /usr/local/bin -xzf growi-backup-tool_${GROWI_BACKUP_TOOL_VERSION}_linux_amd64.tar.gz
-chmod +x /usr/local/bin/growi-backup-tool
-rm -f growi-backup-tool_${GROWI_BACKUP_TOOL_VERSION}_linux_amd64.tar.gz
-
 /usr/local/bin/growi-backup-tool expand -i "${BACKUP_EXPORT_DIR}" -o "${BACKUP_EXPAND_DIR}"
-
 echo "[$(date)] Expanded exported json files to markdown files."
 
 # Copy attachments

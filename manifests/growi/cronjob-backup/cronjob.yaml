@@ -15,12 +15,11 @@ spec:
           restartPolicy: OnFailure
           containers:
           - name: backup
-            image: bitnami/mongodb
+            image: mongo
             imagePullPolicy: IfNotPresent
             command:
             - /bin/sh
-            args:
-            - /usr/local/bin/backup.sh
+            - /etc/config/backup.sh
             env:
             - name: MONGO_URI
               valueFrom:
@@ -36,7 +35,7 @@ spec:
                 memory: 1024Mi
             volumeMounts:
             - name: cm-backup
-              mountPath: /usr/local/bin/backup.sh
+              mountPath: /etc/config
             - name: backup-dir
               mountPath: /backup
             - name: attachments-dir
