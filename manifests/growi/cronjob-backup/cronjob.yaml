@@ -1,0 +1,52 @@
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  namespace: growi
+  name: backup
+spec:
+  schedule: "30 5 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          securityContext:
+            fsGroup: 1000
+          restartPolicy: OnFailure
+          containers:
+          - name: backup
+            image: mongo
+            imagePullPolicy: IfNotPresent
+            command:
+            - /bin/sh
+            - /etc/config/backup.sh
+            env:
+            - name: MONGO_URI
+              valueFrom:
+                secretKeyRef:
+                  name: growi-secret
+                  key: MONGO_URI
+            resources:
+              requests:
+                cpu: 250m
+                memory: 512Mi
+              limits:
+                cpu: 500m
+                memory: 4096Mi
+            volumeMounts:
+            - name: cm-backup
+              mountPath: /etc/config
+            - name: backup-dir
+              mountPath: /backup
+            - name: attachments-dir
+              mountPath: /attachments
+          volumes:
+          - name: cm-backup
+            configMap:
+              name: cm-backup
+          - name: backup-dir
+            persistentVolumeClaim:
+              claimName: backup-backup-dir-pvc
+          - name: attachments-dir
+            persistentVolumeClaim:
+              claimName: backup-attachments-dir-pvc
