@@ -3,7 +3,7 @@
 set -eu
 
 # Set Versions
-GROWI_BACKUP_TOOL_VERSION=0.0.4
+GROWI_BACKUP_TOOL_VERSION=0.1.0
 
 # Set environment variables
 TIMESTAMP=$(date +%Y%m%d%H%M%S)
@@ -14,10 +14,10 @@ BACKUP_EXPAND_DIR=/backup/${TIMESTAMP}/expand
 ATTACHMENTS_DIR=/attachments
 BACKUP_TARBALL_PATH=/backup/${TIMESTAMP}.tar.bz2
 
-echo "[$(date)] Started backup."
+echo "[$(date -Iseconds)] Started backup."
 
 # Install required packages
-echo "[$(date)] Installing required packages..."
+echo "[$(date -Iseconds)] Installing required packages..."
 
 apt-get update
 apt-get install -y curl bzip2
@@ -27,58 +27,58 @@ tar -C /usr/local/bin -xzf growi-backup-tool_${GROWI_BACKUP_TOOL_VERSION}_linux_
 chmod +x /usr/local/bin/growi-backup-tool
 rm -f growi-backup-tool_${GROWI_BACKUP_TOOL_VERSION}_linux_amd64.tar.gz
 
-echo "[$(date)] Installed required packages."
+echo "[$(date -Iseconds)] Installed required packages."
 
 # Create backup directories
-echo "[$(date)] Creating backup directories..."
+echo "[$(date -I"seconds")] Creating backup directories..."
 mkdir -p "${BACKUP_DIR}"
 mkdir -p "${BACKUP_DUMP_DIR}"
 mkdir -p "${BACKUP_EXPORT_DIR}"
 mkdir -p "${BACKUP_EXPAND_DIR}"
-echo "[$(date)] Created backup directories."
+echo "[$(date -Iseconds)] Created backup directories."
 
 
 # Backup MongoDB
-echo "[$(date)] Creating MongoDB backup..."
+echo "[$(date -Iseconds)] Creating MongoDB backup..."
 mongodump \
     --uri="${MONGO_URI}" \
     --out="${BACKUP_DUMP_DIR}"
-echo "[$(date)] Created MongoDB backup."
+echo "[$(date -Iseconds)] Created MongoDB backup."
 
 # Export MongoDB
-echo "[$(date)] Exporting MongoDB..."
+echo "[$(date -Iseconds)] Exporting MongoDB..."
 mongoexport \
     --uri="${MONGO_URI}" \
     --collection=pages \
-    --out="${BACKUP_EXPORT_DIR}"/pages.json
+    --out="${BACKUP_EXPORT_DIR}"/pages.jsonl
 mongoexport \
     --uri="${MONGO_URI}" \
     --collection=revisions \
-    --out="${BACKUP_EXPORT_DIR}"/revisions.json
+    --out="${BACKUP_EXPORT_DIR}"/revisions.jsonl
 mongoexport \
     --uri="${MONGO_URI}" \
     --collection=attachments \
-    --out="${BACKUP_EXPORT_DIR}"/attachments.json
-echo "[$(date)] Exported MongoDB."
+    --out="${BACKUP_EXPORT_DIR}"/attachments.jsonl
+echo "[$(date -Iseconds)] Exported MongoDB."
 
 
 # Expand exprorted json files to markdown files
-echo "[$(date)] Expanding exported json files to markdown files..."
-/usr/local/bin/growi-backup-tool expand -i "${BACKUP_EXPORT_DIR}" -o "${BACKUP_EXPAND_DIR}"
-echo "[$(date)] Expanded exported json files to markdown files."
+echo "[$(date -Iseconds)] Expanding exported json files to markdown files..."
+/usr/local/bin/growi-backup-tool expand -p "${BACKUP_EXPORT_DIR}"/pages.jsonl -r "${BACKUP_EXPORT_DIR}"/revisions.jsonl -o "${BACKUP_EXPAND_DIR}"
+echo "[$(date -Iseconds)] Expanded exported json files to markdown files."
 
 # Copy attachments
-echo "[$(date)] Copying attachments..."
+echo "[$(date -Iseconds)] Copying attachments..."
 cp -r ${ATTACHMENTS_DIR} "${BACKUP_DIR}"
-echo "[$(date)] Copied attachments."
+echo "[$(date -Iseconds)] Copied attachments."
 
 # Create tarball (*.tar.bz2)
-echo "[$(date)] Creating tarball..."
+echo "[$(date -Iseconds)] Creating tarball..."
 tar cjf "${BACKUP_TARBALL_PATH}" -C /backup "${TIMESTAMP}"
-echo "[$(date)] Created tarball."
+echo "[$(date -Iseconds)] Created tarball."
 
 
 # Clean up
-echo "[$(date)] Cleaning up..."
+echo "[$(date -Iseconds)] Cleaning up..."
 rm -rf "${BACKUP_DIR}"
-echo "[$(date)] Cleaned up."
+echo "[$(date -Iseconds)] Cleaned up."
