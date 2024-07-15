@@ -32,7 +32,7 @@ spec:
                 memory: 512Mi
               limits:
                 cpu: 500m
-                memory: 1024Mi
+                memory: 4096Mi
             volumeMounts:
             - name: cm-backup
               mountPath: /etc/config
