@@ -13,7 +13,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   storageClassName: local-storage
   local:
-    path: /mnt/hdd/data/k8s/pv/minecraft/data
+    path: /data/k8s/pv/minecraft/data
   nodeAffinity:
     required:
       nodeSelectorTerms:
