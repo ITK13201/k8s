@@ -10,7 +10,7 @@ resources:
 helmCharts:
 - name: mariadb
   repo: https://charts.bitnami.com/bitnami
-  version: 18.2.6
+  version: 19.0.5
   releaseName: mariadb
   namespace: rss-generator
   valuesFile: values-mariadb.yaml
