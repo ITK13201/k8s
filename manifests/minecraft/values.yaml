@@ -16,7 +16,7 @@ replicaCount: 1
 resources:
   requests:
     memory: 20Gi
-    cpu: 2
+    cpu: 1
 
 podSecurityContext:
   runAsUser: 1000
