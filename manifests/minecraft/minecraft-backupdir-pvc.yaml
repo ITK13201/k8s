@@ -1,0 +1,19 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app: minecraft
+  name: minecraft-backupdir-pvc
+  namespace: minecraft
+spec:
+  resources:
+    requests:
+      storage: 100Gi
+  volumeMode: Filesystem
+  storageClassName: local-storage
+  accessModes:
+  - ReadWriteOnce
+  selector:
+    matchLabels:
+      target-app: minecraft-backupdir

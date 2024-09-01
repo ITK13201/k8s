@@ -16,3 +16,5 @@ resources:
 - rss-generator-mariadb-primary.yaml
 - rss-generator-mariadb-secondary.yaml
 - growi-converter-attachment.yaml
+- minecraft-datadir.yaml
+- minecraft-backupdir.yaml

@@ -12,3 +12,4 @@ resources:
 - rss-generator.yaml
 - argocd.yaml
 - growi-converter.yaml
+- minecraft.yaml
