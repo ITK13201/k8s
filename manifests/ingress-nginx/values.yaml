@@ -43,11 +43,5 @@ controller:
     limit-req-status-code: "444"
     # Sets the status code to return in response to rejected connections.
     limit-conn-status-code: "444"
-    # ===
-    # ONLY ACCEPT CLOUDFLARE IP RANGES
-    # updated at 2024-09-05
-    # ===
-    whitelist-source-range:
-    - 118.241.81.225
   ingressClassResource:
     default: true

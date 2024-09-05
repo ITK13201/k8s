@@ -1,6 +1,8 @@
 ---
 basicAuth:
   enabled: false
+ingress: 
+  enabled: false
 chromeNode:
   enabled: true
 firefoxNode:
