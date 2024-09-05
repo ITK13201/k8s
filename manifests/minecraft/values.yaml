@@ -1,23 +1,21 @@
+---
 # ref: https://hub.docker.com/r/itzg/minecraft-server/
 image:
   repository: itzg/minecraft-server
   tag: latest
   pullPolicy: IfNotPresent
   pullSecret: ""
-
 # ### WARNING ###
 # Minecraft is not horizontally scalable, adjusting this will most likely break your setup.
 # ### WARNING ###
 replicaCount: 1
-
 ## Configure resource requests and limits
 ## ref: http://kubernetes.io/docs/user-guide/compute-resources/
 ##
 resources:
   requests:
-    memory: 20Gi
+    memory: 25Gi
     cpu: 1
-
 podSecurityContext:
   runAsUser: 1000
   runAsGroup: 1000
@@ -25,15 +23,12 @@ podSecurityContext:
   fsGroup: 1000
   seccompProfile:
     type: RuntimeDefault
-
 securityContext:
   capabilities:
     drop:
-      - ALL
+    - ALL
   readOnlyRootFilesystem: true
   allowPrivilegeEscalation: false
-
-
 minecraftServer:
   # This must be overridden, since we can't accept this for the user.
   eula: "TRUE"
@@ -86,7 +81,7 @@ minecraftServer:
   # One of: creative, survival, adventure, spectator
   gameMode: survival
   # Message of the Day
-  motd: "Welcome to Minecraft on Kubernetes!"
+  motd: "Welcome to JOJI server!"
   # If true, enable player-vs-player damage.
   pvp: default
   # One of: DEFAULT, FLAT, LARGEBIOMES, AMPLIFIED, CUSTOMIZED
@@ -117,7 +112,7 @@ minecraftServer:
   # Require public key to be signed by Mojang to join
   enforceSecureProfile: default
   # If you adjust this, you may need to adjust resources.requests above to match.
-  memory: 20G
+  memory: 25G
   # General JVM options to be passed to the Minecraft server invocation
   jvmOpts: ""
   # Options like -X that need to proceed general JVM options
@@ -133,19 +128,14 @@ minecraftServer:
   nodePort: 30011
   # Set the external port of the service, usefull when using the LoadBalancer service type
   servicePort: 25565
-
-
   # List with URLs and paths to jar files, additionally may be a directory with jars
   # This works for both mods and plugins depending on server type
   modUrls: []
   pluginUrls: []
-
   # A list of Spigot resources/plugins IDs to download.
   spigetResources: []
-
   # Additional service specs to be defined
   extraServiceSpec: {}
-
   # A list of Modrinth project slugs with optional version after colon
   modrinth:
     projects: []
@@ -153,7 +143,6 @@ minecraftServer:
     optionalDependencies: false
     # The version type is used to determine the newest version to use from each project. The allowed values are: release, beta, alpha
     allowedVersionType: release
-
   # Config for AUTO_CURSEFORGE server type
   autoCurseForge:
     # CurseForge API key obtained from developer console
@@ -186,7 +175,6 @@ minecraftServer:
     # Set to skip files in modpack "overrides" folder that would replace existing files
     # NOTE: World data is always skipped if present
     overridesSkipExisting: false
-
   rcon:
     # If you enable this, make SURE to change your password below.
     enabled: true
@@ -200,49 +188,38 @@ minecraftServer:
     serviceType: NodePort
     ## Set the external port if the rcon serviceType is NodePort
     nodePort: 30012
-
   query:
     # If you enable this, your server will be "published" to Gamespy
     enabled: false
     port: 25565
-
 persistence:
   dataDir:
     # Set this to false if you don't care to persist state between restarts.
     enabled: true
     existingClaim: minecraft-datadir-pvc
-
 # PLEASE NOTE! rcon must be enabled above!  It does NOT require a nodePort or loadBalancerIP
 mcbackup:
   enabled: true
-
   image:
     repository: itzg/mc-backup
     tag: latest
     pullPolicy: IfNotPresent
-
   #  wait 2 minutes before starting
   initialDelay: 2m
-
   # ***set to 0 or smaller, script will run once and exit.  DO NOT SET TO 0 or smaller, this will cause K8s to kill your pod!***
   # backupInterval="1.5d" -> backup every one and a half days (36 hours)
   # backupInterval="2h 30m" -> backup every two and a half hours
   backupInterval: 24h
-
   # option lets you pause backups if no players are online.
-  pauseIfNoPlayers: "false"
-
+  pauseIfNoPlayers: "true"
   # is set to a positive number, it'll delete old .tgz backup files from DEST_DIR. By default deletes backups older than a week.
-  pruneBackupsDays: 7
-
+  pruneBackupsDays: 30
   # Set to a negative value to retry indefinitely
   rconRetries: 5
   rconRetryInterval: 10s
-
   # is a comma-separated list of glob(3) patterns to exclude from backups. By default excludes all jar files (plugins, server files),
   # logs folder and cache (used by i.e. PaperMC server).
   excludes: "*.jar,cache,logs"
-
   # backup methods, see https://github.com/itzg/docker-mc-backup e.g. tar, rclone, restic, rsync
   backupMethod: tar
   # tar and rclone methods
@@ -258,7 +235,6 @@ mcbackup:
   rcloneRemote:
   rcloneDestDir:
   rcloneCompressMethod: gzip
-
   # see https://rclone.org/ for details
   # this value is evaluated as a template
   rcloneConfig:
@@ -273,23 +249,19 @@ mcbackup:
 
   # if you prefer to create a secret from file (e.g. kubectl create secret generic my-rclone-config --from-file=~/.config/rclone/rclone.conf)
   # rcloneConfigExistingSecret: my-rclone-config
-
   resticRepository: ""
   # variable to define a space separated list of additional restic tags. see https://hub.docker.com/r/itzg/mc-backup
   resticAdditionalTags: "mc_backups"
   # see https://restic.readthedocs.io/en/latest/060_forget.html
   pruneResticRetention: "--keep-daily 7 --keep-weekly 5 --keep-monthly 12 --keep-yearly 75"
-
   # At least one of RESTIC_PASSWORD* env variables need to be defined, see https://restic.readthedocs.io/en/latest/030_preparing_a_new_repo.html
-  resticEnvs:
-    {}
-    # RESTIC_PASSWORD: restic-password
+  resticEnvs: {}
+  # RESTIC_PASSWORD: restic-password
 
   resources:
     requests:
       memory: 512Mi
       cpu: 500m
-
   persistence:
     backupDir:
       # Set this to false if you don't care to persist state between restarts.

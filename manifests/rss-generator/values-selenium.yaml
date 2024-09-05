@@ -1,7 +1,7 @@
 ---
 basicAuth:
   enabled: false
-ingress: 
+ingress:
   enabled: false
 chromeNode:
   enabled: true

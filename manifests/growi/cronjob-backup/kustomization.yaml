@@ -7,6 +7,6 @@ resources:
 - pvc-backup-dir.yaml
 - pvc-attachments-dir.yaml
 configMapGenerator:
-  - name: cm-backup
-    files:
-      - ./config/backup.sh
+- name: cm-backup
+  files:
+  - ./config/backup.sh
