@@ -16,6 +16,9 @@ resources:
   requests:
     memory: 25Gi
     cpu: 1
+  limits:
+    memory: 25Gi
+    cpu: 4
 podSecurityContext:
   runAsUser: 1000
   runAsGroup: 1000
