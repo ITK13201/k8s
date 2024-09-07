@@ -93,6 +93,11 @@ def clean_backups(app_name: str):
             )
             return_code = subprocess.call(
                 [
+                    "ionice",
+                    "-c3",
+                    "nice",
+                    "-n",
+                    "19",
                     "tar",
                     "cjfp",
                     archive_path,

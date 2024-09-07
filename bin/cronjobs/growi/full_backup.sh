@@ -27,7 +27,7 @@ discord-bot-cli -c "${APP}" -t "Full backup" -d "Full backup started." -l "info"
 ### FULL BACKUP ###
 discord-bot-cli -c "${APP}" -t "Full backup" -d "Taking a full backup..." -l "info"
 mkdir -p "${FULL_BACKUP_DIR}"
-rsync -a --delete ${TARGET_DIR}/ "${FULL_BACKUP_DIR}"/ 2>&1 | tee "${tmpfile}"
+ionice -c3 nice -n 19 rsync -a --delete ${TARGET_DIR}/ "${FULL_BACKUP_DIR}"/ 2>&1 | tee "${tmpfile}"
 message=$(cat "${tmpfile}")
 status=$?
 if [[ ${status} = 0 ]]; then
