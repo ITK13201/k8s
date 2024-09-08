@@ -169,6 +169,14 @@ minecraftServer:
       nodePort: 30013
     name: voice-chat
     containerPort: 24454
+    protocol: TCP
+  - service:
+      enabled: true
+      embedded: true
+      port: 24454
+      nodePort: 30013
+    name: voice-chat
+    containerPort: 24454
     protocol: UDP
 persistence:
   dataDir:
