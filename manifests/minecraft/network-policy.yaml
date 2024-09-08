@@ -24,5 +24,7 @@ spec:
       port: 25565
     - protocol: UDP
       port: 25565
+    - protocol: TCP
+      port: 24454
     - protocol: UDP
       port: 24454
