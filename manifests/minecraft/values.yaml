@@ -36,21 +36,23 @@ minecraftServer:
   # This must be overridden, since we can't accept this for the user.
   eula: "TRUE"
   # One of: LATEST, SNAPSHOT, or a specific version (ie: "1.7.9").
-  version: "LATEST"
+  version: "1.21.1"
   # This can be one of "VANILLA", "FORGE", "SPIGOT", "BUKKIT", "PAPER", "FTBA", "SPONGEVANILLA", "CURSEFORGE"
-  type: "VANILLA"
+  type: "PAPER"
+  # If type is set to PAPER, this sets the URL to download the PaperSpigot package
+  paperDownloadUrl: "https://api.papermc.io/v2/projects/paper/versions/1.21.1/builds/69/downloads/paper-1.21.1-69.jar"
   # Set to true if running Feed The Beast and get an error like "unable to launch forgemodloader"
   ftbLegacyJavaFixer: default
   # One of: peaceful, easy, normal, and hard
-  difficulty: normal
+  difficulty: easy
   # A comma-separated list of player names to whitelist.
   whitelist:
   # A comma-separated list of player names who should be admins.
-  ops:
+  ops: itk13201
   # A server icon URL for server listings. Auto-scaled and transcoded.
-  icon:
+  icon: "https://yt3.googleusercontent.com/ytc/AIdro_n0UHVg3QPJtrk2JvWHSu5q5ROON0zKSJ_5o3_Xxzx4LSY=s160-c-k-c0x00ffffff-no-rj"
   # Max connected players.
-  maxPlayers: 20
+  maxPlayers: 30
   # This sets the maximum possible size in blocks, expressed as a radius, that the world border can obtain.
   maxWorldSize: 10000
   # Allows players to travel to the Nether.
@@ -84,11 +86,11 @@ minecraftServer:
   # One of: creative, survival, adventure, spectator
   gameMode: survival
   # Message of the Day
-  motd: "Welcome to JOJI server!"
+  motd: "Welcome to the JOJI server!"
   # If true, enable player-vs-player damage.
   pvp: default
   # One of: DEFAULT, FLAT, LARGEBIOMES, AMPLIFIED, CUSTOMIZED
-  levelType: DEFAULT
+  levelType: "minecraft:normal"
   # When levelType == FLAT or CUSTOMIZED, this can be used to further customize map generation.
   # ref: https://hub.docker.com/r/itzg/minecraft-server/
   generatorSettings:
@@ -111,7 +113,7 @@ minecraftServer:
   # When true, players will be prompted for a response and will be disconnected if they decline the required pack
   resourcePackEnforce: false
   # Check accounts against Minecraft account service.
-  onlineMode: default
+  onlineMode: false
   # Require public key to be signed by Mojang to join
   enforceSecureProfile: default
   # If you adjust this, you may need to adjust resources.requests above to match.
@@ -141,43 +143,11 @@ minecraftServer:
   extraServiceSpec: {}
   # A list of Modrinth project slugs with optional version after colon
   modrinth:
-    projects: []
+    projects: ["simple-voice-chat:nS19YToN"]
     # Downloads Modrinth project dependencies marked as optional
     optionalDependencies: false
     # The version type is used to determine the newest version to use from each project. The allowed values are: release, beta, alpha
     allowedVersionType: release
-  # Config for AUTO_CURSEFORGE server type
-  autoCurseForge:
-    # CurseForge API key obtained from developer console
-    apiKey:
-      key: "CHANGEME!"
-      existingSecret: ""
-      secretKey: cf-api-key
-    # Link to modpack in general or a specific file
-    # NOTE: In case of specific file - do not point at server file
-    pageUrl: ""
-    # Unique id of modpack, can be used instead of url
-    slug: ""
-    # Id used to specify which exact modpack file needs to be downloaded
-    # NOTE: Do not use server file id
-    fileId: ""
-    # Less restrictive way of specifying modpack version, uses substring match
-    filenameMatcher: ""
-    # List of project slugs or IDs to be excluded from modpack, useful if mod is incorrectly marked as server side
-    excludeMods: []
-    # List of project slugs or IDs to be included in modpack, useful if mod is incorrectly marked as client side only
-    includeMods: []
-    # Path to file with rules for including and excluding mods. If null - use bundled file, if empty - disable it
-    excludeIncludeFile: null
-    # Reevaluate exclude and include rules
-    forceSynchronize: false
-    # Can be set to either WORLD_FILE or OVERRIDES to specify where to get LEVEL
-    setLevelFrom: ""
-    # Sets limit to how many mods can be downloaded in parallel
-    parallelDownloads: 4
-    # Set to skip files in modpack "overrides" folder that would replace existing files
-    # NOTE: World data is always skipped if present
-    overridesSkipExisting: false
   rcon:
     # If you enable this, make SURE to change your password below.
     enabled: true
@@ -191,10 +161,15 @@ minecraftServer:
     serviceType: NodePort
     ## Set the external port if the rcon serviceType is NodePort
     nodePort: 30012
-  query:
-    # If you enable this, your server will be "published" to Gamespy
-    enabled: false
-    port: 25565
+  extraPorts:
+  - service:
+      enabled: true
+      embedded: true
+      port: 24454
+      nodePort: 30013
+    name: voice-chat
+    containerPort: 24454
+    protocol: UDP
 persistence:
   dataDir:
     # Set this to false if you don't care to persist state between restarts.
