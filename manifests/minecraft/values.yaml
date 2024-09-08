@@ -167,7 +167,7 @@ minecraftServer:
       embedded: true
       port: 24454
       nodePort: 30013
-    name: voice-chat
+    name: vc-tcp
     containerPort: 24454
     protocol: TCP
   - service:
@@ -175,7 +175,7 @@ minecraftServer:
       embedded: true
       port: 24454
       nodePort: 30013
-    name: voice-chat
+    name: vc-udp
     containerPort: 24454
     protocol: UDP
 persistence:
