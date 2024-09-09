@@ -130,7 +130,7 @@ minecraftServer:
   serviceAnnotations: {}
   serviceType: NodePort
   ## Set the port used if the serviceType is NodePort
-  nodePort: 30011
+  nodePort: 30021
   # Set the external port of the service, usefull when using the LoadBalancer service type
   servicePort: 25565
   # List with URLs and paths to jar files, additionally may be a directory with jars
@@ -160,13 +160,13 @@ minecraftServer:
     secretKey: rcon-password
     serviceType: NodePort
     ## Set the external port if the rcon serviceType is NodePort
-    nodePort: 30012
+    nodePort: 30022
   extraPorts:
   - service:
       enabled: true
       embedded: true
       port: 24454
-      nodePort: 30013
+      nodePort: 30023
     name: vc
     containerPort: 24454
     protocol: UDP
