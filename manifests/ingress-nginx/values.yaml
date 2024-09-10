@@ -43,3 +43,5 @@ controller:
     limit-conn-status-code: "444"
   ingressClassResource:
     default: true
+  podLabels:
+    target-app: ingress-nginx

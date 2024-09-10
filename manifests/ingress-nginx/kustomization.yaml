@@ -9,3 +9,5 @@ helmCharts:
   namespace: ingress-nginx
   valuesFile: values.yaml
   valuesMerge: override
+resources:
+- network-policy.yaml
