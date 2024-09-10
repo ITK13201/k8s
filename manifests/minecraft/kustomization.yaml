@@ -11,6 +11,5 @@ helmCharts:
   valuesFile: values.yaml
   valuesMerge: override
 resources:
-- network-policy.yaml
 - minecraft-datadir-pvc.yaml
 - minecraft-backupdir-pvc.yaml

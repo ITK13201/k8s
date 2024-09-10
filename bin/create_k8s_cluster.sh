@@ -1,12 +1,14 @@
 #!/bin/bash
 
 ### VERSIONS ###
-CALICO_VERSION=3.27.0
+CALICO_VERSION=3.28.1
 ###
 
 set -e
 
-sudo kubeadm init --config /usr/local/etc/kubeadm/config.yaml
+# sudo kubeadm init --config /usr/local/etc/kubeadm/config.yaml
+# For calico
+sudo kubeadm init --pod-network-cidr=192.168.0.0/16
 
 ### Allow kubectl to be run as a non-root user ###
 mkdir -p $HOME/.kube

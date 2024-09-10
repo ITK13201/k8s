@@ -3,10 +3,10 @@
 set -e
 
 ### Versions ###
-CONTAINERD_VERSION=1.7.11
-RUNC_VERSION=1.1.10
-CNI_PLUGINS_VERSION=1.4.0
-CRICTL_VERSION=1.29.0
+CONTAINERD_VERSION=1.7.22
+RUNC_VERSION=1.1.14
+CNI_PLUGINS_VERSION=1.5.1
+CRICTL_VERSION=1.31.1
 ###
 
 # add /usr/bin/local to PATH env (as sudo)
@@ -82,11 +82,10 @@ sed -i 's/^SELINUX=enforcing$/SELINUX=permissive/' /etc/selinux/config
 cat <<EOF | tee /etc/yum.repos.d/kubernetes.repo
 [kubernetes]
 name=Kubernetes
-baseurl=https://pkgs.k8s.io/core:/stable:/v1.29/rpm/
+baseurl=https://pkgs.k8s.io/core:/stable:/v1.31/rpm/
 enabled=1
 gpgcheck=1
-gpgkey=https://pkgs.k8s.io/core:/stable:/v1.29/rpm/repodata/repomd.xml.key
-exclude=kubelet kubeadm kubectl cri-tools kubernetes-cni
+gpgkey=https://pkgs.k8s.io/core:/stable:/v1.31/rpm/repodata/repomd.xml.key
 EOF
 
 dnf install -y kubelet kubeadm kubectl --disableexcludes=kubernetes
