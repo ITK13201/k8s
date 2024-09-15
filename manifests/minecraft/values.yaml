@@ -136,14 +136,24 @@ minecraftServer:
   # List with URLs and paths to jar files, additionally may be a directory with jars
   # This works for both mods and plugins depending on server type
   modUrls: []
-  pluginUrls: []
+  pluginUrls:
+  - "https://download.luckperms.net/1556/bukkit/loader/LuckPerms-Bukkit-5.4.141.jar"
   # A list of Spigot resources/plugins IDs to download.
-  spigetResources: []
+  spigetResources:
+  # LWC Extended: https://www.spigotmc.org/resources/lwc-extended.69551/
+  - 69551
   # Additional service specs to be defined
   extraServiceSpec: {}
   # A list of Modrinth project slugs with optional version after colon
   modrinth:
-    projects: ["simple-voice-chat:nS19YToN"]
+    projects:
+    - "simple-voice-chat:nS19YToN"
+    - "worldedit-bukkit:yAujLUIK"
+    - "ViaVersion:pmXPieWB"
+    - "DecentHolograms:Md7xgFfm"
+    - "worldguard-bukkit:J66QOTLZ"
+    - "dcintegration-spigot:YjBjd4DI"
+    - "AxGraves:V4lEjrPp"
     # Downloads Modrinth project dependencies marked as optional
     optionalDependencies: false
     # The version type is used to determine the newest version to use from each project. The allowed values are: release, beta, alpha
