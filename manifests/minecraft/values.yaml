@@ -148,12 +148,12 @@ minecraftServer:
   modrinth:
     projects:
     - "simple-voice-chat:nS19YToN"
-    - "worldedit-bukkit:yAujLUIK"
-    - "ViaVersion:pmXPieWB"
-    - "DecentHolograms:Md7xgFfm"
-    - "worldguard-bukkit:J66QOTLZ"
-    - "dcintegration-spigot:YjBjd4DI"
-    - "AxGraves:V4lEjrPp"
+    - "worldedit:yAujLUIK"
+    - "viaversion:pmXPieWB"
+    - "decentholograms:Md7xgFfm"
+    - "worldguard:J66QOTLZ"
+    - "dcintegration:YjBjd4DI"
+    - "axgraves:V4lEjrPp"
     # Downloads Modrinth project dependencies marked as optional
     optionalDependencies: false
     # The version type is used to determine the newest version to use from each project. The allowed values are: release, beta, alpha
