@@ -48,7 +48,7 @@ minecraftServer:
   # A comma-separated list of player names to whitelist.
   whitelist:
   # A comma-separated list of player names who should be admins.
-  ops: itk13201
+  ops:
   # A server icon URL for server listings. Auto-scaled and transcoded.
   icon: "https://yt3.googleusercontent.com/ytc/AIdro_n0UHVg3QPJtrk2JvWHSu5q5ROON0zKSJ_5o3_Xxzx4LSY=s160-c-k-c0x00ffffff-no-rj"
   # Max connected players.
@@ -154,6 +154,9 @@ minecraftServer:
     - "worldguard:J66QOTLZ"
     - "dcintegration:YjBjd4DI"
     - "axgraves:V4lEjrPp"
+    - "lmd:kyd9MmX5"
+    - "tab-was-taken:gG7VFbG0"
+    - "chunky:6ENKPUbu"
     # Downloads Modrinth project dependencies marked as optional
     optionalDependencies: false
     # The version type is used to determine the newest version to use from each project. The allowed values are: release, beta, alpha
