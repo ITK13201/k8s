@@ -1,0 +1,65 @@
+---
+image:
+  registry: docker.io
+  repository: bitnami/mariadb
+  tag: 10.5
+  pullPolicy: IfNotPresent
+auth:
+  username: minecraft
+  existingSecret: mariadb-secret
+initdbScripts:
+  001-init.sql: |
+    CREATE DATABASE IF NOT EXISTS `luckperms`;
+    CREATE DATABASE IF NOT EXISTS `lwc`;
+    CREATE DATABASE IF NOT EXISTS `worldguard`;
+    GRANT ALL PRIVILEGES ON luckperms.* TO 'minecraft'@'%';
+    GRANT ALL PRIVILEGES ON lwc.* TO 'minecraft'@'%';
+    GRANT ALL PRIVILEGES ON worldguard.* TO 'minecraft'@'%';
+primary:
+  name: primary
+  containerPorts:
+    mysql: 3306
+  podLabels:
+    target-app: minecraft-mariadb
+  containerSecurityContext:
+    enabled: true
+    runAsUser: 1000
+    runAsGroup: 1000
+    runAsNonRoot: true
+  resources:
+    requests:
+      cpu: 250m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  persistence:
+    enabled: true
+    storageClass: manual
+    accessMode:
+    - ReadWriteOnce
+    size: 32Gi
+    selector:
+      matchLabels:
+        target-app: minecraft-mariadb
+  service:
+    type: NodePort
+    ports:
+      mysql: 3306
+    nodePorts:
+      mysql: 30014
+networkPolicy:
+  enabled: true
+  allowExternalEgress: true
+  extraIngress:
+    - ports:
+        - port: 3306
+          protocol: TCP
+      from:
+        - ipBlock:
+            cidr: 149.28.20.40/32
+        - ipBlock:
+            cidr: 192.168.1.0/24
+        - podSelector:
+            matchLabels:
+              target-app: minecraft-mariadb

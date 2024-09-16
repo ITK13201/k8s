@@ -8,7 +8,14 @@ helmCharts:
   releaseName: minecraft
   namespace: minecraft
   version: 4.23.0
-  valuesFile: values.yaml
+  valuesFile: values-minecraft.yaml
+  valuesMerge: override
+- name: mariadb
+  repo: https://charts.bitnami.com/bitnami
+  version: 19.0.5
+  releaseName: mariadb
+  namespace: minecraft
+  valuesFile: values-mariadb.yaml
   valuesMerge: override
 resources:
 - network-policy.yaml
