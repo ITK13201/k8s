@@ -52,14 +52,14 @@ networkPolicy:
   enabled: true
   allowExternalEgress: true
   extraIngress:
-    - ports:
-        - port: 3306
-          protocol: TCP
-      from:
-        - ipBlock:
-            cidr: 149.28.20.40/32
-        - ipBlock:
-            cidr: 192.168.1.0/24
-        - podSelector:
-            matchLabels:
-              target-app: minecraft-mariadb
+  - ports:
+    - port: 3306
+      protocol: TCP
+    from:
+    - ipBlock:
+        cidr: 149.28.20.40/32
+    - ipBlock:
+        cidr: 192.168.1.0/24
+    - podSelector:
+        matchLabels:
+          target-app: minecraft-mariadb
