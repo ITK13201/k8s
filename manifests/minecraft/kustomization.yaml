@@ -11,7 +11,7 @@ helmCharts:
   valuesFile: values-minecraft.yaml
   valuesMerge: override
 - name: mariadb
-  repo: https://charts.bitnami.com/bitnami
+  repo: oci://registry-1.docker.io/bitnamicharts
   version: 20.5.3
   releaseName: mariadb
   namespace: minecraft
