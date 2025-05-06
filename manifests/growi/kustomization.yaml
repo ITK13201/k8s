@@ -12,14 +12,14 @@ resources:
 - pvc-elasticsearch-data.yaml
 helmCharts:
 - name: mongodb
-  repo: https://charts.bitnami.com/bitnami
+  repo: oci://registry-1.docker.io/bitnamicharts
   version: 16.5.5
   releaseName: mongodb
   namespace: growi
   valuesFile: values-mongodb.yaml
   valuesMerge: override
 - name: elasticsearch
-  repo: https://charts.bitnami.com/bitnami
+  repo: oci://registry-1.docker.io/bitnamicharts
   version: 22.0.1
   releaseName: elasticsearch
   namespace: growi
