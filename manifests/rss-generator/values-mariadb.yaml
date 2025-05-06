@@ -55,4 +55,6 @@ secondary:
     accessModes:
     - ReadWriteOnce
     size: 4Gi
-    selector: rss-generator-mariadb-secondary
+    selector:
+      matchLabels:
+        target-app: rss-generator-mariadb-secondary
