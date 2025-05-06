@@ -13,7 +13,7 @@ resources:
 helmCharts:
 - name: mongodb
   repo: https://charts.bitnami.com/bitnami
-  version: 15.6.22
+  version: 15.6.26
   releaseName: mongodb
   namespace: growi
   valuesFile: values-mongodb.yaml
