@@ -20,7 +20,7 @@ helmCharts:
   valuesMerge: override
 - name: elasticsearch
   repo: oci://registry-1.docker.io/bitnamicharts
-  version: 22.0.1
+  version: 22.0.3
   releaseName: elasticsearch
   namespace: growi
   valuesFile: values-elasticsearch.yaml
