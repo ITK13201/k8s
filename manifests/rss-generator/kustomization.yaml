@@ -17,7 +17,7 @@ helmCharts:
   valuesMerge: override
 - name: selenium-grid
   repo: https://www.selenium.dev/docker-selenium
-  version: 0.43.1
+  version: 0.44.2
   releaseName: selenium
   namespace: rss-generator
   valuesFile: values-selenium.yaml
