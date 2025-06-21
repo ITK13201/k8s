@@ -13,7 +13,7 @@ spec:
           restartPolicy: OnFailure
           containers:
           - name: rss-generator
-            image: ghcr.io/itk13201/rss-generator:v1.2.1
+            image: ghcr.io/itk13201/rss-generator:v1.2.2
             args:
             - -w
             - -j
