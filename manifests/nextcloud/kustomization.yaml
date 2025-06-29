@@ -16,6 +16,6 @@ images:
 - name: docker.io/bitnami/mariadb
   newTag: 11.7.2
 - name: docker.io/bitnami/redis
-  newTag: 8.0.0
+  newTag: 8.0.2
 resources:
 - nextcloud-files-pvc.yaml
