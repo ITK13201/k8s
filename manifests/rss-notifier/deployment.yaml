@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: rss-notifier
-        image: ghcr.io/itk13201/rss-notifier:v0.0.0
+        image: ghcr.io/itk13201/rss-notifier:v0.0.1
         imagePullPolicy: IfNotPresent
         ports:
         - name: http
