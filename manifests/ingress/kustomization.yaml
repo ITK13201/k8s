@@ -8,3 +8,4 @@ resources:
 - rss-generator.yaml
 - argocd.yaml
 - growi-converter.yaml
+- rss-notifier.yaml
