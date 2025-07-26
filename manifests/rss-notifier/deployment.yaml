@@ -32,6 +32,11 @@ spec:
             secretKeyRef:
               name: rss-notifier-secret
               key: database-password
+        - name: DISCORD_BOT_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: rss-notifier-secret
+              key: discord-bot-token
         resources:
           requests:
             cpu: 250m
