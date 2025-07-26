@@ -3,7 +3,7 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   namespace: rss-notifier
-  name: update-rss-feeds
+  name: rss-notifier-update-rss-feeds
 spec:
   schedule: "*/10 * * * *"
   jobTemplate:
@@ -26,6 +26,11 @@ spec:
                 secretKeyRef:
                   name: rss-notifier-secret
                   key: database-password
+            - name: DISCORD_BOT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: rss-notifier-secret
+                  key: discord-bot-token
             resources:
               requests:
                 cpu: 100m

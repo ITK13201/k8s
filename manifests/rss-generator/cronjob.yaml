@@ -3,7 +3,7 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   namespace: rss-generator
-  name: update-rss-feeds
+  name: rss-generator-update-rss-feeds
 spec:
   schedule: "*/10 * * * *"
   jobTemplate:
