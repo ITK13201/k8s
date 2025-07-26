@@ -1,0 +1,22 @@
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: rss-notifier-mariadb-primary-pv
+  labels:
+    target-app: rss-notifier-mariadb-primary
+spec:
+  capacity:
+    storage: 4Gi
+  accessModes:
+  - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: manual
+  local:
+    path: /mnt/hdd/data/k8s/pv/rss-notifier/mariadb-primary
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: Exists

@@ -1,0 +1,60 @@
+---
+image:
+  registry: docker.io
+  repository: bitnami/mariadb
+  tag: 11.3.2-debian-12-r1
+  pullPolicy: IfNotPresent
+auth:
+  database: rss_notifier
+  username: rss_notifier
+  existingSecret: mariadb-secret
+primary:
+  name: primary
+  containerPorts:
+    mysql: 3306
+  containerSecurityContext:
+    enabled: true
+    runAsUser: 1000
+    runAsGroup: 1000
+    runAsNonRoot: true
+  resources:
+    requests:
+      cpu: 250m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  persistence:
+    enabled: true
+    storageClass: manual
+    accessMode:
+    - ReadWriteOnce
+    size: 4Gi
+    selector:
+      matchLabels:
+        target-app: rss-notifier-mariadb-primary
+secondary:
+  podSecurityContext:
+    enabled: true
+    fsGroup: 1000
+  containerSecurityContext:
+    enabled: true
+    runAsUser: 1000
+    runAsGroup: 1000
+    runAsNonRoot: true
+  resources:
+    requests:
+      cpu: 250m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  persistence:
+    enabled: true
+    storageClass: manual
+    accessModes:
+    - ReadWriteOnce
+    size: 4Gi
+    selector:
+      matchLabels:
+        target-app: rss-notifier-mariadb-secondary

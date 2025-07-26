@@ -1,0 +1,41 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rss-notifier
+  labels:
+    app: rss-notifier
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rss-notifier
+  template:
+    metadata:
+      labels:
+        app: rss-notifier
+    spec:
+      containers:
+      - name: rss-notifier
+        image: ghcr.io/itk13201/rss-notifier:v0.0.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - name: http
+          containerPort: 80
+          protocol: TCP
+        envFrom:
+        - configMapRef:
+            name: rss-notifier-cm
+        env:
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: rss-notifier-secret
+              key: database-password
+        resources:
+          requests:
+            cpu: 250m
+            memory: 256Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi

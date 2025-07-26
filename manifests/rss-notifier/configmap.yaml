@@ -1,0 +1,13 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rss-notifier-cm
+data:
+  TZ: "Asia/Tokyo"
+  PORT: "80"
+  DEBUG: "0"
+  DATABASE_USER: "rss_notifier"
+  DATABASE_HOST: "mariadb"
+  DATABASE_PORT: "3306"
+  DATABASE_NAME: "rss_notifier"

@@ -1,0 +1,35 @@
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  namespace: rss-notifier
+  name: update-rss-feeds
+spec:
+  schedule: "*/10 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+          - name: rss-notifier
+            image: ghcr.io/itk13201/rss-notifier:v0.0.0
+            args:
+            - -w
+            - -j
+            envFrom:
+            - configMapRef:
+                name: rss-notifier-cm
+            env:
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: rss-notifier-secret
+                  key: database-password
+            resources:
+              requests:
+                cpu: 100m
+                memory: 128Mi
+              limits:
+                cpu: 200m
+                memory: 256Mi
