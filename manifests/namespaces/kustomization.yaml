@@ -13,3 +13,4 @@ resources:
 - argocd.yaml
 - growi-converter.yaml
 - minecraft.yaml
+- rss-notifier.yaml
