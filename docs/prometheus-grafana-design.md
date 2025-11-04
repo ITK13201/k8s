@@ -11,6 +11,45 @@
 - 主要コンポーネントのメトリクス収集設定
 - アラート設定の基盤構築
 
+### 1.3 進捗状況
+
+**現在のステータス: マニフェスト作成完了、テスト待ち**
+
+| フェーズ | ステータス | 完了日 | 備考 |
+|---------|----------|--------|------|
+| 設計書作成 | ✅ 完了 | 2025-11-05 | 本ドキュメント |
+| issue作成 | ✅ 完了 | 2025-11-05 | [#110](https://github.com/ITK13201/k8s/issues/110) |
+| マニフェスト作成 | ✅ 完了 | 2025-11-05 | 16ファイル、1255行 |
+| CLAUDE.md更新 | ✅ 完了 | 2025-11-05 | Git workflow、Kustomizeパターン追加 |
+| Minikube環境テスト | ⏳ 未実施 | - | セクション10参照 |
+| 本番環境デプロイ | ⏳ 未実施 | - | セクション11参照 |
+| Discord通知設定 | ⏳ 未実施 | - | セクション8.2.1参照 |
+
+**作成済みファイル一覧:**
+- `manifests/namespaces/monitoring.yaml` - monitoring namespace
+- `manifests/pv/prometheus-server.yaml` - Prometheus PV (10Gi)
+- `manifests/pv/prometheus-alertmanager.yaml` - Alertmanager PV (5Gi)
+- `manifests/pv/grafana.yaml` - Grafana PV (5Gi)
+- `manifests/monitoring/kustomization.yaml` - Kustomize helmCharts設定
+- `manifests/monitoring/values.yaml` - kube-prometheus-stack設定
+- `manifests/monitoring/prometheus-pvc.yaml` - Prometheus PVC
+- `manifests/monitoring/alertmanager-pvc.yaml` - Alertmanager PVC
+- `manifests/monitoring/grafana-pvc.yaml` - Grafana PVC
+- `manifests/ingress/prometheus.yaml` - Prometheus Ingress
+- `manifests/ingress/grafana.yaml` - Grafana Ingress
+- 既存kustomization.yamlの更新（namespaces, pv, ingress）
+
+**Gitブランチ:**
+- ブランチ名: `feature/add-monitoring`
+- コミット数: 3
+- 最新コミット: `#110 docs: update design doc with Kustomize helmCharts pattern`
+
+**次のステップ:**
+1. Minikube環境でのテスト実施（セクション10）
+2. テスト完了後、PRを作成してmainブランチにマージ
+3. 本番環境へのデプロイ（ArgoCD自動同期）
+4. 動作確認と検証チェックリストの実施
+
 ## 2. アーキテクチャ設計
 
 ### 2.1 全体構成
@@ -92,9 +131,47 @@ graph TB
 **kube-prometheus-stack**を使用する。
 - Chart Repository: https://prometheus-community.github.io/helm-charts
 - Chart Name: kube-prometheus-stack
+- Chart Version: 69.2.1
 - 理由: Prometheus Operator、Prometheus、Grafana、Alertmanager、各種Exporterが統合されており、管理が容易
 
-### 3.2 ディレクトリ構造
+### 3.2 デプロイ方法
+
+**Kustomize helmChartsフィールド**を使用してデプロイする。
+
+このリポジトリの標準パターンに従い、Helmチャートは直接実行せず、Kustomizeのみを使用してマニフェスト管理を行う。
+
+**選定理由:**
+- ✅ 既存パターン（minecraft, nextcloud, growi等）との一貫性
+- ✅ GitOps-friendly: ArgoCD ApplicationSetと統合
+- ✅ Kustomize必須要件を満たす
+- ✅ リポジトリ内で統一された管理方法
+
+**kustomization.yaml例:**
+```yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: monitoring
+helmCharts:
+- name: kube-prometheus-stack
+  repo: https://prometheus-community.github.io/helm-charts
+  version: 69.2.1
+  releaseName: kube-prometheus-stack
+  namespace: monitoring
+  valuesFile: values.yaml
+  valuesMerge: override
+  includeCRDs: true
+resources:
+- prometheus-pvc.yaml
+- alertmanager-pvc.yaml
+- grafana-pvc.yaml
+```
+
+**注意事項:**
+- ArgoCD側で`--enable-helm`フラグが有効になっている必要がある
+- ローカルでの`kustomize build`はhelmChartsフィールドをサポートしていない
+- ArgoCD経由でのデプロイが前提
+
+### 3.3 ディレクトリ構造
 
 ```
 manifests/
@@ -118,7 +195,7 @@ manifests/
     └── grafana-pvc.yaml           # 新規作成
 ```
 
-### 3.3 ネームスペース
+### 3.4 ネームスペース
 
 - Namespace名: `monitoring`
 - ラベル: `name: monitoring`
@@ -555,37 +632,63 @@ minikube delete
 
 ### 11.2 初期構築手順
 
-1. **ネームスペース作成**
+1. **GitHub issueの作成**
+   ```bash
+   gh issue create --title "PrometheusとGrafanaの監視スタックを導入" \
+     --body "監視スタックの導入..." \
+     --label enhancement
+   # issue番号（例: #110）をメモする
+   ```
+
+2. **ネームスペース作成**
    ```bash
    kubectl apply -f manifests/namespaces/monitoring.yaml
    ```
 
-2. **PersistentVolume作成**
+3. **PersistentVolume作成**
    ```bash
    kubectl apply -f manifests/pv/prometheus-server.yaml
    kubectl apply -f manifests/pv/prometheus-alertmanager.yaml
    kubectl apply -f manifests/pv/grafana.yaml
    ```
 
-3. **Secret作成**
+4. **Secret作成**
    ```bash
    # credentials/monitoring/grafana.env を作成
    # GF_SECURITY_ADMIN_PASSWORD=<パスワード>
    ./bin/create_secrets.sh
    ```
 
-4. **マニフェスト適用（ArgoCD経由）**
+5. **マニフェスト適用（ArgoCD経由）**
    ```bash
    git add manifests/monitoring/
-   git commit -m "feat: add Prometheus and Grafana monitoring stack"
-   git push origin main
+   git commit -m "#110 feat: add Prometheus and Grafana monitoring stack
+
+   PrometheusとGrafanaの監視スタックを導入
+
+   - kube-prometheus-stack (v69.2.1) をKustomize helmChartsで管理
+   - Prometheus、Grafana、Alertmanagerの設定
+   - PersistentVolume/PVCの作成
+   - Ingress設定
+
+   🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+   Co-Authored-By: Claude <noreply@anthropic.com>"
+
+   git push origin feature/add-monitoring
+   # PRを作成してmainにマージ
    # ArgoCDが自動的に同期
    ```
 
-5. **手動適用する場合**
+6. **手動適用する場合**
    ```bash
    kubectl apply -k manifests/monitoring/
    ```
+
+**コミットメッセージ規約:**
+- 先頭にissue番号を含める: `#<issue-number> <type>: <description>`
+- 種別: `feat`, `fix`, `docs`, `refactor`, `test` など
+- 詳細な変更内容を本文に記載
 
 ### 11.3 デプロイメント後の確認
 
