@@ -14,3 +14,4 @@ resources:
 - growi-converter.yaml
 - minecraft.yaml
 - rss-notifier.yaml
+- monitoring.yaml

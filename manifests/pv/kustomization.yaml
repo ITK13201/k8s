@@ -21,3 +21,6 @@ resources:
 - minecraft-mariadb.yaml
 - rss-notifier-mariadb-primary.yaml
 - rss-notifier-mariadb-secondary.yaml
+- prometheus-server.yaml
+- prometheus-alertmanager.yaml
+- grafana.yaml
