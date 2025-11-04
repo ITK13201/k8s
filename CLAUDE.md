@@ -93,6 +93,30 @@ Many applications use Helm charts integrated via Kustomize. To modify:
 2. The `kustomization.yaml` references this values file via `valuesFile` field
 3. Commit changes - ArgoCD will regenerate and apply the Helm chart
 
+**Important Pattern**: This repository uses **Kustomize helmCharts field** for Helm integration:
+- Kustomize is mandatory for all manifest management
+- Direct `helm install` or `helm upgrade` commands should not be used
+- This ensures consistency across all applications (minecraft, nextcloud, growi, monitoring, etc.)
+- Benefits: GitOps-friendly, integrates with ArgoCD ApplicationSet, maintains consistency
+
+Example `kustomization.yaml` with helmCharts:
+```yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: <namespace>
+helmCharts:
+- name: <chart-name>
+  repo: <chart-repo-url>
+  version: <version>
+  releaseName: <release-name>
+  namespace: <namespace>
+  valuesFile: values.yaml
+  valuesMerge: override
+  includeCRDs: true
+resources:
+- <additional-resources>.yaml
+```
+
 ## Important Notes
 
 ### Application-Specific Constraints
@@ -124,6 +148,28 @@ PersistentVolumes are pre-created for applications requiring persistent storage.
 2. Create PVC in the application's directory
 3. Reference the PVC in the application's deployment/statefulset
 
+### Git Workflow and Commit Conventions
+
+**Commit Message Format**:
+1. Create a GitHub issue for the feature/fix
+2. Include issue number at the beginning of commit message: `#<issue-number> <type>: <description>`
+3. Use conventional commit types: `feat`, `fix`, `docs`, `refactor`, `test`, etc.
+
+Example:
+```bash
+# 1. Create GitHub issue
+gh issue create --title "Feature description" --body "Details..." --label enhancement
+
+# 2. Commit with issue number
+git commit -m "#123 feat: add new monitoring stack
+
+Detailed description of changes...
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>"
+```
+
 ### Testing and Deployment Workflow
 
 Before deploying to production, always test in Minikube environment first:
@@ -133,14 +179,24 @@ Before deploying to production, always test in Minikube environment first:
    git checkout -b feature/<feature-name>
    ```
 
-2. **Test in Minikube**
+2. **Create GitHub issue**
+   ```bash
+   gh issue create --title "Description" --body "Details..." --label enhancement
+   ```
+
+3. **Test in Minikube**
    - Start Minikube cluster: `minikube start --cpus=4 --memory=8192`
    - Apply manifests manually: `kubectl apply -k manifests/<application-name>/`
    - Verify functionality using port-forwarding or Minikube tunnel
    - Run validation checks
 
-3. **Deploy to production**
-   - Merge to main branch after testing is complete
+4. **Commit with issue number**
+   - Include `#<issue-number>` at the beginning of commit message
+   - Follow conventional commit format
+
+5. **Deploy to production**
+   - Push branch and create Pull Request
+   - Merge to main branch after review
    - ArgoCD automatically syncs and deploys changes
 
 **Important**: Never skip Minikube testing for infrastructure changes (monitoring, ingress, cert-manager, etc.)
