@@ -1,4 +1,10 @@
 ---
+replicaCount: 1
+hpa:
+  enabled: true
+  cputhreshold: 70
+  minPods: 1
+  maxPods: 6
 nextcloud:
   host: cloud.i-tk.dev
   existingSecret:
@@ -7,6 +13,16 @@ nextcloud:
     usernameKey: nextcloud-username
     passwordKey: nextcloud-password
     tokenKey: nextcloud-token
+  phpConfigs:
+    # HPA scales pods (1-6), each pod handles up to 20 concurrent requests (max 120 total)
+    www-fpm.conf: |-
+      [www]
+      pm = dynamic
+      pm.max_children = 20
+      pm.start_servers = 5
+      pm.min_spare_servers = 2
+      pm.max_spare_servers = 10
+      pm.max_requests = 1000
 nginx:
   enabled: true
   resources:
@@ -44,7 +60,7 @@ mariadb:
     persistence:
       enabled: true
       storageClass: manual
-      accessMode:
+      accessModes:
       - ReadWriteOnce
       size: 4Gi
       selector:
@@ -125,7 +141,7 @@ persistence:
 resources:
   requests:
     cpu: 500m
-    memory: 512Mi
+    memory: 1024Mi
   limits:
     cpu: 1000m
-    memory: 1024Mi
+    memory: 2048Mi

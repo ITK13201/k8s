@@ -16,6 +16,7 @@ initdbScripts:
     GRANT ALL PRIVILEGES ON lwc.* TO 'minecraft'@'%';
     GRANT ALL PRIVILEGES ON worldguard.* TO 'minecraft'@'%';
 primary:
+  replicaCount: 0
   name: primary
   containerPorts:
     mysql: 3306

@@ -10,7 +10,7 @@ auth:
   usernames: ["growi"]
   databases: ["growi"]
   existingSecret: mongodb-secret
-replicaCount: 1
+replicaCount: 0
 podSecurityContext:
   enabled: true
   fsGroupChangePolicy: Always
