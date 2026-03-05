@@ -17,6 +17,15 @@ temp*.yaml
 ### Vagrant ###
 .vagrant/
 
+### Terraform ###
+terraform/.terraform/
+terraform/.terraform.lock.hcl
+terraform/terraform.tfvars
+terraform/backend.hcl
+
+### Ansible ###
+ansible/inventory/group_vars/all.secret.yml
+
 ### Developments ###
 *.log
 tmp/
