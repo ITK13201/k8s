@@ -67,6 +67,11 @@ ansible-playbook -i ansible/inventory/hosts.yml ansible/playbooks/site.yml
 ansible-playbook -i ansible/inventory/hosts.yml ansible/playbooks/site.yml --check  # dry-run
 ```
 
+## Git コミット規約
+
+- コミットメッセージの1行目（abstract）は**英語**で記載する
+- 本文（description）は**日本語**で記載する
+
 ## MCP サーバー利用ルール
 
 - **Terraform** に関する作業を行う際は、**必ず Terraform MCP サーバー**経由で情報を取得すること。

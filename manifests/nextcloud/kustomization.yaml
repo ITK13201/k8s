@@ -17,5 +17,13 @@ images:
   newTag: 11.7.2
 - name: docker.io/bitnami/redis
   newTag: 8.0.2
+patches:
+- patch: |-
+    - op: add
+      path: /metadata/namespace
+      value: nextcloud
+  target:
+    name: nextcloud(-nginxconfig|-phpconfig)?
+    kind: ConfigMap|Service|Deployment|HorizontalPodAutoscaler
 resources:
 - nextcloud-files-pvc.yaml

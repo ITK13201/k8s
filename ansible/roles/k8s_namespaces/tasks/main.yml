@@ -1,0 +1,24 @@
+---
+- name: Create temporary directory for namespace manifests
+  ansible.builtin.tempfile:
+    state: directory
+    suffix: namespaces
+  register: ns_tmp_dir
+
+- name: Copy namespace manifests
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/../../manifests/namespaces/"
+    dest: "{{ ns_tmp_dir.path }}/"
+    mode: "0644"
+
+- name: Apply namespace manifests
+  ansible.builtin.command: kubectl apply -k {{ ns_tmp_dir.path }}
+  environment:
+    KUBECONFIG: "{{ k8s_kubeconfig_dir }}/config"
+  register: ns_result
+  changed_when: "'created' in ns_result.stdout or 'configured' in ns_result.stdout"
+
+- name: Clean up temporary directory
+  ansible.builtin.file:
+    path: "{{ ns_tmp_dir.path }}"
+    state: absent

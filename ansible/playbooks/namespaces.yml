@@ -1,0 +1,6 @@
+---
+- name: Apply Kubernetes namespaces
+  hosts: control_plane
+  become: true
+  roles:
+    - k8s_namespaces

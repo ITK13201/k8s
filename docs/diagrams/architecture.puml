@@ -1,4 +1,4 @@
-@startuml k8s-architecture
+@startuml architecture
 !theme plain
 skinparam backgroundColor #FFFFFF
 skinparam defaultFontName "Helvetica"

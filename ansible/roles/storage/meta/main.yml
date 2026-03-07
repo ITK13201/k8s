@@ -1,0 +1,6 @@
+---
+galaxy_info:
+  role_name: storage
+  description: Mount additional disks and configure fstab
+  min_ansible_version: "2.15"
+dependencies: []

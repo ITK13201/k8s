@@ -47,6 +47,14 @@ k8s-cp01      Ready    control-plane   5m    v1.32.x
 k8s-worker01  Ready    <none>          3m    v1.32.x
 ```
 
+## kubeconfig の取得
+
+`site.yml` 完了後、手元のマシンで kubectl を使えるようにするため kubeconfig を取得する。
+
+```bash
+scp k8s@192.168.1.200:~/.kube/config ~/.kube/config
+```
+
 ## ロールごとの責務
 
 | ロール | 対象 | 主な処理 |
@@ -54,8 +62,9 @@ k8s-worker01  Ready    <none>          3m    v1.32.x
 | `common` | 全ノード | swap 無効化・sysctl・カーネルモジュール・SELinux permissive |
 | `containerd` | 全ノード | Docker CE repo → containerd インストール・SystemdCgroup 有効化 |
 | `k8s_node` | 全ノード | kubeadm / kubelet / kubectl インストール |
-| `k8s_control_plane` | CP のみ | `kubeadm init`・Calico CNI 適用 |
+| `k8s_control_plane` | CP のみ | `kubeadm init`・Calico CNI 適用・kubeconfig 配置 |
 | `k8s_worker` | Worker のみ | `kubeadm join` |
+| `argocd` | CP のみ | `kubectl apply -k manifests/argocd/` で ArgoCD をデプロイ |
 
 ## Dry-run（変更確認）
 
