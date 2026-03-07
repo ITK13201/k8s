@@ -1,4 +1,5 @@
 ---
 - import_playbook: control_plane.yml
 - import_playbook: workers.yml
+- import_playbook: namespaces.yml
 - import_playbook: argocd.yml

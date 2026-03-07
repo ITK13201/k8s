@@ -6,7 +6,11 @@
 2. `./bin/create_secrets.sh` を実行すると `secrets/<namespace>/<secret-name>.yaml` が生成される
 3. 生成された Secret YAML をクラスタに適用する
 
-`credentials/` は gitignore 対象。`secrets/` はリポジトリで管理される。
+```bash
+kubectl apply -R -f secrets/
+```
+
+`credentials/` と `secrets/` はどちらも gitignore 対象（ローカルのみ）。
 
 ## スクリプトの動作
 

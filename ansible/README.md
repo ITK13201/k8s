@@ -23,12 +23,15 @@ playbooks/
   control_plane.yml   # コントロールプレーンのみ
   workers.yml         # ワーカーのみ
 roles/
-  common/             # swap 無効化・sysctl・カーネルモジュール・SELinux
-  containerd/         # containerd インストール・設定
-  k8s_node/           # kubeadm / kubelet / kubectl インストール
+  common/             # swap無効化・sysctl・カーネルモジュール・SELinux
+  containerd/         # containerdインストール・設定
+  k8s_node/           # kubeadm / kubelet / kubectlインストール
   k8s_control_plane/  # kubeadm init・Calico CNI
   k8s_worker/         # kubeadm join
-requirements.yml      # Galaxy コレクション定義
+  argocd/             # ArgoCDデプロイ（kubectl apply -k manifests/argocd/）
+playbooks/
+  argocd.yml          # ArgoCDのみデプロイ
+requirements.yml      # Galaxyコレクション定義
 ```
 
 ## クイックスタート

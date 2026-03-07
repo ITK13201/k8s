@@ -11,12 +11,37 @@
     dest: "{{ argocd_tmp_dir.path }}/"
     mode: "0644"
 
-- name: Apply ArgoCD manifests with Kustomize
-  ansible.builtin.command: kubectl apply -k {{ argocd_tmp_dir.path }}
+- name: Install ArgoCD (server-side to avoid CRD annotation size limit)
+  ansible.builtin.command: >
+    kubectl apply --server-side -n {{ argocd_namespace }}
+    -f https://raw.githubusercontent.com/argoproj/argo-cd/{{ argocd_version }}/manifests/install.yaml
   environment:
     KUBECONFIG: "{{ k8s_kubeconfig_dir }}/config"
-  register: argocd_result
-  changed_when: "'created' in argocd_result.stdout or 'configured' in argocd_result.stdout"
+  register: argocd_install_result
+  changed_when: "'created' in argocd_install_result.stdout or 'configured' in argocd_install_result.stdout"
+
+- name: Wait for ArgoCD CRDs to be established
+  ansible.builtin.command: >
+    kubectl wait --for=condition=established
+    crd/applications.argoproj.io
+    crd/appprojects.argoproj.io
+    crd/applicationsets.argoproj.io
+    --timeout=120s
+  environment:
+    KUBECONFIG: "{{ k8s_kubeconfig_dir }}/config"
+  changed_when: false
+
+- name: Apply ArgoCD custom resources and configmap patches
+  ansible.builtin.command: >
+    kubectl apply -n {{ argocd_namespace }}
+    -f {{ argocd_tmp_dir.path }}/app-project.yaml
+    -f {{ argocd_tmp_dir.path }}/application-set.yaml
+    -f {{ argocd_tmp_dir.path }}/argocd-cm-patch.yaml
+    -f {{ argocd_tmp_dir.path }}/argocd-cmd-params-cm-patch.yaml
+  environment:
+    KUBECONFIG: "{{ k8s_kubeconfig_dir }}/config"
+  register: argocd_custom_result
+  changed_when: "'created' in argocd_custom_result.stdout or 'configured' in argocd_custom_result.stdout"
 
 - name: Clean up temporary directory
   ansible.builtin.file:

@@ -30,5 +30,23 @@ Growi は PV の claimRef 問題があるため、専用スクリプトで更新
 
 ## クラスタ初期セットアップ
 
-1. `bin/install_k8s.sh` — containerd / kubelet / kubeadm / kubectl / Helm のインストール（Rocky Linux 想定）
-2. `bin/create_k8s_cluster.sh` — `kubeadm init` と Calico のデプロイ
+1. **VM プロビジョニング** — Terraform で Proxmox VE 上に VM を作成（[docs/terraform.md](terraform.md) 参照）
+2. **k8s クラスタ構築・ArgoCD デプロイ** — Ansible で一括セットアップ（[docs/ansible.md](ansible.md) 参照）
+
+   ```bash
+   ansible-playbook -i ansible/inventory/hosts.yml ansible/playbooks/site.yml
+   ```
+
+3. **kubeconfig を手元に取得する**
+
+   ```bash
+   scp k8s@192.168.1.200:~/.kube/config ~/.kube/config
+   ```
+
+4. **シークレット適用** — ArgoCD がアプリを同期する前に手元から適用する
+
+   ```bash
+   kubectl apply -R -f secrets/
+   ```
+
+以降のアプリデプロイは ArgoCD が `master` への push を検知して自動同期する。
