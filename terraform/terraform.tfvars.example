@@ -1,0 +1,26 @@
+proxmox_endpoint = "https://192.168.1.100:8006/"
+proxmox_username = "root@pam"
+proxmox_password = "your-proxmox-password"
+proxmox_node     = "pve"
+
+datastore_id = "local-lvm"
+
+vm_user        = "k8s"
+ssh_public_key = "ssh-ed25519 AAAA... your-public-key"
+
+gateway_ip = "192.168.1.1"
+dns_server = "192.168.1.1"
+
+control_plane_ip        = "192.168.1.200/24"
+control_plane_cpu_cores = 2
+control_plane_memory_mb = 8192
+control_plane_disk_gb   = 30
+
+worker_count     = 1
+worker_ips       = ["192.168.1.201/24"]
+worker_cpu_cores = 8
+worker_memory_mb = 32768
+worker_disk_gb   = 150
+
+worker_hdd_storage_by_id = "ata-YOUR-STORAGE-DISK-BY-ID"
+worker_hdd_backup_by_id  = "ata-YOUR-BACKUP-DISK-BY-ID"

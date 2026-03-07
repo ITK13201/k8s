@@ -1,0 +1,6 @@
+---
+galaxy_info:
+  role_name: containerd
+  description: Install and configure containerd
+  min_ansible_version: "2.15"
+dependencies: []

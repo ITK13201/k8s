@@ -1,0 +1,9 @@
+---
+- name: Set up control plane node
+  hosts: control_plane
+  become: true
+  roles:
+    - common
+    - containerd
+    - k8s_node
+    - k8s_control_plane

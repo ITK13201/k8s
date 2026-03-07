@@ -1,0 +1,6 @@
+---
+galaxy_info:
+  role_name: argocd
+  description: Deploy ArgoCD to Kubernetes cluster
+  min_ansible_version: "2.15"
+dependencies: []

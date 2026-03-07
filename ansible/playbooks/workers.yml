@@ -1,0 +1,22 @@
+---
+- name: Retrieve join command from control plane
+  hosts: control_plane
+  become: true
+  tasks:
+    - name: Generate join command
+      ansible.builtin.command: kubeadm token create --print-join-command
+      register: k8s_join_command_result
+      changed_when: false
+
+    - name: Set join command fact
+      ansible.builtin.set_fact:
+        k8s_join_command: "{{ k8s_join_command_result.stdout }}"
+
+- name: Set up worker nodes
+  hosts: workers
+  become: true
+  roles:
+    - common
+    - containerd
+    - k8s_node
+    - k8s_worker
