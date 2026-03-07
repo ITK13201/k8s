@@ -1,0 +1,94 @@
+@startuml network
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName "Helvetica"
+skinparam linetype ortho
+skinparam nodesep 60
+skinparam ranksep 70
+
+title Kubernetes ネットワーク構成
+
+' =====================
+' 外部
+' =====================
+cloud "インターネット" as internet
+
+' =====================
+' 物理ネットワーク
+' =====================
+node "ホームルーター\n192.168.1.1\n(上流 DNS)" as router
+
+router <--> internet
+
+package "物理ネットワーク  192.168.1.0/24" {
+
+  node "Proxmox VE  Linux bridge (vmbr0)" as bridge
+
+  node "k8s-cp01\neth0: 192.168.1.200" as cp {
+    component "CoreDNS\n10.244.51.1 / 10.244.51.3" as coredns
+    component "Control Plane Pods\n10.244.51.0/24" as cp_pods
+  }
+
+  node "k8s-worker01\neth0: 192.168.1.201" as worker {
+    component "App Pods (ArgoCD 等)\n10.244.79.0/24" as worker_pods
+  }
+
+}
+
+bridge <--> cp     : L2 (eth0)
+bridge <--> worker : L2 (eth0)
+bridge <--> router : L2
+
+' =====================
+' Pod ネットワーク（Calico）
+' =====================
+package "Pod ネットワーク  Calico IPPool\n10.244.0.0/16  ipipMode: CrossSubnet  natOutgoing: true" {
+  component "cp01 サブネット\n10.244.51.0/24" as cp_subnet
+  component "worker01 サブネット\n10.244.79.0/24" as worker_subnet
+}
+
+cp_pods     -[hidden]- cp_subnet
+worker_pods -[hidden]- worker_subnet
+
+cp_subnet <--> worker_subnet : "同一 L2 のため直接ルーティング\n（eth0 経由、IPIP トンネルなし）"
+
+' =====================
+' Service ネットワーク
+' =====================
+package "Service ネットワーク  ClusterIP\n10.96.0.0/12" {
+  component "kube-dns\n10.96.0.10" as dns_svc
+  component "kubernetes API\n10.96.0.1:443" as api_svc
+}
+
+' =====================
+' DNS 解決フロー
+' =====================
+worker_pods --> dns_svc    : "DNS クエリ (UDP 53)"
+dns_svc     --> coredns    : "kube-proxy DNAT"
+coredns     --> router     : "上流 DNS 転送\nMASQUERADE → src=192.168.1.200"
+router      --> internet   : "外部名前解決"
+
+worker_pods --> api_svc    : "API アクセス (TCP 443)"
+
+' =====================
+' 注意点
+' =====================
+note as caution
+  <b>構成上の注意点</b>
+
+  1. pod CIDR は物理ネットワーク (192.168.1.0/24) と
+     重複しない範囲を選ぶこと
+     （重複すると Calico MASQUERADE が上流 DNS に
+     適用されず外部名前解決が失敗する）
+
+  2. Calico IPPool は ipipMode: CrossSubnet を設定すること
+     Proxmox の Linux ブリッジは IPIP パケットの
+     外部ソース IP（tunl0 の IP）を不正と判断してドロップする
+     CrossSubnet では同一 L2 サブネット内を
+     直接ルーティングするため回避できる
+
+  3. 設定は Ansible で自動適用済み
+     （roles/k8s_control_plane/tasks/main.yml）
+end note
+
+@enduml
