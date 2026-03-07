@@ -1,7 +1,9 @@
-bucket   = "tf-state-k8s"
-key      = "terraform.tfstate"
-region   = "auto"
-endpoint = "https://REPLACE_WITH_ACCOUNT_ID.r2.cloudflarestorage.com"
+bucket = "tf-state-k8s"
+key    = "terraform.tfstate"
+region = "auto"
+endpoints = {
+  s3 = "https://REPLACE_WITH_ACCOUNT_ID.r2.cloudflarestorage.com"
+}
 
 access_key = "REPLACE_WITH_R2_ACCESS_KEY_ID"
 secret_key = "REPLACE_WITH_R2_SECRET_ACCESS_KEY"
@@ -9,4 +11,5 @@ secret_key = "REPLACE_WITH_R2_SECRET_ACCESS_KEY"
 skip_credentials_validation = true
 skip_metadata_api_check     = true
 skip_region_validation      = true
+skip_requesting_account_id  = true
 force_path_style            = true

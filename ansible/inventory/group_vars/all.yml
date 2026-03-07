@@ -1,7 +1,7 @@
 ---
 ansible_user: k8s
-ansible_ssh_private_key_file: ~/.ssh/personal/pve/id_ed25519
-ansible_python_interpreter: /usr/bin/python3
+ansible_ssh_private_key_file: ~/.ssh/personal/pve.i-tk.dev/id_ed25519
+ansible_python_interpreter: ~/.pyenv/shims/python
 
 k8s_version: "1.32"
 k8s_pod_network_cidr: "192.168.0.0/16"

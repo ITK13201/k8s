@@ -21,3 +21,6 @@ worker_ips       = ["192.168.1.201/24"]
 worker_cpu_cores = 8
 worker_memory_mb = 32768
 worker_disk_gb   = 150
+
+worker_hdd_storage_by_id = "ata-YOUR-STORAGE-DISK-BY-ID"
+worker_hdd_backup_by_id  = "ata-YOUR-BACKUP-DISK-BY-ID"

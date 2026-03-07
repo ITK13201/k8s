@@ -39,12 +39,17 @@ Terraform state は Cloudflare R2 で管理。SSH 鍵は `~/.ssh/personal/pve/id
 - [Terraform 手順](docs/terraform.md)（Proxmox VE VM プロビジョニング）
 - [Ansible 手順](docs/ansible.md)（k8s インストール）
 - [設計ドキュメント](docs/design/overview.md)（Proxmox VE 移行設計）
+  - [Terraform 設計](docs/design/terraform.md)
+  - [Ansible 設計](docs/design/ansible.md)
 
 ## 主要コマンド
 
 ```bash
 # マニフェストをローカルでレンダリング（Helm含む）
 kubectl kustomize --enable-helm ./manifests/<app>/
+
+# YAML フォーマット（.yamlfmt の設定を使用）
+yamlfmt .
 
 # Secretの再生成
 ./bin/create_secrets.sh
@@ -53,10 +58,13 @@ kubectl kustomize --enable-helm ./manifests/<app>/
 terraform -chdir=terraform init -backend-config=backend.hcl
 terraform -chdir=terraform plan
 terraform -chdir=terraform apply
+terraform -chdir=terraform output -json   # VM の IP アドレス確認
 
 # Ansible
 ansible-galaxy collection install -r ansible/requirements.yml
+ansible all -i ansible/inventory/hosts.yml -m ping   # 接続確認
 ansible-playbook -i ansible/inventory/hosts.yml ansible/playbooks/site.yml
+ansible-playbook -i ansible/inventory/hosts.yml ansible/playbooks/site.yml --check  # dry-run
 ```
 
 ## MCP サーバー利用ルール

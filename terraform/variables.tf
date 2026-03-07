@@ -101,3 +101,13 @@ variable "worker_disk_gb" {
   type    = number
   default = 150
 }
+
+variable "worker_hdd_storage_by_id" {
+  type        = string
+  description = "by-id name of the storage HDD for disk passthrough (under /dev/disk/by-id/)"
+}
+
+variable "worker_hdd_backup_by_id" {
+  type        = string
+  description = "by-id name of the backup HDD for disk passthrough (under /dev/disk/by-id/)"
+}

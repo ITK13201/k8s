@@ -29,6 +29,20 @@ resource "proxmox_virtual_environment_vm" "workers" {
     discard      = "on"
   }
 
+  disk {
+    datastore_id      = ""
+    path_in_datastore = "/dev/disk/by-id/${var.worker_hdd_storage_by_id}"
+    file_format       = "raw"
+    interface         = "scsi1"
+  }
+
+  disk {
+    datastore_id      = ""
+    path_in_datastore = "/dev/disk/by-id/${var.worker_hdd_backup_by_id}"
+    file_format       = "raw"
+    interface         = "scsi2"
+  }
+
   initialization {
     datastore_id      = var.datastore_id
     user_data_file_id = proxmox_virtual_environment_file.user_data.id
