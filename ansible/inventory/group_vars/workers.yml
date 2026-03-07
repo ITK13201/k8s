@@ -1,10 +1,10 @@
 ---
 storage_disks:
-  - uuid: "6727c405-f02e-4339-ba10-20ae2f901c66"
+  - uuid: "1150bec5-27f1-4ca2-a64b-1424a0932196"
     mount_point: /mnt/hdd
     fstype: ext4
     options: defaults,nofail
-  - uuid: "1150bec5-27f1-4ca2-a64b-1424a0932196"
+  - uuid: "6727c405-f02e-4339-ba10-20ae2f901c66"
     mount_point: /mnt/hdd-backup
     fstype: ext4
     options: defaults,nofail

@@ -31,17 +31,35 @@
     dest: "{{ argocd_tmp_dir.path }}/"
     mode: "0644"
 
-- name: Apply ArgoCD custom resources and configmap patches
+- name: Apply ArgoCD AppProject and ApplicationSet
   ansible.builtin.command: >
     kubectl apply -n {{ argocd_namespace }}
-    -f {{ argocd_tmp_dir.path }}/argocd-cm-patch.yaml
-    -f {{ argocd_tmp_dir.path }}/argocd-cmd-params-cm-patch.yaml
     -f {{ argocd_tmp_dir.path }}/app-project.yaml
     -f {{ argocd_tmp_dir.path }}/application-set.yaml
   environment:
     KUBECONFIG: "{{ k8s_kubeconfig_dir }}/config"
   register: argocd_custom_result
   changed_when: "'created' in argocd_custom_result.stdout or 'configured' in argocd_custom_result.stdout"
+
+- name: Patch argocd-cm with kustomize build options
+  ansible.builtin.command: >
+    kubectl patch configmap argocd-cm -n {{ argocd_namespace }}
+    --type merge
+    -p '{"data":{"kustomize.buildOptions":"--enable-helm"}}'
+  environment:
+    KUBECONFIG: "{{ k8s_kubeconfig_dir }}/config"
+  register: argocd_cm_patch_result
+  changed_when: "'no change' not in argocd_cm_patch_result.stdout"
+
+- name: Patch argocd-cmd-params-cm with server insecure mode
+  ansible.builtin.command: >
+    kubectl patch configmap argocd-cmd-params-cm -n {{ argocd_namespace }}
+    --type merge
+    -p '{"data":{"server.insecure":"true"}}'
+  environment:
+    KUBECONFIG: "{{ k8s_kubeconfig_dir }}/config"
+  register: argocd_cmd_params_patch_result
+  changed_when: "'no change' not in argocd_cmd_params_patch_result.stdout"
 
 - name: Clean up temporary directory
   ansible.builtin.file:
