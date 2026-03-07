@@ -14,9 +14,9 @@ images:
 - name: nextcloud
   newTag: 31.0.14-fpm
 - name: docker.io/bitnami/mariadb
-  newTag: 11.7.2
+  newTag: latest
 - name: docker.io/bitnami/redis
-  newTag: 8.0.2
+  newTag: latest
 patches:
 - patch: |-
     - op: add

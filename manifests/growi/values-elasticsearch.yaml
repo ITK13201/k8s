@@ -3,7 +3,7 @@ plugins: "analysis-kuromoji,analysis-icu"
 image:
   registry: docker.io
   repository: bitnami/elasticsearch
-  tag: 8.13.2-debian-12-r2
+  tag: latest
   pullPolicy: IfNotPresent
 master:
   masterOnly: true
