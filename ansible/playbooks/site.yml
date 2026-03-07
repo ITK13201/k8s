@@ -3,3 +3,4 @@
 - import_playbook: workers.yml
 - import_playbook: namespaces.yml
 - import_playbook: argocd.yml
+- import_playbook: fetch_kubeconfig.yml

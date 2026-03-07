@@ -1,16 +1,4 @@
 ---
-- name: Create temporary directory for ArgoCD manifests
-  ansible.builtin.tempfile:
-    state: directory
-    suffix: argocd
-  register: argocd_tmp_dir
-
-- name: Copy ArgoCD manifests
-  ansible.builtin.copy:
-    src: "{{ playbook_dir }}/../../manifests/argocd/"
-    dest: "{{ argocd_tmp_dir.path }}/"
-    mode: "0644"
-
 - name: Install ArgoCD (server-side to avoid CRD annotation size limit)
   ansible.builtin.command: >
     kubectl apply --server-side -n {{ argocd_namespace }}
@@ -31,13 +19,25 @@
     KUBECONFIG: "{{ k8s_kubeconfig_dir }}/config"
   changed_when: false
 
+- name: Create temporary directory for ArgoCD manifests
+  ansible.builtin.tempfile:
+    state: directory
+    suffix: argocd
+  register: argocd_tmp_dir
+
+- name: Copy ArgoCD manifests
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/../../manifests/argocd/"
+    dest: "{{ argocd_tmp_dir.path }}/"
+    mode: "0644"
+
 - name: Apply ArgoCD custom resources and configmap patches
   ansible.builtin.command: >
     kubectl apply -n {{ argocd_namespace }}
-    -f {{ argocd_tmp_dir.path }}/app-project.yaml
-    -f {{ argocd_tmp_dir.path }}/application-set.yaml
     -f {{ argocd_tmp_dir.path }}/argocd-cm-patch.yaml
     -f {{ argocd_tmp_dir.path }}/argocd-cmd-params-cm-patch.yaml
+    -f {{ argocd_tmp_dir.path }}/app-project.yaml
+    -f {{ argocd_tmp_dir.path }}/application-set.yaml
   environment:
     KUBECONFIG: "{{ k8s_kubeconfig_dir }}/config"
   register: argocd_custom_result
