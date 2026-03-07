@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
       - name: palworld-server
-        image: thijsvanloef/palworld-server-docker:v1.4.2
+        image: thijsvanloef/palworld-server-docker:v1.4.6
         imagePullPolicy: IfNotPresent
         resources:
           requests:
