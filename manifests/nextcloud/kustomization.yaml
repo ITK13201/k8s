@@ -7,16 +7,16 @@ helmCharts:
   repo: https://nextcloud.github.io/helm/
   releaseName: nextcloud
   namespace: nextcloud
-  version: 8.9.1
+  version: 9.0.1
   valuesFile: values.yaml
   valuesMerge: override
 images:
 - name: nextcloud
   newTag: 33.0.0-fpm
-- name: docker.io/bitnami/mariadb
-  newTag: latest
-- name: docker.io/bitnami/redis
-  newTag: latest
+- name: docker.io/bitnamilegacy/mariadb
+  newTag: 12.0.2
+- name: docker.io/bitnamilegacy/redis
+  newTag: 8.2.1
 patches:
 - patch: |-
     - op: add

@@ -1,8 +1,8 @@
 ---
 image:
   registry: docker.io
-  repository: bitnami/mariadb
-  tag: latest
+  repository: bitnamilegacy/mariadb
+  tag: 12.0.2
   pullPolicy: IfNotPresent
 auth:
   database: rss_notifier
