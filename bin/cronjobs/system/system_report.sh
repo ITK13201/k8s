@@ -17,7 +17,7 @@ trap 'trap - EXIT; rm_tmpfile; exit -1' INT PIPE TERM
 # ===
 
 ### Space of File System ###
-df -h | grep -e /dev/mapper/cs-root -e /dev/sd 2>&1 | tee "${tmpfile}"
+df -h --output=source,size,used,avail,pcent,target | grep -E '^/dev/' 2>&1 | tee "${tmpfile}"
 message=$(cat "${tmpfile}")
 status=$?
 if [[ ${status} = 0 ]]; then

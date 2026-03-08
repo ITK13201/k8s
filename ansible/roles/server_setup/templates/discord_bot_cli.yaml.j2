@@ -1,0 +1,6 @@
+token: "{{ server_setup_discord_bot_cli_config_token }}"
+channels:
+{% for channel in server_setup_discord_bot_cli_config_channels %}
+  - name: "{{ channel.name }}"
+    id: "{{ channel.id }}"
+{% endfor %}

@@ -1,0 +1,55 @@
+---
+server_setup_discord_bot_cli_version: "0.2.1"
+server_setup_discord_bot_cli_archive: "discord-bot-cli_{{ server_setup_discord_bot_cli_version }}_linux_amd64.tar.gz"
+server_setup_discord_bot_cli_url: |
+  "https://github.com/ITK13201/discord-bot-cli/releases/download/v{{ server_setup_discord_bot_cli_version }}/{{ server_setup_discord_bot_cli_archive }}"
+server_setup_discord_bot_cli_install_dir: /usr/local/bin
+
+server_setup_discord_bot_cli_config_token: ""
+server_setup_discord_bot_cli_config_channels:
+  - name: system
+    id: ""
+  - name: nextcloud
+    id: ""
+  - name: growi
+    id: ""
+
+server_setup_repo_url: "https://github.com/ITK13201/k8s.git"
+server_setup_repo_dest: /usr/local/src/k8s/k8s
+
+server_setup_cron_jobs:
+  - name: "k8s system report"
+    minute: "30"
+    hour: "0"
+    weekday: "*"
+    job: "/bin/bash -l {{ server_setup_repo_dest }}/bin/cronjobs/system/system_report.sh"
+  - name: "k8s clean backups"
+    minute: "30"
+    hour: "5"
+    weekday: "*"
+    job: "/bin/bash -l -c \"{{ server_setup_repo_dest }}/bin/cronjobs/system/clean_backups.py\""
+  - name: "k8s nextcloud full backup"
+    minute: "30"
+    hour: "4"
+    weekday: "6"
+    job: "/bin/bash -l {{ server_setup_repo_dest }}/bin/cronjobs/nextcloud/full_backup.sh"
+  - name: "k8s nextcloud incremental backup"
+    minute: "30"
+    hour: "4"
+    weekday: "1-5"
+    job: "/bin/bash -l {{ server_setup_repo_dest }}/bin/cronjobs/nextcloud/incremental_backup.sh"
+  - name: "k8s palworld backup move"
+    minute: "30"
+    hour: "10"
+    weekday: "*"
+    job: "mv /data/k8s/pv/palworld/backups/* /mnt/hdd-backup/backups/k8s/pv/palworld"
+  - name: "k8s growi full backup"
+    minute: "0"
+    hour: "5"
+    weekday: "6"
+    job: "/bin/bash -l {{ server_setup_repo_dest }}/bin/cronjobs/growi/full_backup.sh"
+  - name: "k8s growi incremental backup"
+    minute: "0"
+    hour: "5"
+    weekday: "1-5"
+    job: "/bin/bash -l {{ server_setup_repo_dest }}/bin/cronjobs/growi/incremental_backup.sh"
