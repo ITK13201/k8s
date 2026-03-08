@@ -46,7 +46,8 @@ Terraform state は Cloudflare R2 で管理。SSH 鍵は `~/.ssh/personal/pve/id
 
 ```bash
 # マニフェストをローカルでレンダリング（Helm含む）
-kubectl kustomize --enable-helm ./manifests/<app>/
+# kubectl kustomize ではなく standalone の kustomize を使うこと
+kustomize build --enable-helm ./manifests/<app>/
 
 # YAML フォーマット（.yamlfmt の設定を使用）
 yamlfmt .
@@ -60,12 +61,34 @@ terraform -chdir=terraform plan
 terraform -chdir=terraform apply
 terraform -chdir=terraform output -json   # VM の IP アドレス確認
 
-# Ansible
-ansible-galaxy collection install -r ansible/requirements.yml
-ansible all -i ansible/inventory/hosts.yml -m ping   # 接続確認
-ansible-playbook -i ansible/inventory/hosts.yml ansible/playbooks/site.yml
-ansible-playbook -i ansible/inventory/hosts.yml ansible/playbooks/site.yml --check  # dry-run
+# Ansible（ansible.cfg の相対パス設定のため ansible/ ディレクトリから実行すること）
+cd ansible/
+ansible-galaxy collection install -r requirements.yml
+ansible all -m ping                              # 接続確認
+ansible-playbook playbooks/site.yml              # 全ノード
+ansible-playbook playbooks/workers.yml           # ワーカーのみ
+ansible-playbook playbooks/site.yml --check      # dry-run
+ansible-lint roles/<role>/tasks/main.yml         # lint
 ```
+
+## 重要な制約
+
+### Kubernetes API バージョン
+- HPA は必ず `autoscaling/v2` を使うこと（`autoscaling/v1` は k8s v1.26 以降削除済み）
+- Helm chart が `autoscaling/v1` を生成する場合は `values.yaml` で HPA を無効化し、独自リソースとして `hpa.yaml` を追加する
+
+### バージョン固定
+- `kubernetes-dashboard`: **v6 を維持**（v6→v7 は非互換アップグレード）
+- 詳細は [docs/applications.md](docs/applications.md) を参照
+
+### Ansible ロール変数命名規則
+- ロール変数には必ずロール名プレフィックスを付ける: `rolename_varname`
+- ロール内部変数（`register` など）はダブルアンダースコア: `rolename__varname`
+- `ansible-lint` で検証すること
+
+### Ansible シークレット管理
+- `ansible/inventory/group_vars/workers.secret.yml` に機密変数を記載（gitignore 対象）
+- テンプレートは `workers.secret.yml.example` を参照
 
 ## Git コミット規約
 
