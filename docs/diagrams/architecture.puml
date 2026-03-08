@@ -102,7 +102,7 @@ legend right
 
   <b>Helm 統合</b>
   helmCharts: ブロックで依存 Chart を宣言
-  kubectl kustomize --enable-helm でレンダリング
+  kustomize build --enable-helm でレンダリング
 
   <b>Secret 管理</b>
   secrets/<ns>/ に Secret YAML を配置
