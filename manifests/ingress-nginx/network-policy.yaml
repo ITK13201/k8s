@@ -64,3 +64,10 @@ spec:
       port: 80
     - protocol: TCP
       port: 443
+  # Allow kube-apiserver to reach admission webhook (port 8443)
+  - from:
+    - ipBlock:
+        cidr: 192.168.1.200/32
+    ports:
+    - protocol: TCP
+      port: 8443

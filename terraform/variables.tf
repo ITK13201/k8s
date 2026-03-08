@@ -49,10 +49,10 @@ variable "gateway_ip" {
   description = "Default gateway IP"
 }
 
-variable "dns_server" {
-  type        = string
-  default     = "8.8.8.8"
-  description = "DNS server IP"
+variable "dns_servers" {
+  type        = list(string)
+  default     = ["8.8.8.8", "192.168.1.1"]
+  description = "DNS server IPs (in priority order)"
 }
 
 # Control plane

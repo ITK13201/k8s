@@ -39,7 +39,7 @@ resource "proxmox_virtual_environment_vm" "control_plane" {
     }
 
     dns {
-      servers = [var.dns_server]
+      servers = var.dns_servers
     }
   }
 
