@@ -12,6 +12,8 @@ spec:
       revision: HEAD
       directories:
       - path: manifests/*
+      - path: manifests/growi
+        exclude: true
   template:
     metadata:
       name: 'k8s-{{.path.basename}}'
