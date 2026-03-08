@@ -55,7 +55,7 @@ resource "proxmox_virtual_environment_vm" "workers" {
     }
 
     dns {
-      servers = [var.dns_server]
+      servers = var.dns_servers
     }
   }
 
@@ -69,4 +69,11 @@ resource "proxmox_virtual_environment_vm" "workers" {
   }
 
   serial_device {}
+
+  lifecycle {
+    ignore_changes = [
+      # Passthrough HDD size is reported by Proxmox and differs from Terraform default
+      disk,
+    ]
+  }
 }
