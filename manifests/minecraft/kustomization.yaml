@@ -12,7 +12,7 @@ helmCharts:
   valuesMerge: override
 - name: mariadb
   repo: oci://registry-1.docker.io/bitnamicharts
-  version: 20.5.9
+  version: 25.0.1
   releaseName: mariadb
   namespace: minecraft
   valuesFile: values-mariadb.yaml
