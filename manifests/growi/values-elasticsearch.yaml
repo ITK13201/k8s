@@ -2,8 +2,8 @@
 plugins: "analysis-kuromoji,analysis-icu"
 image:
   registry: docker.io
-  repository: bitnami/elasticsearch
-  tag: latest
+  repository: bitnamilegacy/elasticsearch
+  tag: 9.1.2
   pullPolicy: IfNotPresent
 master:
   masterOnly: true
