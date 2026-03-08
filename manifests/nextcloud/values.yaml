@@ -1,10 +1,7 @@
 ---
 replicaCount: 1
 hpa:
-  enabled: true
-  cputhreshold: 70
-  minPods: 1
-  maxPods: 6
+  enabled: false
 nextcloud:
   host: cloud.i-tk.dev
   existingSecret:

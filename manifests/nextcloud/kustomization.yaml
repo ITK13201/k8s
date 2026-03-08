@@ -24,6 +24,7 @@ patches:
       value: nextcloud
   target:
     name: nextcloud(-nginxconfig|-phpconfig)?
-    kind: ConfigMap|Service|Deployment|HorizontalPodAutoscaler
+    kind: ConfigMap|Service|Deployment
 resources:
 - nextcloud-files-pvc.yaml
+- hpa.yaml
