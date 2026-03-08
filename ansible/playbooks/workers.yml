@@ -21,3 +21,4 @@
     - containerd
     - k8s_node
     - k8s_worker
+    - server_setup

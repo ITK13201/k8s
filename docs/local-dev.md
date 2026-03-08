@@ -11,6 +11,19 @@ minikube delete
 
 # LoadBalancer 用トンネル
 minikube tunnel
+
+# プロファイル一覧表示
+minikube profile list
+```
+
+## アドオン
+
+```bash
+# 利用可能なアドオン一覧
+minikube addons list
+
+# Kubernetes Dashboard を開く
+minikube dashboard
 ```
 
 ## ローカルイメージの利用

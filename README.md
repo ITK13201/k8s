@@ -1,14 +1,33 @@
-# Kubernetes
+# Kubernetes Infrastructure
 
-## READMEs per Environment
+Proxmox VE + ArgoCD + Kustomize + Helm で管理する個人用 Kubernetes インフラ。
+`master` へのプッシュが ArgoCD によって自動同期（prune 有効）される。
 
-### Local README
+## インフラ構成
 
-[./README_MINIKUBE](./README_MINIKUBEL.md)
+| レイヤー | 技術 | 概要 |
+|---------|------|------|
+| 仮想化基盤 | Proxmox VE | 物理ホスト（12コア・46GB・SSD 256GB） |
+| VM プロビジョニング | Terraform (bpg/proxmox) | control-plane × 1、worker × 1 |
+| k8s インストール | Ansible | kubeadm + Calico CNI |
+| アプリデプロイ | ArgoCD | `manifests/` を GitOps で管理 |
 
-### Production README
+## VM スペック
 
-[./README_PRODUCTION](./README_PRODUCTION.md)
+| VM | IP | CPU | メモリ | ディスク |
+|----|----|-----|--------|---------|
+| k8s-cp01 | 192.168.1.200 | 2コア | 8GB | 30GB |
+| k8s-worker01 | 192.168.1.201 | 10コア | 32GB | 150GB |
+
+## ドキュメント
+
+- [アーキテクチャ・ディレクトリ構成](docs/architecture.md)
+- [アプリケーション一覧・バージョン制約](docs/applications.md)
+- [シークレット管理](docs/secrets.md)
+- [ローカル開発 (Minikube)](docs/local-dev.md)
+- [運用・バックアップ](docs/operations.md)
+- [Terraform 手順](docs/terraform.md)
+- [Ansible 手順](docs/ansible.md)
 
 ## Application-specific notes
 

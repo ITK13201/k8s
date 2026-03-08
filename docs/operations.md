@@ -2,7 +2,11 @@
 
 ## cron ジョブ（サーバー側）
 
-`etc/root.crontab` をサーバーの root cron に登録する。主な処理:
+`etc/root.crontab` をサーバーの root cron に登録する。スクリプトは
+`/usr/local/src/k8s/k8s/bin/cronjobs/` にデプロイされている前提のパスがハードコードされている。
+サーバー上でのリポジトリクローン先は `/usr/local/src/k8s/k8s/` で固定とする。
+
+主な処理:
 
 | スケジュール | 処理 |
 |-------------|------|

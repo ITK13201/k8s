@@ -65,6 +65,7 @@ scp k8s@192.168.1.200:~/.kube/config ~/.kube/config
 | `k8s_control_plane` | CP のみ | `kubeadm init`・Calico CNI 適用・kubeconfig 配置 |
 | `k8s_worker` | Worker のみ | `kubeadm join` |
 | `argocd` | CP のみ | `kubectl apply -k manifests/argocd/` で ArgoCD をデプロイ |
+| `server_setup` | Worker のみ | discord-bot-cli インストール・リポジトリ clone・cron 設定 |
 
 ## Dry-run（変更確認）
 
