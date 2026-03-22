@@ -9,3 +9,5 @@ resources:
 - argocd.yaml
 - growi-converter.yaml
 - rss-notifier.yaml
+- prometheus.yaml
+- grafana.yaml

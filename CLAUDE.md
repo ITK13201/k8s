@@ -73,6 +73,14 @@ ansible-lint roles/<role>/tasks/main.yml         # lint
 
 ## 重要な制約
 
+### ArgoCD ApplicationSet の除外アプリ
+- `manifests/growi` は ApplicationSet から **明示的に除外** されており、ArgoCD による自動同期対象外
+- Growi を更新する場合は `./bin/update/update-growi.sh` を使うこと（[docs/operations.md](docs/operations.md) 参照）
+
+### マニフェストディレクトリの命名
+- `manifests/ingress/` — 各アプリの **Ingress リソース**（argocd.yaml, grafana.yaml など）を集約
+- `manifests/ingress-nginx/` — ingress-nginx **コントローラ**本体の Helm values・kustomization
+
 ### Kubernetes API バージョン
 - HPA は必ず `autoscaling/v2` を使うこと（`autoscaling/v1` は k8s v1.26 以降削除済み）
 - Helm chart が `autoscaling/v1` を生成する場合は `values.yaml` で HPA を無効化し、独自リソースとして `hpa.yaml` を追加する
