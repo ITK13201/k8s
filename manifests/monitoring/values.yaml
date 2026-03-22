@@ -99,17 +99,6 @@ grafana:
       cpu: 500m
       memory: 512Mi
 
-  # Datasources (Prometheus auto-configured)
-  datasources:
-    datasources.yaml:
-      apiVersion: 1
-      datasources:
-      - name: Prometheus
-        type: prometheus
-        url: http://kube-prometheus-stack-prometheus.monitoring.svc:9090
-        access: proxy
-        isDefault: true
-
   # Default dashboards enabled
   defaultDashboardsEnabled: true
   defaultDashboardsTimezone: Asia/Tokyo
