@@ -13,7 +13,7 @@ prometheus:
           - ReadWriteOnce
           resources:
             requests:
-              storage: 10Gi
+              storage: 50Gi
           storageClassName: manual
           selector:
             matchLabels:
@@ -21,7 +21,7 @@ prometheus:
 
     # Retention settings
     retention: 15d
-    retentionSize: 9GB
+    retentionSize: 45GB
 
     # Resource limits (適切に調整)
     resources:
@@ -47,7 +47,7 @@ alertmanager:
           - ReadWriteOnce
           resources:
             requests:
-              storage: 5Gi
+              storage: 10Gi
           storageClassName: manual
           selector:
             matchLabels:
@@ -77,15 +77,18 @@ alertmanager:
 
 # Grafana configuration
 grafana:
-  # Admin password will be set via Secret
-  adminPassword: admin
+  # Admin credentials from Secret (credentials/monitoring/grafana.env)
+  admin:
+    existingSecret: grafana
+    userKey: GF_SECURITY_ADMIN_USER
+    passwordKey: GF_SECURITY_ADMIN_PASSWORD
 
   # Persistence
   persistence:
     enabled: true
     existingClaim: grafana-pvc
     storageClassName: manual
-    size: 5Gi
+    size: 10Gi
 
   # Resource limits
   resources:

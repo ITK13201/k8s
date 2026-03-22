@@ -13,7 +13,7 @@
 
 ### 1.3 進捗状況
 
-**現在のステータス: マニフェスト作成完了、テスト待ち**
+**現在のステータス: 本番デプロイ準備完了（PR作成待ち）**
 
 | フェーズ | ステータス | 完了日 | 備考 |
 |---------|----------|--------|------|
@@ -21,15 +21,16 @@
 | issue作成 | ✅ 完了 | 2025-11-05 | [#110](https://github.com/ITK13201/k8s/issues/110) |
 | マニフェスト作成 | ✅ 完了 | 2025-11-05 | 16ファイル、1255行 |
 | CLAUDE.md更新 | ✅ 完了 | 2025-11-05 | Git workflow、Kustomizeパターン追加 |
-| Minikube環境テスト | ⏳ 未実施 | - | セクション10参照 |
-| 本番環境デプロイ | ⏳ 未実施 | - | セクション11参照 |
+| Minikube環境テスト | ✅ 完了 | 2025-11-05 | セクション10、11参照 |
+| 本番向けマニフェスト調整 | ✅ 完了 | 2026-03-22 | ストレージサイズ拡張、Grafana Secret参照化、chart v82.13.1 |
+| 本番環境デプロイ | ⏳ 未実施 | - | masterブランチマージ後、ArgoCD自動デプロイ |
 | Discord通知設定 | ⏳ 未実施 | - | セクション8.2.1参照 |
 
 **作成済みファイル一覧:**
 - `manifests/namespaces/monitoring.yaml` - monitoring namespace
-- `manifests/pv/prometheus-server.yaml` - Prometheus PV (10Gi)
-- `manifests/pv/prometheus-alertmanager.yaml` - Alertmanager PV (5Gi)
-- `manifests/pv/grafana.yaml` - Grafana PV (5Gi)
+- `manifests/pv/prometheus-server.yaml` - Prometheus PV (50Gi)
+- `manifests/pv/prometheus-alertmanager.yaml` - Alertmanager PV (10Gi)
+- `manifests/pv/grafana.yaml` - Grafana PV (10Gi)
 - `manifests/monitoring/kustomization.yaml` - Kustomize helmCharts設定
 - `manifests/monitoring/values.yaml` - kube-prometheus-stack設定
 - `manifests/monitoring/prometheus-pvc.yaml` - Prometheus PVC
@@ -45,10 +46,15 @@
 - 最新コミット: `#110 docs: update design doc with Kustomize helmCharts pattern`
 
 **次のステップ:**
-1. Minikube環境でのテスト実施（セクション10）
-2. テスト完了後、PRを作成してmainブランチにマージ
-3. 本番環境へのデプロイ（ArgoCD自動同期）
-4. 動作確認と検証チェックリストの実施
+1. ✅ ~~Minikube環境でのテスト実施（セクション10）~~ - 完了
+2. ✅ ~~バージョン更新（v69.2.1 → v82.13.1）~~ - 完了
+3. ✅ ~~StorageClass設定変更（manual → standard → manual）~~ - 本番用に manual に戻し済み
+4. ✅ ~~Minikube環境での検証チェックリスト完了~~ - 完了（セクション11参照）
+5. ✅ ~~本番向けマニフェスト調整~~ - ストレージサイズ拡張、Grafana Secret参照化
+6. `credentials/monitoring/grafana.env` に本番パスワードを設定し `./bin/create_secrets.sh` を実行
+7. PRを作成してmasterブランチにマージ
+8. 本番環境へのデプロイ（ArgoCD自動同期）
+9. 本番環境での動作確認と検証チェックリストの実施
 
 ## 2. アーキテクチャ設計
 
@@ -131,7 +137,7 @@ graph TB
 **kube-prometheus-stack**を使用する。
 - Chart Repository: https://prometheus-community.github.io/helm-charts
 - Chart Name: kube-prometheus-stack
-- Chart Version: 69.2.1
+- Chart Version: 82.13.1
 - 理由: Prometheus Operator、Prometheus、Grafana、Alertmanager、各種Exporterが統合されており、管理が容易
 
 ### 3.2 デプロイ方法
@@ -154,7 +160,7 @@ namespace: monitoring
 helmCharts:
 - name: kube-prometheus-stack
   repo: https://prometheus-community.github.io/helm-charts
-  version: 69.2.1
+  version: 82.13.1
   releaseName: kube-prometheus-stack
   namespace: monitoring
   valuesFile: values.yaml
@@ -666,7 +672,7 @@ minikube delete
 
    PrometheusとGrafanaの監視スタックを導入
 
-   - kube-prometheus-stack (v69.2.1) をKustomize helmChartsで管理
+   - kube-prometheus-stack (v79.1.1) をKustomize helmChartsで管理
    - Prometheus、Grafana、Alertmanagerの設定
    - PersistentVolume/PVCの作成
    - Ingress設定
