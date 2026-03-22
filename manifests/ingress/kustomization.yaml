@@ -10,4 +10,5 @@ resources:
 - growi-converter.yaml
 - rss-notifier.yaml
 - prometheus.yaml
+- alertmanager.yaml
 - grafana.yaml
