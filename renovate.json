@@ -6,6 +6,11 @@
   "labels": [
     "renovate"
   ],
+  "ignorePaths": [
+    "manifests/growi-converter/**",
+    "manifests/minecraft/**",
+    "manifests/palworld/**"
+  ],
   "packageRules": [
     {
       "matchUpdateTypes": [
@@ -17,11 +22,6 @@
       "automergeType": "pr",
       "automergeStrategy": "squash",
       "platformAutomerge": false
-    },
-    {
-      "matchPackageNames": ["kubernetes-dashboard"],
-      "matchDatasources": ["helm"],
-      "allowedVersions": "<7.0.0"
     }
   ],
   "customManagers": [
