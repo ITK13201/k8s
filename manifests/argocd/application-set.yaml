@@ -14,6 +14,12 @@ spec:
       - path: manifests/*
       - path: manifests/growi
         exclude: true
+      - path: manifests/growi-converter
+        exclude: true
+      - path: manifests/minecraft
+        exclude: true
+      - path: manifests/palworld
+        exclude: true
   template:
     metadata:
       name: 'k8s-{{.path.basename}}'
