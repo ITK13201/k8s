@@ -6,7 +6,6 @@ resources:
 - growi.yaml
 - rss-generator.yaml
 - argocd.yaml
-- growi-converter.yaml
 - rss-notifier.yaml
 - prometheus.yaml
 - alertmanager.yaml
