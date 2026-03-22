@@ -25,7 +25,7 @@ terraform/backend.hcl
 
 ### Ansible ###
 ansible/inventory/group_vars/all.secret.yml
-ansible/inventory/group_vars/workers.secret.yml
+ansible/inventory/group_vars/workers/secret.yml
 
 ### Developments ###
 *.log

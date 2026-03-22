@@ -41,6 +41,8 @@ Terraform state は Cloudflare R2 で管理。SSH 鍵は `~/.ssh/personal/pve/id
 - [設計ドキュメント](docs/design/overview.md)（Proxmox VE 移行設計）
   - [Terraform 設計](docs/design/terraform.md)
   - [Ansible 設計](docs/design/ansible.md)
+  - [Prometheus/Grafana 設計](docs/prometheus-grafana-design.md)
+- [インシデント記録](docs/incidents/)（障害・ネットワーク問題の事後分析）
 
 ## 主要コマンド
 
