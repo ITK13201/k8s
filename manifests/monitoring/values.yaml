@@ -78,7 +78,8 @@ alertmanager:
 # Grafana configuration
 grafana:
   # Skip chown on startup (PV directory already owned by 472:472)
-  initChownData: false
+  initChownData:
+    enabled: false
 
   # Admin credentials from Secret (credentials/monitoring/grafana.env)
   admin:
