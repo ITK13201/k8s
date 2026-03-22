@@ -42,3 +42,4 @@ spec:
         kind: StatefulSet
         jqPathExpressions:
         - .spec.persistentVolumeClaimRetentionPolicy
+        - .spec.volumeClaimTemplates[].status
