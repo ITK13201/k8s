@@ -103,6 +103,14 @@ grafana:
       cpu: 500m
       memory: 512Mi
 
+  grafana.ini:
+    server:
+      domain: grafana.i-tk.dev
+      root_url: https://grafana.i-tk.dev
+    security:
+      cookie_secure: true
+      cookie_samesite: lax
+
   # Default dashboards enabled
   defaultDashboardsEnabled: true
   defaultDashboardsTimezone: Asia/Tokyo
