@@ -1,0 +1,78 @@
+---
+# --- discord-bot-cli ---
+
+- name: Check if discord-bot-cli is installed
+  ansible.builtin.stat:
+    path: "{{ server_setup_discord_bot_cli_install_dir }}/discord-bot-cli"
+  register: server_setup__discord_bot_cli_binary
+
+- name: Install discord-bot-cli
+  when: not server_setup__discord_bot_cli_binary.stat.exists
+  block:
+    - name: Download discord-bot-cli archive
+      ansible.builtin.get_url:
+        url: "{{ server_setup_discord_bot_cli_url }}"
+        dest: "/tmp/{{ server_setup_discord_bot_cli_archive }}"
+        mode: "0644"
+
+    - name: Extract discord-bot-cli archive
+      ansible.builtin.unarchive:
+        src: "/tmp/{{ server_setup_discord_bot_cli_archive }}"
+        dest: /tmp
+        remote_src: true
+
+    - name: Install discord-bot-cli binary
+      ansible.builtin.copy:
+        src: /tmp/discord-bot-cli
+        dest: "{{ server_setup_discord_bot_cli_install_dir }}/discord-bot-cli"
+        mode: "0755"
+        remote_src: true
+
+    - name: Remove discord-bot-cli archive
+      ansible.builtin.file:
+        path: "/tmp/{{ server_setup_discord_bot_cli_archive }}"
+        state: absent
+
+- name: Deploy discord-bot-cli config
+  ansible.builtin.template:
+    src: discord_bot_cli.yaml.j2
+    dest: /root/.discord-bot-cli.yaml
+    owner: root
+    group: root
+    mode: "0600"
+
+# --- Repository ---
+
+- name: Install git
+  ansible.builtin.dnf:
+    name: git
+    state: present
+
+- name: Create repo parent directory
+  ansible.builtin.file:
+    path: "{{ server_setup_repo_dest | dirname }}"
+    state: directory
+    mode: "0755"
+
+- name: Clone k8s repository
+  ansible.builtin.git:
+    repo: "{{ server_setup_repo_url }}"
+    dest: "{{ server_setup_repo_dest }}"
+    version: master
+    update: true
+    accept_hostkey: true
+
+# --- Cron jobs ---
+
+- name: Configure cron jobs
+  ansible.builtin.cron:
+    name: "{{ item.name }}"
+    minute: "{{ item.minute }}"
+    hour: "{{ item.hour }}"
+    day: "{{ item.day | default('*') }}"
+    month: "{{ item.month | default('*') }}"
+    weekday: "{{ item.weekday | default('*') }}"
+    job: "{{ item.job }}"
+    user: root
+    state: present
+  loop: "{{ server_setup_cron_jobs }}"

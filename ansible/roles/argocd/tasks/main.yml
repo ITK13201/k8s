@@ -1,0 +1,76 @@
+---
+- name: Check if ArgoCD is already installed
+  ansible.builtin.command: kubectl get deployment argocd-server -n {{ argocd_namespace }}
+  environment:
+    KUBECONFIG: "{{ k8s_kubeconfig_dir }}/config"
+  register: argocd__check
+  failed_when: false
+  changed_when: false
+
+- name: Install ArgoCD (server-side to avoid CRD annotation size limit)
+  when: argocd__check.rc != 0
+  ansible.builtin.command: >
+    kubectl apply --server-side -n {{ argocd_namespace }}
+    -f https://raw.githubusercontent.com/argoproj/argo-cd/{{ argocd_version }}/manifests/install.yaml
+  environment:
+    KUBECONFIG: "{{ k8s_kubeconfig_dir }}/config"
+  register: argocd_install_result
+  changed_when: "'created' in argocd_install_result.stdout or 'configured' in argocd_install_result.stdout"
+
+- name: Wait for ArgoCD CRDs to be established
+  ansible.builtin.command: >
+    kubectl wait --for=condition=established
+    crd/applications.argoproj.io
+    crd/appprojects.argoproj.io
+    crd/applicationsets.argoproj.io
+    --timeout=120s
+  environment:
+    KUBECONFIG: "{{ k8s_kubeconfig_dir }}/config"
+  changed_when: false
+
+- name: Create temporary directory for ArgoCD manifests
+  ansible.builtin.tempfile:
+    state: directory
+    suffix: argocd
+  register: argocd_tmp_dir
+
+- name: Copy ArgoCD manifests
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/../../manifests/argocd/"
+    dest: "{{ argocd_tmp_dir.path }}/"
+    mode: "0644"
+
+- name: Apply ArgoCD AppProject and ApplicationSet
+  ansible.builtin.command: >
+    kubectl apply -n {{ argocd_namespace }}
+    -f {{ argocd_tmp_dir.path }}/app-project.yaml
+    -f {{ argocd_tmp_dir.path }}/application-set.yaml
+  environment:
+    KUBECONFIG: "{{ k8s_kubeconfig_dir }}/config"
+  register: argocd_custom_result
+  changed_when: "'created' in argocd_custom_result.stdout or 'configured' in argocd_custom_result.stdout"
+
+- name: Patch argocd-cm with kustomize build options
+  ansible.builtin.command: >
+    kubectl patch configmap argocd-cm -n {{ argocd_namespace }}
+    --type merge
+    -p '{"data":{"kustomize.buildOptions":"--enable-helm"}}'
+  environment:
+    KUBECONFIG: "{{ k8s_kubeconfig_dir }}/config"
+  register: argocd_cm_patch_result
+  changed_when: "'no change' not in argocd_cm_patch_result.stdout"
+
+- name: Patch argocd-cmd-params-cm with server insecure mode
+  ansible.builtin.command: >
+    kubectl patch configmap argocd-cmd-params-cm -n {{ argocd_namespace }}
+    --type merge
+    -p '{"data":{"server.insecure":"true"}}'
+  environment:
+    KUBECONFIG: "{{ k8s_kubeconfig_dir }}/config"
+  register: argocd_cmd_params_patch_result
+  changed_when: "'no change' not in argocd_cmd_params_patch_result.stdout"
+
+- name: Clean up temporary directory
+  ansible.builtin.file:
+    path: "{{ argocd_tmp_dir.path }}"
+    state: absent

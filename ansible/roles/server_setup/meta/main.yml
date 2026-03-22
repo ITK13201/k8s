@@ -1,0 +1,6 @@
+---
+galaxy_info:
+  role_name: server_setup
+  description: Install discord-bot-cli, clone k8s repo, and configure cron jobs on worker nodes
+  min_ansible_version: "2.14"
+dependencies: []

@@ -17,12 +17,18 @@
       "automergeType": "pr",
       "automergeStrategy": "squash",
       "platformAutomerge": false
+    },
+    {
+      "matchPackageNames": ["kubernetes-dashboard"],
+      "matchDatasources": ["helm"],
+      "allowedVersions": "<7.0.0"
     }
   ],
-  "regexManagers": [
+  "customManagers": [
     {
-      "fileMatch": [
-        "(^|/)kustomization\\.ya?ml$"
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/(^|/)kustomization\\.ya?ml$/"
       ],
       "matchStrings": [
         "https://github\\.com/(?<depName>[^/]+/[^/]+)/releases/download/(?<currentValue>[^/]+)/.*"
@@ -30,8 +36,9 @@
       "datasourceTemplate": "github-releases"
     },
     {
-      "fileMatch": [
-        "(^|/)kustomization\\.ya?ml$"
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/(^|/)kustomization\\.ya?ml$/"
       ],
       "matchStrings": [
         "https://raw\\.githubusercontent\\.com/(?<depName>[^/]+/[^/]+)/(?<currentValue>[^/]+)/.*"
@@ -39,8 +46,9 @@
       "datasourceTemplate": "github-tags"
     },
     {
-      "fileMatch": [
-        ".*\\.ya?ml$"
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/.*\\.ya?ml$/"
       ],
       "matchStrings": [
         "image: (?<depName>\\S*):(?<currentValue>\\S*)"

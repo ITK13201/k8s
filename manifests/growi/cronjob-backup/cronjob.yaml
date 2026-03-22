@@ -5,6 +5,7 @@ metadata:
   namespace: growi
   name: backup
 spec:
+  suspend: true
   schedule: "30 5 * * *"
   jobTemplate:
     spec:

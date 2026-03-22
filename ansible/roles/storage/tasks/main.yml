@@ -1,0 +1,34 @@
+---
+- name: Create mount point directories
+  ansible.builtin.file:
+    path: "{{ item.mount_point }}"
+    state: directory
+    mode: "0755"
+  loop: "{{ storage_disks }}"
+  tags: storage
+
+- name: Check current mount UUID
+  ansible.builtin.shell: |
+    blkid -s UUID -o value $(findmnt -n -o SOURCE {{ item.mount_point }} 2>/dev/null) 2>/dev/null || echo ""
+  register: current_mount_uuid
+  changed_when: false
+  loop: "{{ storage_disks }}"
+  tags: storage
+
+- name: Unmount if UUID mismatch
+  ansible.builtin.mount:
+    path: "{{ item.item.mount_point }}"
+    state: unmounted
+  when: item.stdout | trim != item.item.uuid
+  loop: "{{ current_mount_uuid.results }}"
+  tags: storage
+
+- name: Mount disks and add to fstab
+  ansible.builtin.mount:
+    src: "UUID={{ item.uuid }}"
+    path: "{{ item.mount_point }}"
+    fstype: "{{ item.fstype }}"
+    opts: "{{ item.options }}"
+    state: mounted
+  loop: "{{ storage_disks }}"
+  tags: storage

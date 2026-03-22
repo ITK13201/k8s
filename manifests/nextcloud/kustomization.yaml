@@ -7,15 +7,24 @@ helmCharts:
   repo: https://nextcloud.github.io/helm/
   releaseName: nextcloud
   namespace: nextcloud
-  version: 6.6.10
+  version: 9.0.1
   valuesFile: values.yaml
   valuesMerge: override
 images:
-- name: nextcloud
-  newTag: 31.0.6-fpm
-- name: docker.io/bitnami/mariadb
-  newTag: 11.7.2
-- name: docker.io/bitnami/redis
-  newTag: 8.0.2
+- name: docker.io/library/nextcloud
+  newTag: 33.0.0-fpm
+- name: docker.io/bitnamilegacy/mariadb
+  newTag: 12.0.2
+- name: docker.io/bitnamilegacy/redis
+  newTag: 8.2.1
+patches:
+- patch: |-
+    - op: add
+      path: /metadata/namespace
+      value: nextcloud
+  target:
+    name: nextcloud(-nginxconfig|-phpconfig)?
+    kind: ConfigMap|Service|Deployment
 resources:
 - nextcloud-files-pvc.yaml
+- hpa.yaml

@@ -1,0 +1,52 @@
+---
+# クラスタをリセットして再構築できる状態にする。
+# worker → control plane の順にリセットすること。
+- name: Reset worker nodes
+  hosts: workers
+  become: true
+  tasks:
+    - name: Reset kubeadm
+      ansible.builtin.command: kubeadm reset -f
+      changed_when: true
+
+    - name: Flush iptables
+      ansible.builtin.command: iptables -F
+      changed_when: true
+
+    - name: Remove CNI config
+      ansible.builtin.file:
+        path: /etc/cni/net.d
+        state: absent
+
+    - name: Remove kubeconfig
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - /root/.kube
+        - "/home/{{ ansible_user }}/.kube"
+
+- name: Reset control plane
+  hosts: control_plane
+  become: true
+  tasks:
+    - name: Reset kubeadm
+      ansible.builtin.command: kubeadm reset -f
+      changed_when: true
+
+    - name: Flush iptables
+      ansible.builtin.command: iptables -F
+      changed_when: true
+
+    - name: Remove CNI config
+      ansible.builtin.file:
+        path: /etc/cni/net.d
+        state: absent
+
+    - name: Remove kubeconfig
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - /root/.kube
+        - "/home/{{ ansible_user }}/.kube"

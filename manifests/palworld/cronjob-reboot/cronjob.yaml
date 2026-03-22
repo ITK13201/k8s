@@ -5,6 +5,7 @@ metadata:
   name: restart-deployment
   namespace: palworld
 spec:
+  suspend: true
   concurrencyPolicy: Forbid
   timeZone: "Asia/Tokyo"
   schedule: '30 9 * * *'

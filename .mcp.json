@@ -1,0 +1,23 @@
+{
+  "mcpServers": {
+    "terraform": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "hashicorp/terraform-mcp-server:latest"
+      ]
+    },
+    "ansible": {
+      "command": "node",
+      "args": [
+        "/home/itk/.vscode/extensions/redhat.ansible-26.1.3/out/mcp/cli.js",
+        "--stdio"
+      ],
+      "env": {
+        "WORKSPACE_ROOT": "/home/itk/Work/personal/projects/k8s"
+      }
+    }
+  }
+}

@@ -1,0 +1,82 @@
+---
+- name: Check if control plane is already initialized
+  ansible.builtin.stat:
+    path: /etc/kubernetes/admin.conf
+  register: k8s_admin_conf
+
+- name: Initialize control plane
+  ansible.builtin.command: >
+    kubeadm init
+    --pod-network-cidr={{ k8s_pod_network_cidr }}
+  when: not k8s_admin_conf.stat.exists
+  changed_when: true
+
+- name: Create .kube directory for root
+  ansible.builtin.file:
+    path: "{{ k8s_kubeconfig_dir }}"
+    state: directory
+    mode: '0700'
+
+- name: Copy admin.conf to root kubeconfig
+  ansible.builtin.copy:
+    src: /etc/kubernetes/admin.conf
+    dest: "{{ k8s_kubeconfig_dir }}/config"
+    remote_src: true
+    mode: '0600'
+
+- name: Create .kube directory for ansible_user
+  ansible.builtin.file:
+    path: "/home/{{ ansible_user }}/.kube"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0700'
+
+- name: Copy admin.conf to ansible_user kubeconfig
+  ansible.builtin.copy:
+    src: /etc/kubernetes/admin.conf
+    dest: "/home/{{ ansible_user }}/.kube/config"
+    remote_src: true
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0600'
+
+- name: Apply Calico CNI
+  ansible.builtin.command: >
+    kubectl apply -f
+    https://raw.githubusercontent.com/projectcalico/calico/{{ k8s_calico_version }}/manifests/calico.yaml
+  environment:
+    KUBECONFIG: "{{ k8s_kubeconfig_dir }}/config"
+  register: k8s_calico_result
+  changed_when: "'created' in k8s_calico_result.stdout or 'configured' in k8s_calico_result.stdout"
+  retries: 3
+  delay: 10
+
+- name: Wait for Calico IPPool CRD to be established
+  ansible.builtin.command: >
+    kubectl wait --for=condition=established
+    crd/ippools.crd.projectcalico.org
+    --timeout=120s
+  environment:
+    KUBECONFIG: "{{ k8s_kubeconfig_dir }}/config"
+  changed_when: false
+
+- name: Wait for default Calico IPPool to be created
+  ansible.builtin.command: kubectl get ippool default-ipv4-ippool
+  environment:
+    KUBECONFIG: "{{ k8s_kubeconfig_dir }}/config"
+  register: k8s_calico_ippool_check
+  until: k8s_calico_ippool_check.rc == 0
+  retries: 12
+  delay: 10
+  changed_when: false
+
+- name: Configure Calico IPPool to use CrossSubnet IPIP mode
+  ansible.builtin.command: >
+    kubectl patch ippool default-ipv4-ippool
+    --type=merge
+    -p '{"spec":{"ipipMode":"CrossSubnet","natOutgoing":true}}'
+  environment:
+    KUBECONFIG: "{{ k8s_kubeconfig_dir }}/config"
+  register: k8s_calico_patch_result
+  changed_when: "'no change' not in k8s_calico_patch_result.stdout"

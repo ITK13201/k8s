@@ -1,0 +1,112 @@
+@startuml architecture
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName "Helvetica"
+skinparam componentStyle rectangle
+skinparam linetype ortho
+skinparam nodesep 60
+skinparam ranksep 80
+
+title 個人用 Kubernetes インフラ アーキテクチャ
+
+' =====================
+' External / Remote
+' =====================
+actor "Developer" as dev
+
+cloud "GitHub\n(k8s リポジトリ)" as github {
+  component "manifests/\n(Kustomize + Helm)" as manifests
+  component "terraform/\nansible/" as iac_code
+}
+
+cloud "Cloudflare R2\n(Terraform State)" as r2
+
+component "Renovate\n(依存自動更新)" as renovate
+
+' =====================
+' Local Tools
+' =====================
+package "ローカルツール" {
+  component "Terraform\n(bpg/proxmox ~>0.97)" as terraform
+  component "Ansible\n(カスタムロール)" as ansible
+}
+
+' =====================
+' Physical Infrastructure
+' =====================
+node "物理ホスト (12コア / 46GB RAM / SSD 256GB)" as physical_host {
+
+  node "Proxmox VE" as pve {
+
+    node "k8s-cp01  192.168.1.200\n2コア / 8GB / 30GB  Rocky Linux 9" as cp_vm {
+      component "Control Plane\n(kubeadm init)" as cp_k8s
+      component "Calico CNI" as calico
+      component "ArgoCD\n(ApplicationSet)" as argocd
+    }
+
+    node "k8s-worker01  192.168.1.201\n10コア / 32GB / 150GB  Rocky Linux 9" as worker_vm {
+      component "Worker Node\n(kubeadm join)" as worker_k8s
+
+      package "Namespace: monitoring" {
+        component "kube-prometheus-stack" as monitoring
+      }
+      package "Namespace: growi" {
+        component "Growi\n+ MongoDB + Elasticsearch" as growi
+      }
+      package "Namespace: nextcloud" {
+        component "Nextcloud" as nextcloud
+      }
+      package "Namespace: ingress-nginx / cert-manager" {
+        component "ingress-nginx\ncert-manager" as ingress
+      }
+      package "その他 Namespace" {
+        component "Minecraft / Palworld\nrss-generator / rss-notifier\nkubernetes-dashboard..." as others
+      }
+    }
+
+  }
+}
+
+' =====================
+' Relationships
+' =====================
+
+' --- Provisioning flow ---
+dev --> terraform : "terraform apply"
+terraform ..> r2 : "state 読み書き"
+terraform --> pve : "(1) VM プロビジョニング\nCloud-Init で初期設定"
+
+dev --> ansible : "ansible-playbook"
+ansible --> cp_vm : "(2) k8s インストール\nkubeadm init + Calico"
+ansible --> worker_vm : "(2) k8s インストール\nkubeadm join"
+
+' --- GitOps flow ---
+dev --> github : "git push (master)"
+renovate --> github : "依存更新 PR\n(non-0.x minor/patch は自動マージ)"
+argocd --> manifests : "(3) 監視・同期 (prune 有効)"
+
+argocd --> monitoring : "自動デプロイ"
+argocd --> growi : "自動デプロイ"
+argocd --> nextcloud : "自動デプロイ"
+argocd --> ingress : "自動デプロイ"
+argocd --> others : "自動デプロイ"
+
+' =====================
+' Legend / Notes
+' =====================
+legend right
+  <b>プロビジョニングフロー</b>
+  1. Terraform: Proxmox VE 上に VM を作成
+  2. Ansible: kubeadm で k8s クラスタ構築
+  3. ArgoCD: manifests/ を GitOps で管理
+
+  <b>Helm 統合</b>
+  helmCharts: ブロックで依存 Chart を宣言
+  kustomize build --enable-helm でレンダリング
+
+  <b>Secret 管理</b>
+  secrets/<ns>/ に Secret YAML を配置
+  credentials/<ns>/ (.env) は gitignore 対象
+endlegend
+
+@enduml
