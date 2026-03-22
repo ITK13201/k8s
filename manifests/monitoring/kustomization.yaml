@@ -12,6 +12,4 @@ helmCharts:
   valuesMerge: override
   includeCRDs: true
 resources:
-- prometheus-pvc.yaml
-- alertmanager-pvc.yaml
 - grafana-pvc.yaml
