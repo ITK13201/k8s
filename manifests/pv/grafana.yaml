@@ -13,7 +13,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   storageClassName: manual
   local:
-    path: /mnt/data/k8s/pv/monitoring/grafana
+    path: /mnt/hdd/data/k8s/pv/monitoring/grafana
   nodeAffinity:
     required:
       nodeSelectorTerms:

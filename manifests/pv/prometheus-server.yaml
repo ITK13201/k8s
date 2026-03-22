@@ -13,7 +13,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   storageClassName: manual
   local:
-    path: /mnt/data/k8s/pv/monitoring/prometheus
+    path: /mnt/hdd/data/k8s/pv/monitoring/prometheus
   nodeAffinity:
     required:
       nodeSelectorTerms:
