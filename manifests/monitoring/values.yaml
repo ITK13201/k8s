@@ -110,6 +110,7 @@ grafana:
     security:
       cookie_secure: true
       cookie_samesite: lax
+      csrf_trusted_origins: grafana.i-tk.dev
 
   # Default dashboards enabled
   defaultDashboardsEnabled: true
