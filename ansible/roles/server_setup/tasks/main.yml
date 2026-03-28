@@ -64,6 +64,13 @@
 
 # --- Cron jobs ---
 
+- name: Set PATH in crontab
+  ansible.builtin.cron:
+    name: PATH
+    env: true
+    job: /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+    user: root
+
 - name: Configure cron jobs
   ansible.builtin.cron:
     name: "{{ item.name }}"
