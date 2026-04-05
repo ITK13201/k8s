@@ -1,0 +1,12 @@
+- op: add
+  path: /spec/template/spec/containers/0/ports/0/hostPort
+  value: 25
+- op: add
+  path: /spec/template/spec/containers/0/ports/1/hostPort
+  value: 465
+- op: add
+  path: /spec/template/spec/containers/0/ports/2/hostPort
+  value: 587
+- op: add
+  path: /spec/template/spec/containers/0/ports/4/hostPort
+  value: 993

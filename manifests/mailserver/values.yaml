@@ -15,12 +15,19 @@ deployment:
     RELAY_HOST: smtp.resend.com
     RELAY_PORT: "465"
     RELAY_USER: resend
-  envFrom:
-  - secretRef:
-      name: mailserver-resend-secret  # RELAY_PASSWORD を注入
-  # hostPort でワーカーノードのポートに直接バインド（シングルワーカー構成）
-  hostPorts:
-    enabled: true
+  # Secret から RELAY_PASSWORD を注入
+  secretEnvironments:
+  - mailserver-resend-secret
+  # ワーカーノードにスケジュール固定（hostPort のため）
+  nodeSelector:
+    kubernetes.io/hostname: k8s-worker01
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1536Mi
+    limits:
+      cpu: 2000m
+      memory: 2048Mi
 
 certificate: "mailserver-tls"
 
@@ -49,15 +56,3 @@ persistent_volume_claims:
     selector:
       matchLabels:
         target-app: mailserver-log
-
-resources:
-  requests:
-    cpu: 500m
-    memory: 1536Mi
-  limits:
-    cpu: 2000m
-    memory: 2048Mi
-
-# ワーカーノードにスケジュール固定（hostPort のため）
-nodeSelector:
-  kubernetes.io/hostname: k8s-worker01

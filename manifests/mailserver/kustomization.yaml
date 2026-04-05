@@ -11,3 +11,8 @@ helmCharts:
   valuesMerge: override
 resources:
 - certificate.yaml
+patches:
+- path: patch-hostport.yaml
+  target:
+    kind: Deployment
+    name: mailserver-docker-mailserver
