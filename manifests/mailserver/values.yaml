@@ -13,7 +13,7 @@ deployment:
     ENABLE_FAIL2BAN: 1.0
     # Resend SMTP リレー設定（送信専用）
     RELAY_HOST: smtp.resend.com
-    RELAY_PORT: "465"
+    RELAY_PORT: "587"
     RELAY_USER: resend
   # Secret から RELAY_PASSWORD を注入
   secretEnvironments:
