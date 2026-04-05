@@ -42,6 +42,10 @@ Terraform state は Cloudflare R2 で管理。SSH 鍵は `~/.ssh/personal/pve/id
   - [Terraform 設計](docs/design/terraform.md)
   - [Ansible 設計](docs/design/ansible.md)
   - [Prometheus/Grafana 設計](docs/prometheus-grafana-design.md)
+  - [Cloudflare Zero Trust 設計](docs/design/cloudflare-zero-trust.md)
+  - [Terraform Cloudflare 設計](docs/design/terraform-cloudflare.md)
+  - [メールサーバ設計](docs/design/mailserver.md)（docker-mailserver on k8s）
+  - [シークレット管理 1Password 移行設計](docs/design/secrets-1password.md)（ESO + 1Password Connect）
 - [インシデント記録](docs/incidents/)（障害・ネットワーク問題の事後分析）
 
 ## 主要コマンド
@@ -57,11 +61,16 @@ yamlfmt .
 # Secretの再生成
 ./bin/create_secrets.sh
 
-# Terraform（R2バックエンドのため -backend-config が必須）
+# Terraform Proxmox（R2バックエンドのため -backend-config が必須）
 terraform -chdir=terraform init -backend-config=backend.hcl
 terraform -chdir=terraform plan
 terraform -chdir=terraform apply
 terraform -chdir=terraform output -json   # VM の IP アドレス確認
+
+# Terraform Cloudflare（独立したワークスペース）
+terraform -chdir=terraform/cloudflare init -backend-config=backend.hcl
+terraform -chdir=terraform/cloudflare plan
+terraform -chdir=terraform/cloudflare apply
 
 # Ansible（ansible.cfg の相対パス設定のため ansible/ ディレクトリから実行すること）
 cd ansible/
@@ -90,6 +99,12 @@ ansible-lint roles/<role>/tasks/main.yml         # lint
 ### バージョン固定
 - `kubernetes-dashboard`: **v6 を維持**（v6→v7 は非互換アップグレード）
 - 詳細は [docs/applications.md](docs/applications.md) を参照
+
+### Cloudflare Terraform Provider v5 命名変更
+- `cloudflare_record` → **`cloudflare_dns_record`**
+- DNS レコードの値フィールド: `value` → **`content`**
+- `cloudflare_zone_settings_override` 廃止 → **`cloudflare_zone_setting`**（設定1つにつき1リソース）
+- 新規サービス追加時は `terraform/cloudflare/dns.tf` の `web_subdomains` リストに追加すること
 
 ### Ansible ロール変数命名規則
 - ロール変数には必ずロール名プレフィックスを付ける: `rolename_varname`
