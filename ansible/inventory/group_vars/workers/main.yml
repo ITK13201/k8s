@@ -1,12 +1,33 @@
 ---
 server_setup_k8s_pv_dirs:
+  # SSD (/data/k8s/pv/)
   - /data/k8s/pv/minecraft/data
   - /data/k8s/pv/minecraft/mariadb
   - /data/k8s/pv/palworld
+  # HDD (/mnt/hdd/data/k8s/pv/)
+  - /mnt/hdd/data/k8s/pv/growi/uploads
+  - /mnt/hdd/data/k8s/pv/growi/mongodb
+  - /mnt/hdd/data/k8s/pv/growi/elasticsearch-master
+  - /mnt/hdd/data/k8s/pv/growi/elasticsearch-data
+  - /mnt/hdd/data/k8s/pv/growi-converter/attachment
+  - /mnt/hdd/data/k8s/pv/nextcloud/files
+  - /mnt/hdd/data/k8s/pv/nextcloud/mariadb
+  - /mnt/hdd/data/k8s/pv/nextcloud/redis-master
+  - /mnt/hdd/data/k8s/pv/nextcloud/redis-replicas
+  - /mnt/hdd/data/k8s/pv/monitoring/prometheus
+  - /mnt/hdd/data/k8s/pv/monitoring/alertmanager
+  - /mnt/hdd/data/k8s/pv/monitoring/grafana
+  - /mnt/hdd/data/k8s/pv/rss-generator/mariadb-primary
+  - /mnt/hdd/data/k8s/pv/rss-generator/mariadb-secondary
+  - /mnt/hdd/data/k8s/pv/rss-notifier/mariadb-primary
+  - /mnt/hdd/data/k8s/pv/rss-notifier/mariadb-secondary
   - /mnt/hdd/data/k8s/pv/mailserver/data
   - /mnt/hdd/data/k8s/pv/mailserver/state
   - /mnt/hdd/data/k8s/pv/mailserver/config
   - /mnt/hdd/data/k8s/pv/mailserver/log
+  # HDD backup (/mnt/hdd-backup/)
+  - /mnt/hdd-backup/backups/k8s/pv/growi-backup/backup
+  - /mnt/hdd-backup/backups/k8s/pv/growi-backup/attachments
 
 storage_disks:
   - uuid: "1150bec5-27f1-4ca2-a64b-1424a0932196"
