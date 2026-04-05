@@ -1,11 +1,14 @@
 cloudflare_api_token  = "REPLACE_WITH_CLOUDFLARE_API_TOKEN"
 cloudflare_account_id = "REPLACE_WITH_ACCOUNT_ID"
 home_ip               = "REPLACE_WITH_HOME_IP"
-owner_email           = "your@email.com"
 
-sendgrid_dkim_cname = {
-  em_name = "emXXXXXX"
-  em      = "emXXXXXX.i-tk.dev.dkim.sendgrid.net"
-  s1      = "s1.domainkey.uXXXXXX.wl.sendgrid.net"
-  s2      = "s2.domainkey.uXXXXXX.wl.sendgrid.net"
-}
+# Cloudflare Zero Trust 設定時に使用
+# owner_email = "your@email.com"
+
+# SendGrid ドメイン認証完了後に設定する
+# sendgrid_dkim_cname = {
+#   em_name = "emXXXXXX"
+#   em      = "emXXXXXX.i-tk.dev.dkim.sendgrid.net"
+#   s1      = "s1.domainkey.uXXXXXX.wl.sendgrid.net"
+#   s2      = "s2.domainkey.uXXXXXX.wl.sendgrid.net"
+# }
