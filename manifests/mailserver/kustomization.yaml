@@ -13,6 +13,23 @@ helmCharts:
 resources:
 - certificate.yaml
 patches:
+# Helm チャートリソースへの namespace 付与（kustomize の namespace: フィールドが helmCharts に適用されないため）
+- patch: '[{"op":"add","path":"/metadata/namespace","value":"mailserver"}]'
+  target:
+    kind: ServiceAccount
+- patch: '[{"op":"add","path":"/metadata/namespace","value":"mailserver"}]'
+  target:
+    kind: ConfigMap
+- patch: '[{"op":"add","path":"/metadata/namespace","value":"mailserver"}]'
+  target:
+    kind: Service
+- patch: '[{"op":"add","path":"/metadata/namespace","value":"mailserver"}]'
+  target:
+    kind: PersistentVolumeClaim
+- patch: '[{"op":"add","path":"/metadata/namespace","value":"mailserver"}]'
+  target:
+    kind: Deployment
+# hostPort パッチ
 - path: patch-hostport.yaml
   target:
     kind: Deployment
