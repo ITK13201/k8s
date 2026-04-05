@@ -1,6 +1,13 @@
 variable "cloudflare_api_token" {
-  type      = string
-  sensitive = true
+  type        = string
+  sensitive   = true
+  description = "DNS・ゾーン設定用 API トークン（Zone:DNS:Edit, Zone:Zone Settings:Edit, Zone:Zone:Read）"
+}
+
+variable "cloudflare_r2_api_token" {
+  type        = string
+  sensitive   = true
+  description = "R2 バケット管理用 API トークン（Account:Cloudflare R2 Storage:Edit）"
 }
 
 variable "cloudflare_account_id" {
