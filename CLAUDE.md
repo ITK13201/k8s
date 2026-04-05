@@ -100,6 +100,25 @@ ansible-lint roles/<role>/tasks/main.yml         # lint
 - `kubernetes-dashboard`: **v6 を維持**（v6→v7 は非互換アップグレード）
 - 詳細は [docs/applications.md](docs/applications.md) を参照
 
+### kustomize helmCharts への namespace 非適用
+- kustomize 5.8.1 では `namespace:` フィールドが `helmCharts:` で生成されるリソースに適用されない
+- 回避策: `kustomization.yaml` 内に種類ごとの JSON6902 パッチを追加する
+  ```yaml
+  patches:
+  - patch: '[{"op":"add","path":"/metadata/namespace","value":"<ns>"}]'
+    target:
+      kind: Deployment
+  ```
+
+### PersistentVolume 管理
+- PV は `manifests/pv/` で定義し、`reclaimPolicy: Retain` を使用
+- PV のホストパスは `k8s-worker01` の `/data/k8s/pv/<app>/` を使用
+- ディレクトリ作成は Ansible `server_setup` ロールの `server_setup_k8s_pv_dirs` 変数で管理
+- PV が `Released` 状態になった場合は `claimRef` を手動で削除して `Available` に戻す:
+  ```bash
+  kubectl patch pv <name> --type=json -p='[{"op":"remove","path":"/spec/claimRef"}]'
+  ```
+
 ### Cloudflare Terraform Provider v5 命名変更
 - `cloudflare_record` → **`cloudflare_dns_record`**
 - DNS レコードの値フィールド: `value` → **`content`**
