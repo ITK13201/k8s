@@ -62,6 +62,16 @@
     update: true
     accept_hostkey: true
 
+# --- k8s PV directories ---
+
+- name: Create k8s PV directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0755"
+  loop: "{{ server_setup_k8s_pv_dirs }}"
+  tags: k8s_pv_dirs
+
 # --- Cron jobs ---
 
 - name: Set PATH in crontab

@@ -13,7 +13,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   storageClassName: manual
   local:
-    path: /data/k8s/pv/mailserver/data
+    path: /mnt/hdd/data/k8s/pv/mailserver/data
   nodeAffinity:
     required:
       nodeSelectorTerms:

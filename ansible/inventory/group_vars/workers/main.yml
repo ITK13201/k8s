@@ -1,4 +1,13 @@
 ---
+server_setup_k8s_pv_dirs:
+  - /data/k8s/pv/minecraft/data
+  - /data/k8s/pv/minecraft/mariadb
+  - /data/k8s/pv/palworld
+  - /mnt/hdd/data/k8s/pv/mailserver/data
+  - /mnt/hdd/data/k8s/pv/mailserver/state
+  - /mnt/hdd/data/k8s/pv/mailserver/config
+  - /mnt/hdd/data/k8s/pv/mailserver/log
+
 storage_disks:
   - uuid: "1150bec5-27f1-4ca2-a64b-1424a0932196"
     mount_point: /mnt/hdd

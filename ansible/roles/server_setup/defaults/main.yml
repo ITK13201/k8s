@@ -13,6 +13,8 @@ server_setup_discord_bot_cli_config_channels:
   - name: growi
     id: ""
 
+server_setup_k8s_pv_dirs: []
+
 server_setup_repo_url: "https://github.com/ITK13201/k8s.git"
 server_setup_repo_dest: /usr/local/src/k8s/k8s
 
