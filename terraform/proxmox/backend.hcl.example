@@ -1,5 +1,5 @@
 bucket = "tf-state-k8s"
-key    = "terraform.tfstate"
+key    = "proxmox/terraform.tfstate"
 region = "auto"
 endpoints = {
   s3 = "https://REPLACE_WITH_ACCOUNT_ID.r2.cloudflarestorage.com"
