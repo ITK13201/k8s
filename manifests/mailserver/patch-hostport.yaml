@@ -8,5 +8,5 @@
   path: /spec/template/spec/containers/0/ports/2/hostPort
   value: 587
 - op: add
-  path: /spec/template/spec/containers/0/ports/4/hostPort
+  path: /spec/template/spec/containers/0/ports/7/hostPort
   value: 993
