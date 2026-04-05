@@ -1,0 +1,16 @@
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: mailserver-tls
+  namespace: mailserver
+spec:
+  secretName: mailserver-tls
+  issuerRef:
+    name: letsencrypt
+    kind: ClusterIssuer
+  dnsNames:
+  - mail.i-tk.dev
+  privateKey:
+    algorithm: ECDSA
+    size: 384

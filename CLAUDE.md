@@ -62,10 +62,10 @@ yamlfmt .
 ./bin/create_secrets.sh
 
 # Terraform Proxmox（R2バックエンドのため -backend-config が必須）
-terraform -chdir=terraform init -backend-config=backend.hcl
-terraform -chdir=terraform plan
-terraform -chdir=terraform apply
-terraform -chdir=terraform output -json   # VM の IP アドレス確認
+terraform -chdir=terraform/proxmox init -backend-config=backend.hcl
+terraform -chdir=terraform/proxmox plan
+terraform -chdir=terraform/proxmox apply
+terraform -chdir=terraform/proxmox output -json   # VM の IP アドレス確認
 
 # Terraform Cloudflare（独立したワークスペース）
 terraform -chdir=terraform/cloudflare init -backend-config=backend.hcl

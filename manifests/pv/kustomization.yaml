@@ -20,3 +20,7 @@ resources:
 - prometheus-server.yaml
 - prometheus-alertmanager.yaml
 - grafana.yaml
+- mailserver-data.yaml
+- mailserver-state.yaml
+- mailserver-config.yaml
+- mailserver-log.yaml

@@ -1,0 +1,66 @@
+---
+deployment:
+  env:
+    OVERRIDE_HOSTNAME: mail.i-tk.dev
+    ENABLE_OPENDKIM: "1"
+    ENABLE_OPENDMARC: "1"
+    ENABLE_RSPAMD: "1"
+    ENABLE_CLAMAV: "0"      # メモリ消費が大きいため無効
+    ENABLE_FAIL2BAN: "1"
+    SSL_TYPE: manual
+    SSL_CERT_PATH: /secrets/tls.crt
+    SSL_KEY_PATH: /secrets/tls.key
+    # SendGrid SMTP リレー設定（送信専用）
+    RELAY_HOST: smtp.sendgrid.net
+    RELAY_PORT: "587"
+    RELAY_USER: apikey
+  envFrom:
+  - secretRef:
+      name: mailserver-sendgrid-secret  # RELAY_PASSWORD を注入
+  # hostPort でワーカーノードのポートに直接バインド（シングルワーカー構成）
+  hostPorts:
+    enabled: true
+  extraVolumes:
+  - name: tls-secret
+    secret:
+      secretName: mailserver-tls
+  extraVolumeMounts:
+  - name: tls-secret
+    mountPath: /secrets
+    readOnly: true
+
+certificate: "mailserver-tls"
+
+persistence:
+  config:
+    enabled: true
+    size: 1Gi
+    storageClass: manual
+    accessMode: ReadWriteOnce
+  data:
+    enabled: true
+    size: 20Gi
+    storageClass: manual
+    accessMode: ReadWriteOnce
+  state:
+    enabled: true
+    size: 1Gi
+    storageClass: manual
+    accessMode: ReadWriteOnce
+  log:
+    enabled: true
+    size: 5Gi
+    storageClass: manual
+    accessMode: ReadWriteOnce
+
+resources:
+  requests:
+    cpu: 500m
+    memory: 1536Mi
+  limits:
+    cpu: 2000m
+    memory: 2048Mi
+
+# ワーカーノードにスケジュール固定（hostPort のため）
+nodeSelector:
+  kubernetes.io/hostname: k8s-worker01

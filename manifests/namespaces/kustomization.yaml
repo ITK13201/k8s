@@ -10,3 +10,4 @@ resources:
 - argocd.yaml
 - rss-notifier.yaml
 - monitoring.yaml
+- mailserver.yaml

@@ -18,10 +18,14 @@ temp*.yaml
 .vagrant/
 
 ### Terraform ###
-terraform/.terraform/
-terraform/.terraform.lock.hcl
-terraform/terraform.tfvars
-terraform/backend.hcl
+terraform/proxmox/.terraform/
+terraform/proxmox/.terraform.lock.hcl
+terraform/proxmox/terraform.tfvars
+terraform/proxmox/backend.hcl
+terraform/cloudflare/.terraform/
+terraform/cloudflare/.terraform.lock.hcl
+terraform/cloudflare/terraform.tfvars
+terraform/cloudflare/backend.hcl
 
 ### Ansible ###
 ansible/inventory/group_vars/all.secret.yml

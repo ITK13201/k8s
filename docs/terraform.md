@@ -25,7 +25,7 @@
 ### backend.hcl の作成
 
 ```bash
-cp terraform/backend.hcl.example terraform/backend.hcl
+cp terraform/proxmox/backend.hcl.example terraform/proxmox/backend.hcl
 # backend.hcl を編集して ACCOUNT_ID・ACCESS_KEY・SECRET_KEY を設定
 ```
 
@@ -40,17 +40,17 @@ cp terraform/backend.hcl.example terraform/backend.hcl
 
 ```bash
 # プロバイダーと R2 バックエンドを初期化
-terraform -chdir=terraform init -backend-config=backend.hcl
+terraform -chdir=terraform/proxmox init -backend-config=backend.hcl
 ```
 
 ## VM のプロビジョニング
 
 ```bash
 # 変更内容を確認
-terraform -chdir=terraform plan
+terraform -chdir=terraform/proxmox plan
 
 # VM を作成
-terraform -chdir=terraform apply
+terraform -chdir=terraform/proxmox apply
 ```
 
 `apply` が完了すると以下のリソースが作成される:
@@ -62,7 +62,7 @@ terraform -chdir=terraform apply
 
 ```bash
 # IP アドレスを確認
-terraform -chdir=terraform output -json
+terraform -chdir=terraform/proxmox output -json
 
 # 出力された IP を ansible/inventory/hosts.yml に反映する
 ```
@@ -70,7 +70,7 @@ terraform -chdir=terraform output -json
 ## VM の削除
 
 ```bash
-terraform -chdir=terraform destroy
+terraform -chdir=terraform/proxmox destroy
 ```
 
 ## トラブルシューティング
