@@ -24,13 +24,13 @@ resource "cloudflare_dns_record" "mx" {
 }
 
 # -----------------------------------------------
-# SPF（送信は SendGrid のみ許可）
+# SPF（送信は Resend のみ許可）
 # -----------------------------------------------
 resource "cloudflare_dns_record" "spf" {
   zone_id = local.zone_id
   name    = "i-tk.dev"
   type    = "TXT"
-  content = "v=spf1 include:sendgrid.net -all"
+  content = "v=spf1 include:amazonses.com -all"
   proxied = false
   ttl     = 3600
 }
@@ -48,38 +48,39 @@ resource "cloudflare_dns_record" "dmarc" {
 }
 
 # -----------------------------------------------
-# SendGrid DKIM CNAME（ドメイン認証）
-# sendgrid_dkim_cname が設定された場合のみ作成
+# Resend ドメイン認証（DKIM・Return-Path）
+# resend_dkim_txt が設定された場合のみ作成
 # -----------------------------------------------
-resource "cloudflare_dns_record" "sendgrid_dkim_em" {
-  count = var.sendgrid_dkim_cname != null ? 1 : 0
+resource "cloudflare_dns_record" "resend_dkim" {
+  count = var.resend_dkim_txt != null ? 1 : 0
 
   zone_id = local.zone_id
-  name    = "${var.sendgrid_dkim_cname.em_name}._domainkey.i-tk.dev"
-  type    = "CNAME"
-  content = var.sendgrid_dkim_cname.em
+  name    = "resend._domainkey.i-tk.dev"
+  type    = "TXT"
+  content = var.resend_dkim_txt
   proxied = false
   ttl     = 3600
 }
 
-resource "cloudflare_dns_record" "sendgrid_dkim_s1" {
-  count = var.sendgrid_dkim_cname != null ? 1 : 0
+resource "cloudflare_dns_record" "resend_return_path_mx" {
+  count = var.resend_dkim_txt != null ? 1 : 0
 
-  zone_id = local.zone_id
-  name    = "s1._domainkey.i-tk.dev"
-  type    = "CNAME"
-  content = var.sendgrid_dkim_cname.s1
-  proxied = false
-  ttl     = 3600
+  zone_id  = local.zone_id
+  name     = "send.i-tk.dev"
+  type     = "MX"
+  content  = "feedback-smtp.ap-northeast-1.amazonses.com"
+  priority = 10
+  proxied  = false
+  ttl      = 3600
 }
 
-resource "cloudflare_dns_record" "sendgrid_dkim_s2" {
-  count = var.sendgrid_dkim_cname != null ? 1 : 0
+resource "cloudflare_dns_record" "resend_return_path_spf" {
+  count = var.resend_dkim_txt != null ? 1 : 0
 
   zone_id = local.zone_id
-  name    = "s2._domainkey.i-tk.dev"
-  type    = "CNAME"
-  content = var.sendgrid_dkim_cname.s2
+  name    = "send.i-tk.dev"
+  type    = "TXT"
+  content = "v=spf1 include:amazonses.com ~all"
   proxied = false
   ttl     = 3600
 }

@@ -1,5 +1,9 @@
 ---
 deployment:
+  # docker-mailserver は s6-overlay を init システムとして使用しており root で動作させる必要がある
+  securityContext:
+    runAsUser: 0
+    runAsGroup: 0
   env:
     OVERRIDE_HOSTNAME: mail.i-tk.dev
     ENABLE_OPENDKIM: "1"
@@ -10,13 +14,13 @@ deployment:
     SSL_TYPE: manual
     SSL_CERT_PATH: /secrets/tls.crt
     SSL_KEY_PATH: /secrets/tls.key
-    # SendGrid SMTP リレー設定（送信専用）
-    RELAY_HOST: smtp.sendgrid.net
-    RELAY_PORT: "587"
-    RELAY_USER: apikey
+    # Resend SMTP リレー設定（送信専用）
+    RELAY_HOST: smtp.resend.com
+    RELAY_PORT: "465"
+    RELAY_USER: resend
   envFrom:
   - secretRef:
-      name: mailserver-sendgrid-secret  # RELAY_PASSWORD を注入
+      name: mailserver-resend-secret  # RELAY_PASSWORD を注入
   # hostPort でワーカーノードのポートに直接バインド（シングルワーカー構成）
   hostPorts:
     enabled: true

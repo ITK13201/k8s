@@ -6,10 +6,5 @@ home_ip                 = "REPLACE_WITH_HOME_IP"
 # Cloudflare Zero Trust 設定時に使用
 # owner_email = "your@email.com"
 
-# SendGrid ドメイン認証完了後に設定する
-# sendgrid_dkim_cname = {
-#   em_name = "emXXXXXX"
-#   em      = "emXXXXXX.i-tk.dev.dkim.sendgrid.net"
-#   s1      = "s1.domainkey.uXXXXXX.wl.sendgrid.net"
-#   s2      = "s2.domainkey.uXXXXXX.wl.sendgrid.net"
-# }
+# Resend ドメイン認証完了後に設定する
+# resend_dkim_txt = "p=XXXX..."

@@ -26,13 +26,8 @@ variable "owner_email" {
   default     = null
 }
 
-variable "sendgrid_dkim_cname" {
-  type = object({
-    em_name = string
-    em      = string
-    s1      = string
-    s2      = string
-  })
-  description = "SendGrid ドメイン認証で発行される CNAME レコード値。未設定の場合 DKIM レコードはスキップされる"
+variable "resend_dkim_txt" {
+  type        = string
+  description = "Resend ドメイン認証で発行される DKIM TXT レコード値（p=...）。未設定の場合 DKIM レコードはスキップされる"
   default     = null
 }

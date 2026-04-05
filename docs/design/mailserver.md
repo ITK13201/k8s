@@ -3,7 +3,7 @@
 ## 概要
 
 docker-mailserver を Kubernetes 上に構築し、個人ドメイン (`i-tk.dev`) のメール**受信**を担う。
-**送信は SendGrid SMTP リレー**を経由するため、docker-mailserver は受信専用サーバとして動作する。
+**送信は Resend SMTP リレー**を経由するため、docker-mailserver は受信専用サーバとして動作する。
 公式 Helm chart (`docker-mailserver/docker-mailserver` v5.1.1 / app v15.1.0) を使用する。
 
 > **注意**: docker-mailserver の Kubernetes 対応はコミュニティサポートであり、公式サポートではない。
@@ -15,11 +15,11 @@ docker-mailserver を Kubernetes 上に構築し、個人ドメイン (`i-tk.dev
 | メールドメイン | `i-tk.dev` |
 | ホスト名 | `mail.i-tk.dev` |
 | 受信プロトコル | SMTP 受信 (25), IMAPS (993) |
-| 送信 | SendGrid SMTP リレー（`smtp.sendgrid.net:587`） |
-| 内部アプリ送信 | クラスタ内アプリ → docker-mailserver (587) → SendGrid リレー |
+| 送信 | Resend SMTP リレー（`smtp.resend.com:465`） |
+| 内部アプリ送信 | クラスタ内アプリ → docker-mailserver (587) → Resend リレー |
 | TLS | cert-manager (Cloudflare DNS-01) |
 | スパムフィルタ | Rspamd (受信フィルタ) |
-| DKIM 検証 | 受信時に検証（署名は SendGrid が担当） |
+| DKIM 検証 | 受信時に検証（署名は Resend が担当） |
 | アンチウイルス | ClamAV 無効（メモリ消費が大きいため） |
 
 ## アーキテクチャ
@@ -41,14 +41,14 @@ IMAP クライアント (MUA) ← port 993
     ↓ port 587 (cluster-internal)
 mailserver Pod
     ↓ SMTP AUTH
-SendGrid (smtp.sendgrid.net:587)
+Resend (smtp.resend.com:465)
     ↓
 宛先 MTA
 
 【送信フロー: 外部 MUA】
 MUA (Thunderbird 等)
-    ↓ SMTP AUTH (smtp.sendgrid.net:587)
-SendGrid
+    ↓ SMTP AUTH (smtp.resend.com:465)
+Resend
     ↓
 宛先 MTA
 ```
@@ -60,10 +60,10 @@ SendGrid
 | ポート | 公開範囲 | 用途 |
 |--------|---------|------|
 | 25 | 外部公開 | SMTP 受信（外部 MTA からのメール受け取り） |
-| 587 | クラスタ内のみ | Submission（クラスタ内アプリ → SendGrid リレー） |
+| 587 | クラスタ内のみ | Submission（クラスタ内アプリ → Resend リレー） |
 | 993 | 外部公開 | IMAPS（MUA からのメール取得） |
 
-> ポート 465 (SMTPS) は不要。送信は SendGrid SMTP に直接接続するため。
+> ポート 465 は Resend SMTP (SMTPS) として使用。
 
 ### ワーカー追加時の移行先: ingress-nginx TCP PROXY Protocol
 
@@ -122,7 +122,7 @@ resources:
 deployment:
   env:
     OVERRIDE_HOSTNAME: mail.i-tk.dev
-    # DKIM は受信検証のみ有効（送信署名は SendGrid が担当）
+    # DKIM は受信検証のみ有効（送信署名は Resend が担当）
     ENABLE_OPENDKIM: "1"
     ENABLE_OPENDMARC: "1"
     ENABLE_RSPAMD: "1"
@@ -131,13 +131,13 @@ deployment:
     SSL_TYPE: manual
     SSL_CERT_PATH: /secrets/tls.crt
     SSL_KEY_PATH: /secrets/tls.key
-    # SendGrid SMTP リレー設定
-    RELAY_HOST: smtp.sendgrid.net
-    RELAY_PORT: "587"
-    RELAY_USER: apikey
+    # Resend SMTP リレー設定
+    RELAY_HOST: smtp.resend.com
+    RELAY_PORT: "465"
+    RELAY_USER: resend
   envFrom:
   - secretRef:
-      name: mailserver-sendgrid-secret   # RELAY_PASSWORD を注入
+      name: mailserver-resend-secret   # RELAY_PASSWORD を注入
   # hostPort でワーカーノードのポートに直接バインド
   hostPorts:
     enabled: true
@@ -237,11 +237,11 @@ spec:
 
 ## シークレット管理
 
-SendGrid API キーを Secret として管理する。
+Resend API キーを Secret として管理する。
 
 ```env
-# credentials/mailserver/mailserver-sendgrid-secret.env
-RELAY_PASSWORD=<SendGrid API Key>
+# credentials/mailserver/mailserver-resend-secret.env
+RELAY_PASSWORD=<Resend API Key>
 ```
 
 Issue #140（1Password 移行）完了後は ExternalSecret に変更する。
@@ -252,18 +252,17 @@ Issue #140（1Password 移行）完了後は ExternalSecret に変更する。
 |--------|------|----|------|
 | A | `mail` | `<自宅グローバルIP>` | ルーターの WAN IP |
 | MX | `@` | `mail.i-tk.dev` | Priority: 10 |
-| TXT | `@` | `v=spf1 include:sendgrid.net -all` | SPF（SendGrid のみ許可） |
+| TXT | `@` | `v=spf1 include:amazonses.com -all` | SPF（Resend のみ許可） |
 | TXT | `_dmarc` | `v=DMARC1; p=quarantine; rua=mailto:postmaster@i-tk.dev` | DMARC |
-| CNAME | `em<number>._domainkey` | （SendGrid が発行する値） | SendGrid DKIM |
-| CNAME | `s1._domainkey` | （SendGrid が発行する値） | SendGrid DKIM |
-| CNAME | `s2._domainkey` | （SendGrid が発行する値） | SendGrid DKIM |
+| TXT | `resend._domainkey` | （Resend が発行する値） | Resend DKIM |
+| MX | `send` | `feedback-smtp.ap-northeast-1.amazonses.com` | Resend Return-Path |
+| TXT | `send` | `v=spf1 include:amazonses.com ~all` | Resend Return-Path SPF |
 
-> **SPF の注意**: 送信は SendGrid のみを経由するため `include:sendgrid.net -all` とする。
-> 自サーバの IP を含む `mx` は不要。
+> **SPF の注意**: 送信は Resend のみを経由するため `include:amazonses.com -all` とする。
 
-### SendGrid ドメイン認証
+### Resend ドメイン認証
 
-SendGrid ダッシュボード「Settings > Sender Authentication > Domain Authentication」で `i-tk.dev` を登録し、発行される CNAME レコードを Cloudflare に設定する。SendGrid がアウトバウンドの DKIM 署名を行う。
+Resend ダッシュボード「Domains」で `i-tk.dev` を登録し、発行される DNS レコードを Cloudflare に設定する。Resend がアウトバウンドの DKIM 署名を行う。
 
 ## DKIM（受信検証）
 
@@ -300,9 +299,9 @@ kubectl exec -n mailserver deploy/mailserver -- setup alias add postmaster@i-tk.
 
 ## セットアップ手順
 
-1. **SendGrid 設定**
-   - SendGrid アカウントで API キーを発行（Mail Send 権限）
-   - 「Sender Authentication」で `i-tk.dev` のドメイン認証を完了し、CNAME レコードを Cloudflare に登録
+1. **Resend 設定**
+   - Resend アカウントで API キーを発行
+   - 「Domains」で `i-tk.dev` のドメイン認証を完了し、DNS レコードを Cloudflare に登録
 
 2. **Namespace 追加**
    `manifests/namespaces/mailserver.yaml` を作成し `kustomization.yaml` に追加
@@ -314,7 +313,7 @@ kubectl exec -n mailserver deploy/mailserver -- setup alias add postmaster@i-tk.
    ```
 
 4. **シークレット作成**
-   `credentials/mailserver/mailserver-sendgrid-secret.env` に SendGrid API キーを記載し `./bin/create_secrets.sh` を実行
+   `credentials/mailserver/mailserver-resend-secret.env` に Resend API キーを記載し `./bin/create_secrets.sh` を実行
 
 5. **マニフェスト作成・プッシュ**
    `manifests/mailserver/` を作成し `master` にプッシュ → ArgoCD が自動同期
@@ -344,5 +343,5 @@ kubectl exec -n mailserver deploy/mailserver -- setup alias add postmaster@i-tk.
 
 - [docker-mailserver Helm Chart](https://docker-mailserver.github.io/docker-mailserver-helm/)
 - [Kubernetes 上での設定（公式）](https://docker-mailserver.github.io/docker-mailserver/latest/config/advanced/kubernetes/)
-- [SendGrid ドメイン認証](https://docs.sendgrid.com/ui/account-and-settings/how-to-set-up-domain-authentication)
+- [Resend ドキュメント](https://resend.com/docs)
 - [Artifact Hub](https://artifacthub.io/packages/helm/docker-mailserver/docker-mailserver)

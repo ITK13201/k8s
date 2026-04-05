@@ -143,15 +143,10 @@ terraform -chdir=terraform/cloudflare import \
   'cloudflare_dns_record.web["argocd"]' "<ZONE_ID>/<RECORD_ID>"
 ```
 
-## SendGrid DKIM 設定（メールサーバ構築後）
+## Resend DKIM 設定（メールサーバ構築後）
 
-SendGrid でドメイン認証完了後、`terraform.tfvars` に `sendgrid_dkim_cname` を追加して apply する。
+Resend でドメイン認証完了後、`terraform.tfvars` に `resend_dkim_txt` を追加して apply する。
 
 ```hcl
-sendgrid_dkim_cname = {
-  em_name = "emXXXXXX"
-  em      = "emXXXXXX.i-tk.dev.dkim.sendgrid.net"
-  s1      = "s1.domainkey.uXXXXXX.wl.sendgrid.net"
-  s2      = "s2.domainkey.uXXXXXX.wl.sendgrid.net"
-}
+resend_dkim_txt = "p=XXXX..."
 ```

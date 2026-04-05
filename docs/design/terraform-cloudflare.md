@@ -97,14 +97,10 @@ variable "cloudflare_account_id" {
   description = "Cloudflare アカウント ID"
 }
 
-variable "sendgrid_dkim_cname" {
-  type = object({
-    em      = string  # em<number>._domainkey の値
-    s1      = string  # s1._domainkey の値
-    s2      = string  # s2._domainkey の値
-    em_name = string  # em<number> 部分の名前
-  })
-  description = "SendGrid ドメイン認証で発行される CNAME レコード値"
+variable "resend_dkim_txt" {
+  type        = string
+  description = "Resend ドメイン認証で発行される DKIM TXT レコード値（p=...）"
+  default     = null
 }
 ```
 
@@ -176,13 +172,13 @@ resource "cloudflare_dns_record" "mx" {
 }
 
 # -----------------------------------------------
-# SPF（送信は SendGrid のみ許可）
+# SPF（送信は Resend のみ許可）
 # -----------------------------------------------
 resource "cloudflare_dns_record" "spf" {
   zone_id = local.zone_id
   name    = "i-tk.dev"
   type    = "TXT"
-  content = "v=spf1 include:sendgrid.net -all"
+  content = "v=spf1 include:amazonses.com -all"
   proxied = false
   ttl     = 3600
 }
@@ -200,31 +196,35 @@ resource "cloudflare_dns_record" "dmarc" {
 }
 
 # -----------------------------------------------
-# SendGrid DKIM CNAME（ドメイン認証）
+# Resend ドメイン認証（DKIM・Return-Path）
 # -----------------------------------------------
-resource "cloudflare_dns_record" "sendgrid_dkim_em" {
+resource "cloudflare_dns_record" "resend_dkim" {
+  count   = var.resend_dkim_txt != null ? 1 : 0
   zone_id = local.zone_id
-  name    = "${var.sendgrid_dkim_cname.em_name}._domainkey.i-tk.dev"
-  type    = "CNAME"
-  content = var.sendgrid_dkim_cname.em
+  name    = "resend._domainkey.i-tk.dev"
+  type    = "TXT"
+  content = var.resend_dkim_txt
   proxied = false
   ttl     = 3600
 }
 
-resource "cloudflare_dns_record" "sendgrid_dkim_s1" {
-  zone_id = local.zone_id
-  name    = "s1._domainkey.i-tk.dev"
-  type    = "CNAME"
-  content = var.sendgrid_dkim_cname.s1
-  proxied = false
-  ttl     = 3600
+resource "cloudflare_dns_record" "resend_return_path_mx" {
+  count    = var.resend_dkim_txt != null ? 1 : 0
+  zone_id  = local.zone_id
+  name     = "send.i-tk.dev"
+  type     = "MX"
+  content  = "feedback-smtp.ap-northeast-1.amazonses.com"
+  priority = 10
+  proxied  = false
+  ttl      = 3600
 }
 
-resource "cloudflare_dns_record" "sendgrid_dkim_s2" {
+resource "cloudflare_dns_record" "resend_return_path_spf" {
+  count   = var.resend_dkim_txt != null ? 1 : 0
   zone_id = local.zone_id
-  name    = "s2._domainkey.i-tk.dev"
-  type    = "CNAME"
-  content = var.sendgrid_dkim_cname.s2
+  name    = "send.i-tk.dev"
+  type    = "TXT"
+  content = "v=spf1 include:amazonses.com ~all"
   proxied = false
   ttl     = 3600
 }
@@ -280,12 +280,7 @@ cloudflare_zone_id    = "REPLACE_WITH_ZONE_ID"
 cloudflare_account_id = "REPLACE_WITH_ACCOUNT_ID"
 home_ip               = "REPLACE_WITH_HOME_IP"
 
-sendgrid_dkim_cname = {
-  em_name = "emXXXXXX"
-  em      = "emXXXXXX.i-tk.dev.dkim.sendgrid.net"
-  s1      = "s1.domainkey.uXXXXXX.wl.sendgrid.net"
-  s2      = "s2.domainkey.uXXXXXX.wl.sendgrid.net"
-}
+resend_dkim_txt = "p=XXXX..."
 ```
 
 ## Cloudflare API トークンの権限

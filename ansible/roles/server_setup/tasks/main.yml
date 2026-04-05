@@ -64,12 +64,22 @@
 
 # --- k8s PV directories ---
 
+- name: Stat k8s PV directories
+  ansible.builtin.stat:
+    path: "{{ item }}"
+  register: server_setup__pv_dir_stat
+  loop: "{{ server_setup_k8s_pv_dirs }}"
+  tags: k8s_pv_dirs
+
 - name: Create k8s PV directories
   ansible.builtin.file:
-    path: "{{ item }}"
+    path: "{{ item.item }}"
     state: directory
+    owner: k8s
+    group: k8s
     mode: "0755"
-  loop: "{{ server_setup_k8s_pv_dirs }}"
+  when: not item.stat.exists
+  loop: "{{ server_setup__pv_dir_stat.results }}"
   tags: k8s_pv_dirs
 
 # --- Cron jobs ---
