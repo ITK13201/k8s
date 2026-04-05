@@ -24,27 +24,31 @@ deployment:
 
 certificate: "mailserver-tls"
 
-persistence:
-  config:
-    enabled: true
+persistent_volume_claims:
+  mail-config:
     size: 1Gi
     storageClass: manual
-    accessMode: ReadWriteOnce
-  data:
-    enabled: true
+    selector:
+      matchLabels:
+        target-app: mailserver-config
+  mail-data:
     size: 20Gi
     storageClass: manual
-    accessMode: ReadWriteOnce
-  state:
-    enabled: true
+    selector:
+      matchLabels:
+        target-app: mailserver-data
+  mail-state:
     size: 1Gi
     storageClass: manual
-    accessMode: ReadWriteOnce
-  log:
-    enabled: true
+    selector:
+      matchLabels:
+        target-app: mailserver-state
+  mail-log:
     size: 5Gi
     storageClass: manual
-    accessMode: ReadWriteOnce
+    selector:
+      matchLabels:
+        target-app: mailserver-log
 
 resources:
   requests:
