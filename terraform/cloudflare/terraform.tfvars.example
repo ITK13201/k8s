@@ -1,4 +1,4 @@
-cloudflare_api_token    = "REPLACE_WITH_DNS_API_TOKEN"     # Zone:DNS:Edit, Zone:Zone Settings:Edit, Zone:Zone:Read
+cloudflare_dns_api_token    = "REPLACE_WITH_DNS_API_TOKEN"     # Zone:DNS:Edit, Zone:Zone Settings:Edit, Zone:Zone:Read
 cloudflare_r2_api_token = "REPLACE_WITH_R2_API_TOKEN"      # Account:Cloudflare R2 Storage:Edit
 cloudflare_account_id   = "REPLACE_WITH_ACCOUNT_ID"
 home_ip                 = "REPLACE_WITH_HOME_IP"

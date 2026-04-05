@@ -1,4 +1,4 @@
-variable "cloudflare_api_token" {
+variable "cloudflare_dns_api_token" {
   type        = string
   sensitive   = true
   description = "DNS・ゾーン設定用 API トークン（Zone:DNS:Edit, Zone:Zone Settings:Edit, Zone:Zone:Read）"

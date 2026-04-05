@@ -12,7 +12,7 @@ terraform {
 
 # DNS・ゾーン設定用（Zone:DNS:Edit, Zone:Zone Settings:Edit, Zone:Zone:Read）
 provider "cloudflare" {
-  api_token = var.cloudflare_api_token
+  api_token = var.cloudflare_dns_api_token
 }
 
 # R2 バケット管理用（Account:Cloudflare R2 Storage:Edit）
