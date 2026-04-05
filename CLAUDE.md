@@ -119,6 +119,9 @@ ansible-lint roles/<role>/tasks/main.yml         # lint
 
 - コミットメッセージの1行目（abstract）は**英語**で記載する
 - 本文（description）は**日本語**で記載する
+- Issue に紐づく作業の場合は、1行目の先頭に Issue 番号を付ける
+  - 例: `#142 feat(terraform/cloudflare): manage DNS records`
+  - 例: `#138 fix(ansible): fix playbook path`
 
 ## MCP サーバー利用ルール
 

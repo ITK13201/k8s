@@ -1,7 +1,7 @@
 resource "cloudflare_zone_setting" "ssl" {
   zone_id    = local.zone_id
   setting_id = "ssl"
-  value      = "full"
+  value      = "strict"
 }
 
 resource "cloudflare_zone_setting" "always_use_https" {

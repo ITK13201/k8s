@@ -31,6 +31,6 @@ resource "cloudflare_dns_record" "web" {
   name    = "${each.key}.i-tk.dev"
   type    = "A"
   content = var.home_ip
-  proxied = false
-  ttl     = 300
+  proxied = true
+  ttl     = 1 # proxied 有効時は automatic（1）
 }
