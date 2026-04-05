@@ -11,9 +11,6 @@ deployment:
     ENABLE_RSPAMD: 1.0
     ENABLE_CLAMAV: 0.0      # メモリ消費が大きいため無効
     ENABLE_FAIL2BAN: 1.0
-    SSL_TYPE: manual
-    SSL_CERT_PATH: /secrets/tls.crt
-    SSL_KEY_PATH: /secrets/tls.key
     # Resend SMTP リレー設定（送信専用）
     RELAY_HOST: smtp.resend.com
     RELAY_PORT: "465"
@@ -24,14 +21,6 @@ deployment:
   # hostPort でワーカーノードのポートに直接バインド（シングルワーカー構成）
   hostPorts:
     enabled: true
-  extraVolumes:
-  - name: tls-secret
-    secret:
-      secretName: mailserver-tls
-  extraVolumeMounts:
-  - name: tls-secret
-    mountPath: /secrets
-    readOnly: true
 
 certificate: "mailserver-tls"
 
