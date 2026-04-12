@@ -59,6 +59,9 @@ kustomize build --enable-helm ./manifests/<app>/
 # YAML フォーマット（.yamlfmt の設定を使用）
 yamlfmt .
 
+# Helm chart の values スキーマ確認（values を書く前に必ず実行）
+helm show values <chart> --repo <repo-url> --version <version>
+
 # Secretの再生成
 ./bin/create_secrets.sh
 
@@ -120,7 +123,9 @@ ansible-lint roles/<role>/tasks/main.yml         # lint
 
 ### PersistentVolume 管理
 - PV は `manifests/pv/` で定義し、`reclaimPolicy: Retain` を使用
-- PV のホストパスは `k8s-worker01` の `/data/k8s/pv/<app>/` を使用
+- ホストパスはストレージ種別で異なる（`ansible/inventory/group_vars/workers/main.yml` の `server_setup_k8s_pv_dirs` に全一覧）:
+  - **SSD** (`/data/k8s/pv/<app>/`): 高速I/Oが必要なもの（minecraft, palworld など）
+  - **HDD** (`/mnt/hdd/data/k8s/pv/<app>/`): 大容量が必要なもの（nextcloud, growi, monitoring など）
 - ディレクトリ作成は Ansible `server_setup` ロールの `server_setup_k8s_pv_dirs` 変数で管理
 - PV が `Released` 状態になった場合は `claimRef` を手動で削除して `Available` に戻す:
   ```bash
