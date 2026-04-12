@@ -17,6 +17,7 @@ server_setup_k8s_pv_dirs:
   - /mnt/hdd/data/k8s/pv/monitoring/prometheus
   - /mnt/hdd/data/k8s/pv/monitoring/alertmanager
   - /mnt/hdd/data/k8s/pv/monitoring/grafana
+  - /mnt/hdd/data/k8s/pv/monitoring/loki
   - /mnt/hdd/data/k8s/pv/rss-generator/mariadb-primary
   - /mnt/hdd/data/k8s/pv/rss-generator/mariadb-secondary
   - /mnt/hdd/data/k8s/pv/rss-notifier/mariadb-primary

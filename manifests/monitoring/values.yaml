@@ -112,6 +112,14 @@ grafana:
       cookie_samesite: lax
       csrf_trusted_origins: grafana.i-tk.dev
 
+  # Loki datasource
+  additionalDataSources:
+    - name: Loki
+      type: loki
+      url: http://loki:3100
+      access: proxy
+      isDefault: false
+
   # Default dashboards enabled
   defaultDashboardsEnabled: true
   defaultDashboardsTimezone: Asia/Tokyo

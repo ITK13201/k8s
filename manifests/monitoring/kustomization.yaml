@@ -11,5 +11,19 @@ helmCharts:
   valuesFile: values.yaml
   valuesMerge: override
   includeCRDs: true
+- name: loki
+  repo: https://grafana.github.io/helm-charts
+  version: 6.55.0
+  releaseName: loki
+  namespace: monitoring
+  valuesFile: loki-values.yaml
+  valuesMerge: override
+- name: promtail
+  repo: https://grafana.github.io/helm-charts
+  version: 6.17.1
+  releaseName: promtail
+  namespace: monitoring
+  valuesFile: promtail-values.yaml
+  valuesMerge: override
 resources:
 - grafana-pvc.yaml

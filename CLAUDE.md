@@ -46,6 +46,7 @@ Terraform state は Cloudflare R2 で管理。SSH 鍵は `~/.ssh/personal/pve/id
   - [Terraform Cloudflare 設計](docs/design/terraform-cloudflare.md)
   - [メールサーバ設計](docs/design/mailserver.md)（docker-mailserver on k8s）
   - [シークレット管理 1Password 移行設計](docs/design/secrets-1password.md)（ESO + 1Password Connect）
+  - [ログ集約設計](docs/design/logging.md)（Grafana Loki + Promtail）
 - [インシデント記録](docs/incidents/)（障害・ネットワーク問題の事後分析）
 
 ## 主要コマンド
@@ -85,8 +86,15 @@ ansible-lint roles/<role>/tasks/main.yml         # lint
 ## 重要な制約
 
 ### ArgoCD ApplicationSet の除外アプリ
-- `manifests/growi` は ApplicationSet から **明示的に除外** されており、ArgoCD による自動同期対象外
-- Growi を更新する場合は `./bin/update/update-growi.sh` を使うこと（[docs/operations.md](docs/operations.md) 参照）
+
+以下のアプリは `manifests/argocd/application-set.yaml` で **明示的に除外** されており、ArgoCD による自動同期対象外:
+
+| アプリ | 備考 |
+|--------|------|
+| `manifests/growi` | 更新は `./bin/update/update-growi.sh` を使うこと（[docs/operations.md](docs/operations.md) 参照） |
+| `manifests/growi-converter` | 手動適用 |
+| `manifests/minecraft` | 手動適用 |
+| `manifests/palworld` | 手動適用 |
 
 ### マニフェストディレクトリの命名
 - `manifests/ingress/` — 各アプリの **Ingress リソース**（argocd.yaml, grafana.yaml など）を集約
@@ -133,6 +141,14 @@ ansible-lint roles/<role>/tasks/main.yml         # lint
 ### Ansible シークレット管理
 - `ansible/inventory/group_vars/workers.secret.yml` に機密変数を記載（gitignore 対象）
 - テンプレートは `workers.secret.yml.example` を参照
+
+### Renovate 自動マージポリシー
+
+Renovate が以下を自動追跡する:
+- YAML ファイル内の Docker イメージタグ
+- `kustomization.yaml` 内の GitHub Release / GitHub raw URL
+
+**non-0.x の minor/patch は自動マージ**。major バージョンアップは手動レビューが必要。
 
 ## Git コミット規約
 
