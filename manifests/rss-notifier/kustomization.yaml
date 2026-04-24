@@ -10,7 +10,7 @@ resources:
 helmCharts:
 - name: mariadb
   repo: oci://registry-1.docker.io/bitnamicharts
-  version: 25.0.7
+  version: 25.0.10
   releaseName: mariadb
   namespace: rss-notifier
   valuesFile: values-mariadb.yaml
