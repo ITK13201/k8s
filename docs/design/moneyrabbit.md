@@ -49,20 +49,38 @@ Cloudflare DNSへの追加・cert-managerによる証明書発行は不要。
 
 ## 5. シークレット設計
 
-1Password Vault `Personal/k8s/`に以下の項目を追加する。
+ESO + 1Password Connect は未導入のため、`credentials/` ディレクトリ方式で手動管理する。
 
-| 1Password項目名 | フィールド | 用途 |
-|----------------|----------|------|
-| `moneyrabbit-secret` | `ANTHROPIC_API_KEY` | Claude Haiku API |
-| `moneyrabbit-secret` | `DATABASE_URL` | MariaDB接続文字列（`moneyrabbit:<pw>@tcp(moneyrabbit-mariadb:3306)/moneyrabbit?parseTime=true`） |
-| `moneyrabbit-mariadb-secret` | `MYSQL_ROOT_PASSWORD` | MariaDB root認証 |
-| `moneyrabbit-mariadb-secret` | `MYSQL_PASSWORD` | アプリ用MariaDBユーザー認証 |
-| `moneyrabbit-mariadb-secret` | `MYSQL_USER` | `moneyrabbit`（固定値だがchartが要求） |
-| `moneyrabbit-mariadb-secret` | `MYSQL_DATABASE` | `moneyrabbit`（固定値だがchartが要求） |
+```
+credentials/moneyrabbit/
+├── moneyrabbit-secret.env          # gitignore対象
+└── moneyrabbit-mariadb-secret.env  # gitignore対象
+```
 
-ESOのExternalSecretでK8s Secretに同期する。
+```bash
+# credentials/moneyrabbit/moneyrabbit-secret.env
+ANTHROPIC_API_KEY=<Claude APIキー>
+DATABASE_URL=moneyrabbit:<MYSQL_PASSWORD>@tcp(moneyrabbit-mariadb:3306)/moneyrabbit?parseTime=true
+```
+
+```bash
+# credentials/moneyrabbit/moneyrabbit-mariadb-secret.env
+MYSQL_ROOT_PASSWORD=<rootパスワード>
+MYSQL_PASSWORD=<アプリ用パスワード>
+MYSQL_USER=moneyrabbit
+MYSQL_DATABASE=moneyrabbit
+```
+
+`./bin/create_secrets.sh` でSecretマニフェストを生成し、手動でapplyする（ArgoCDは管理しない）:
+
+```bash
+./bin/create_secrets.sh
+kubectl apply -f secrets/moneyrabbit/
+```
 
 v0.2.0から`existingSecret`フィールドでSecretを直接指定できるため、Kustomizeパッチによる差し替えは不要。
+
+> ESO + 1Password移行後は`credentials/moneyrabbit/`を廃止し、`external-secret.yaml`に置き換える（[シークレット管理1Password移行設計](secrets-1password.md)参照）。
 
 ## 6. マニフェスト構成
 
@@ -74,13 +92,13 @@ manifests/
 │   ├── kustomization.yaml       # moneyrabbit-mariadb.yaml を追加
 │   └── moneyrabbit-mariadb.yaml # 新規作成
 └── moneyrabbit/
-    ├── kustomization.yaml       # helmCharts のみ（patchesは不要）
+    ├── kustomization.yaml       # helmCharts のみ
     ├── values.yaml              # Helm values
-    ├── external-secret.yaml     # 1Password ESO連携
     └── ingress-tailscale.yaml   # Tailscale Ingress
 ```
 
-> `manifests/ingress/moneyrabbit.yaml` は不要（ingress-nginxは使用しない）。
+Secretは`credentials/`方式で手動管理するため`external-secret.yaml`は不要。
+`manifests/ingress/moneyrabbit.yaml`も不要（ingress-nginxは使用しない）。
 
 ### kustomization.yaml
 
@@ -90,7 +108,6 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: moneyrabbit
 resources:
-- external-secret.yaml
 - ingress-tailscale.yaml
 helmCharts:
 - name: moneyrabbit
@@ -125,65 +142,6 @@ mariadb:
     enabled: true
     storageClass: manual
     size: 20Gi
-```
-
-### external-secret.yaml
-
-```yaml
----
-apiVersion: external-secrets.io/v1beta1
-kind: ExternalSecret
-metadata:
-  name: moneyrabbit-secret
-  namespace: moneyrabbit
-spec:
-  refreshInterval: 1h
-  secretStoreRef:
-    kind: ClusterSecretStore
-    name: onepassword
-  target:
-    name: moneyrabbit-secret
-    creationPolicy: Owner
-  data:
-  - secretKey: ANTHROPIC_API_KEY
-    remoteRef:
-      key: moneyrabbit-secret
-      property: ANTHROPIC_API_KEY
-  - secretKey: DATABASE_URL
-    remoteRef:
-      key: moneyrabbit-secret
-      property: DATABASE_URL
----
-apiVersion: external-secrets.io/v1beta1
-kind: ExternalSecret
-metadata:
-  name: moneyrabbit-mariadb-secret
-  namespace: moneyrabbit
-spec:
-  refreshInterval: 1h
-  secretStoreRef:
-    kind: ClusterSecretStore
-    name: onepassword
-  target:
-    name: moneyrabbit-mariadb-secret
-    creationPolicy: Owner
-  data:
-  - secretKey: MYSQL_ROOT_PASSWORD
-    remoteRef:
-      key: moneyrabbit-mariadb-secret
-      property: MYSQL_ROOT_PASSWORD
-  - secretKey: MYSQL_PASSWORD
-    remoteRef:
-      key: moneyrabbit-mariadb-secret
-      property: MYSQL_PASSWORD
-  - secretKey: MYSQL_USER
-    remoteRef:
-      key: moneyrabbit-mariadb-secret
-      property: MYSQL_USER
-  - secretKey: MYSQL_DATABASE
-    remoteRef:
-      key: moneyrabbit-mariadb-secret
-      property: MYSQL_DATABASE
 ```
 
 ### ingress-tailscale.yaml
@@ -338,13 +296,14 @@ server_setup_k8s_pv_dirs:
 
 1. **Tailscale Operator導入**（未導入の場合）
    - Tailscale管理コンソールでOAuthクライアントを作成
-   - 1Password項目`tailscale-operator-secret`を作成
    - `manifests/tailscale/`・`manifests/namespaces/tailscale.yaml`を作成
    - `master`にpush → ArgoCDで同期・IngressClass`tailscale`が作成されることを確認
 
-2. **1Password項目作成**
-   - `moneyrabbit-mariadb-secret`（MARIADB_ROOT_PASSWORD, MARIADB_PASSWORD）
-   - `moneyrabbit-secret`（ANTHROPIC_API_KEY）
+2. **Secretの手動作成**
+   - `credentials/moneyrabbit/moneyrabbit-secret.env`を作成
+   - `credentials/moneyrabbit/moneyrabbit-mariadb-secret.env`を作成
+   - `mkdir -p secrets/moneyrabbit/ && ./bin/create_secrets.sh`
+   - `kubectl apply -f secrets/moneyrabbit/`（Namespace作成後に実行）
 
 3. **Ansible変数追加→ディレクトリ作成**
    - `server_setup_k8s_pv_dirs`にMariaDB HDDパスを追記
@@ -355,11 +314,11 @@ server_setup_k8s_pv_dirs:
    - `kustomize build --enable-helm ./manifests/moneyrabbit/`でレンダリングを確認
 
 5. **pushとArgoCDデプロイ**
-   - `master`にpush → ArgoCDが自動同期
+   - `master`にpush → ArgoCDが自動同期（Secretは手順2で適用済みであること）
 
 6. **動作確認**
    - `kubectl get pods -n moneyrabbit`で全PodがReadyになるまで確認
-   - Tailnetに接続した状態で`https://moneyrabbit.<tailnet>.ts.net`にアクセス
+   - Tailscale VPN接続済みの端末で`https://moneyrabbit.<tailnet>.ts.net`にアクセス
    - CSVインポート・カテゴリ分類・ダッシュボード表示を確認
 
 ## 11. 進捗
@@ -368,7 +327,7 @@ server_setup_k8s_pv_dirs:
 |---------|----------|
 | 設計書作成 | ✅ 完了 |
 | Tailscale Operator導入 | ⏳ 未実施 |
-| 1Password項目作成 | ⏳ 未実施 |
+| Secret手動作成 | ⏳ 未実施 |
 | Ansible PVディレクトリ追加 | ⏳ 未実施 |
 | マニフェスト作成・ローカル検証 | ⏳ 未実施 |
 | 本番デプロイ・動作確認 | ⏳ 未実施 |
