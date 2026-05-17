@@ -95,9 +95,9 @@ ansible-lint roles/<role>/tasks/main.yml         # lint
 | アプリ | 備考 |
 |--------|------|
 | `manifests/growi` | 更新は `./bin/update/update-growi.sh` を使うこと（[docs/operations.md](docs/operations.md) 参照） |
-| `manifests/growi-converter` | 手動適用 |
-| `manifests/minecraft` | 手動適用 |
-| `manifests/palworld` | 手動適用 |
+| `manifests/growi-converter` | 手動適用: `kubectl apply -k manifests/growi-converter/` |
+| `manifests/minecraft` | 手動適用: `kubectl apply -k manifests/minecraft/` |
+| `manifests/palworld` | 手動適用: `kubectl apply -k manifests/palworld/` |
 
 ### マニフェストディレクトリの命名
 - `manifests/ingress/` — 各アプリの **Ingress リソース**（argocd.yaml, grafana.yaml など）を集約
@@ -144,8 +144,8 @@ ansible-lint roles/<role>/tasks/main.yml         # lint
 - `ansible-lint` で検証すること
 
 ### Ansible シークレット管理
-- `ansible/inventory/group_vars/workers.secret.yml` に機密変数を記載（gitignore 対象）
-- テンプレートは `workers.secret.yml.example` を参照
+- `ansible/inventory/group_vars/workers/secret.yml` に機密変数を記載（gitignore 対象）
+- テンプレートは `workers/secret.yml.example` を参照
 
 ### Renovate 自動マージポリシー
 
@@ -155,11 +155,13 @@ Renovate が以下を自動追跡する:
 
 **non-0.x の minor/patch は自動マージ**。major バージョンアップは手動レビューが必要。
 
+ArgoCD除外アプリ（growi, growi-converter, minecraft, palworld）はRenovateの`ignorePaths`でも追跡対象外。
+
 ## Git コミット規約
 
 - コミットメッセージの1行目（abstract）は**英語**で記載する
 - 本文（description）は**日本語**で記載する
-- Issue に紐づく作業の場合は、1行目の先頭に Issue 番号を付ける
+- Issueに紐づく作業の場合は、1行目の先頭にIssue番号を付ける
   - 例: `#142 feat(terraform/cloudflare): manage DNS records`
   - 例: `#138 fix(ansible): fix playbook path`
 
