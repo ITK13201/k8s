@@ -53,13 +53,16 @@ Cloudflare DNSへの追加・cert-managerによる証明書発行は不要。
 
 | 1Password項目名 | フィールド | 用途 |
 |----------------|----------|------|
-| `moneyrabbit-mariadb-secret` | `MARIADB_ROOT_PASSWORD` | MariaDB root認証 |
-| `moneyrabbit-mariadb-secret` | `MARIADB_PASSWORD` | アプリ用MariaDBユーザー認証 |
 | `moneyrabbit-secret` | `ANTHROPIC_API_KEY` | Claude Haiku API |
+| `moneyrabbit-secret` | `DATABASE_URL` | MariaDB接続文字列（`moneyrabbit:<pw>@tcp(moneyrabbit-mariadb:3306)/moneyrabbit?parseTime=true`） |
+| `moneyrabbit-mariadb-secret` | `MYSQL_ROOT_PASSWORD` | MariaDB root認証 |
+| `moneyrabbit-mariadb-secret` | `MYSQL_PASSWORD` | アプリ用MariaDBユーザー認証 |
+| `moneyrabbit-mariadb-secret` | `MYSQL_USER` | `moneyrabbit`（固定値だがchartが要求） |
+| `moneyrabbit-mariadb-secret` | `MYSQL_DATABASE` | `moneyrabbit`（固定値だがchartが要求） |
 
 ESOのExternalSecretでK8s Secretに同期する。
 
-HelmチャートはAPIキーとパスワードをvalues.yamlの平文で受け取る設計になっているため、Kustomizeのstrategic merge patchでSecretKeyRefに差し替える（詳細は「6. マニフェスト構成」参照）。
+v0.2.0から`existingSecret`フィールドでSecretを直接指定できるため、Kustomizeパッチによる差し替えは不要。
 
 ## 6. マニフェスト構成
 
@@ -71,8 +74,8 @@ manifests/
 │   ├── kustomization.yaml       # moneyrabbit-mariadb.yaml を追加
 │   └── moneyrabbit-mariadb.yaml # 新規作成
 └── moneyrabbit/
-    ├── kustomization.yaml       # helmCharts + patches
-    ├── values.yaml              # Helm values（非シークレット設定）
+    ├── kustomization.yaml       # helmCharts のみ（patchesは不要）
+    ├── values.yaml              # Helm values
     ├── external-secret.yaml     # 1Password ESO連携
     └── ingress-tailscale.yaml   # Tailscale Ingress
 ```
@@ -92,73 +95,15 @@ resources:
 helmCharts:
 - name: moneyrabbit
   repo: https://itk13201.github.io/MoneyRabbit
-  version: 0.1.0
+  version: 0.2.0
   releaseName: moneyrabbit
   namespace: moneyrabbit
   valuesFile: values.yaml
   valuesMerge: override
-patches:
-# kustomize helmChartsにnamespaceが適用されない制約を回避
-- patch: '[{"op":"add","path":"/metadata/namespace","value":"moneyrabbit"}]'
-  target:
-    kind: Deployment
-- patch: '[{"op":"add","path":"/metadata/namespace","value":"moneyrabbit"}]'
-  target:
-    kind: StatefulSet
-- patch: '[{"op":"add","path":"/metadata/namespace","value":"moneyrabbit"}]'
-  target:
-    kind: Service
-- patch: '[{"op":"add","path":"/metadata/namespace","value":"moneyrabbit"}]'
-  target:
-    kind: PersistentVolumeClaim
-# ANTHROPIC_API_KEY をSecretKeyRefに差し替え
-- target:
-    kind: Deployment
-    name: moneyrabbit-backend
-  patch: |
-    apiVersion: apps/v1
-    kind: Deployment
-    metadata:
-      name: moneyrabbit-backend
-    spec:
-      template:
-        spec:
-          containers:
-          - name: backend
-            env:
-            - name: ANTHROPIC_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: moneyrabbit-secret
-                  key: ANTHROPIC_API_KEY
-# MariaDBパスワードをSecretKeyRefに差し替え
-- target:
-    kind: StatefulSet
-    name: moneyrabbit-mariadb
-  patch: |
-    apiVersion: apps/v1
-    kind: StatefulSet
-    metadata:
-      name: moneyrabbit-mariadb
-    spec:
-      template:
-        spec:
-          containers:
-          - name: mariadb
-            env:
-            - name: MARIADB_ROOT_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: moneyrabbit-mariadb-secret
-                  key: MARIADB_ROOT_PASSWORD
-            - name: MARIADB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: moneyrabbit-mariadb-secret
-                  key: MARIADB_PASSWORD
 ```
 
-> **注意**: strategic merge patchのenv差し替えはenv名をマージキーとして使う。実際の動作は`kustomize build --enable-helm ./manifests/moneyrabbit/`で検証すること。
+v0.2.0からchartがnamespaceを自前で設定するため、namespaceパッチは不要。
+`existingSecret`によるSecretKeyRef対応でpatchesセクションも不要。
 
 ### values.yaml
 
@@ -171,12 +116,11 @@ frontend:
 backend:
   image:
     tag: "1.0.2"
-  anthropicApiKey: "PLACEHOLDER"  # Kustomizeパッチで差し替え
+  existingSecret: moneyrabbit-secret   # DATABASE_URL, ANTHROPIC_API_KEY を含む
 
 mariadb:
   auth:
-    password: "PLACEHOLDER"       # Kustomizeパッチで差し替え
-    rootPassword: "PLACEHOLDER"   # Kustomizeパッチで差し替え
+    existingSecret: moneyrabbit-mariadb-secret  # MYSQL_ROOT_PASSWORD, MYSQL_USER, MYSQL_PASSWORD, MYSQL_DATABASE を含む
   persistence:
     enabled: true
     storageClass: manual
@@ -205,6 +149,10 @@ spec:
     remoteRef:
       key: moneyrabbit-secret
       property: ANTHROPIC_API_KEY
+  - secretKey: DATABASE_URL
+    remoteRef:
+      key: moneyrabbit-secret
+      property: DATABASE_URL
 ---
 apiVersion: external-secrets.io/v1beta1
 kind: ExternalSecret
@@ -220,14 +168,22 @@ spec:
     name: moneyrabbit-mariadb-secret
     creationPolicy: Owner
   data:
-  - secretKey: MARIADB_ROOT_PASSWORD
+  - secretKey: MYSQL_ROOT_PASSWORD
     remoteRef:
       key: moneyrabbit-mariadb-secret
-      property: MARIADB_ROOT_PASSWORD
-  - secretKey: MARIADB_PASSWORD
+      property: MYSQL_ROOT_PASSWORD
+  - secretKey: MYSQL_PASSWORD
     remoteRef:
       key: moneyrabbit-mariadb-secret
-      property: MARIADB_PASSWORD
+      property: MYSQL_PASSWORD
+  - secretKey: MYSQL_USER
+    remoteRef:
+      key: moneyrabbit-mariadb-secret
+      property: MYSQL_USER
+  - secretKey: MYSQL_DATABASE
+    remoteRef:
+      key: moneyrabbit-mariadb-secret
+      property: MYSQL_DATABASE
 ```
 
 ### ingress-tailscale.yaml
@@ -397,7 +353,6 @@ server_setup_k8s_pv_dirs:
 4. **マニフェスト作成・ローカル検証**
    - 上記のマニフェストを作成
    - `kustomize build --enable-helm ./manifests/moneyrabbit/`でレンダリングを確認
-   - Kustomizeパッチが正しくSecretKeyRefに差し替えられているか検証
 
 5. **pushとArgoCDデプロイ**
    - `master`にpush → ArgoCDが自動同期
