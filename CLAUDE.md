@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## 重要な方針
+
+**CLAUDE.md は最小限に保つ。** ルートの CLAUDE.md には横断的な情報のみ記載し、詳細は各ディレクトリの CLAUDE.md および `docs/` 配下のファイルに分散して記載する。
+
 ## 概要
 
 ArgoCD (GitOps) + Kustomize + Helm で管理する個人用 Kubernetes インフラリポジトリ。
@@ -25,9 +29,15 @@ ArgoCD (GitOps) + Kustomize + Helm で管理する個人用 Kubernetes インフ
 
 Terraform state は Cloudflare R2 で管理。SSH 鍵は `~/.ssh/personal/pve/id_ed25519`。
 
-## ドキュメント規約
+## ディレクトリ別 CLAUDE.md
 
-**CLAUDE.md には最低限の情報のみ記載する。詳細はドメインごとに `docs/` 配下のファイルに記載すること。**
+各ディレクトリ固有のガイダンスは以下を参照:
+
+- [manifests/CLAUDE.md](manifests/CLAUDE.md) — Kubernetes マニフェスト管理（ArgoCD, Kustomize, Helm, PV, Tailscale, Renovate）
+- [terraform/CLAUDE.md](terraform/CLAUDE.md) — Terraform によるインフラプロビジョニング（Proxmox, Cloudflare）
+- [ansible/CLAUDE.md](ansible/CLAUDE.md) — Ansible による k8s クラスタ構築・設定
+
+## ドキュメント
 
 詳細は以下を参照すること。
 
@@ -48,125 +58,18 @@ Terraform state は Cloudflare R2 で管理。SSH 鍵は `~/.ssh/personal/pve/id
   - [シークレット管理 1Password 移行設計](docs/design/secrets-1password.md)（ESO + 1Password Connect）
   - [ログ集約設計](docs/design/logging.md)（Grafana Loki + Promtail）
   - [MoneyRabbit デプロイ設計](docs/design/moneyrabbit.md)（家計管理PWAアプリ・Tailscale VPN限定）
+  - [ファイル整理設計](docs/design/cleanup.md)（Proxmox VE 移行後の不要ファイル・スクリプト整理計画）
 - [インシデント記録](docs/incidents/)（障害・ネットワーク問題の事後分析）
 
-## 主要コマンド
+## 共通コマンド
 
 ```bash
-# マニフェストをローカルでレンダリング（Helm含む）
-# kubectl kustomize ではなく standalone の kustomize を使うこと
-kustomize build --enable-helm ./manifests/<app>/
-
 # YAML フォーマット（.yamlfmt の設定を使用）
 yamlfmt .
 
-# Helm chart の values スキーマ確認（values を書く前に必ず実行）
-helm show values <chart> --repo <repo-url> --version <version>
-
-# Secretの再生成
+# Secret の再生成
 ./bin/create_secrets.sh
-
-# Terraform Proxmox（R2バックエンドのため -backend-config が必須）
-terraform -chdir=terraform/proxmox init -backend-config=backend.hcl
-terraform -chdir=terraform/proxmox plan
-terraform -chdir=terraform/proxmox apply
-terraform -chdir=terraform/proxmox output -json   # VM の IP アドレス確認
-
-# Terraform Cloudflare（独立したワークスペース）
-terraform -chdir=terraform/cloudflare init -backend-config=backend.hcl
-terraform -chdir=terraform/cloudflare plan
-terraform -chdir=terraform/cloudflare apply
-
-# Ansible（ansible.cfg の相対パス設定のため ansible/ ディレクトリから実行すること）
-cd ansible/
-ansible-galaxy collection install -r requirements.yml
-ansible all -m ping                              # 接続確認
-ansible-playbook playbooks/site.yml              # 全ノード
-ansible-playbook playbooks/workers.yml           # ワーカーのみ
-ansible-playbook playbooks/site.yml --check      # dry-run
-ansible-lint roles/<role>/tasks/main.yml         # lint
 ```
-
-## 重要な制約
-
-### ArgoCD ApplicationSet の除外アプリ
-
-以下のアプリは `manifests/argocd/application-set.yaml` で **明示的に除外** されており、ArgoCD による自動同期対象外:
-
-| アプリ | 備考 |
-|--------|------|
-| `manifests/growi` | 更新は `./bin/update/update-growi.sh` を使うこと（[docs/operations.md](docs/operations.md) 参照） |
-| `manifests/growi-converter` | 手動適用: `kubectl apply -k manifests/growi-converter/` |
-| `manifests/minecraft` | 手動適用: `kubectl apply -k manifests/minecraft/` |
-| `manifests/palworld` | 手動適用: `kubectl apply -k manifests/palworld/` |
-
-### マニフェストディレクトリの命名
-- `manifests/ingress/` — 各アプリの **Ingress リソース**（argocd.yaml, grafana.yaml など）を集約
-- `manifests/ingress-nginx/` — ingress-nginx **コントローラ**本体の Helm values・kustomization
-
-### Kubernetes API バージョン
-- HPA は必ず `autoscaling/v2` を使うこと（`autoscaling/v1` は k8s v1.26 以降削除済み）
-- Helm chart が `autoscaling/v1` を生成する場合は `values.yaml` で HPA を無効化し、独自リソースとして `hpa.yaml` を追加する
-
-### バージョン固定
-- `kubernetes-dashboard`: **v6 を維持**（v6→v7 は非互換アップグレード）
-- 詳細は [docs/applications.md](docs/applications.md) を参照
-
-### kustomize helmCharts への namespace 非適用
-- kustomize 5.8.1 では `namespace:` フィールドが `helmCharts:` で生成されるリソースに適用されない
-- チャートが自身で namespace を設定している場合はパッチ不要（Tailscale Operator、MoneyRabbit v0.3.0+ など）
-- チャートが設定しない場合の回避策: `kustomization.yaml` 内に種類ごとの JSON6902 パッチを追加する
-  ```yaml
-  patches:
-  - patch: '[{"op":"add","path":"/metadata/namespace","value":"<ns>"}]'
-    target:
-      kind: Deployment
-  ```
-
-### PersistentVolume 管理
-- PV は `manifests/pv/` で定義し、`reclaimPolicy: Retain` を使用
-- ホストパスはストレージ種別で異なる（`ansible/inventory/group_vars/workers/main.yml` の `server_setup_k8s_pv_dirs` に全一覧）:
-  - **SSD** (`/data/k8s/pv/<app>/`): 高速I/Oが必要なもの（minecraft, palworld など）
-  - **HDD** (`/mnt/hdd/data/k8s/pv/<app>/`): 大容量が必要なもの（nextcloud, growi, monitoring など）
-- ディレクトリ作成は Ansible `server_setup` ロールの `server_setup_k8s_pv_dirs` 変数で管理
-- PV が `Released` 状態になった場合は `claimRef` を手動で削除して `Available` に戻す:
-  ```bash
-  kubectl patch pv <name> --type=json -p='[{"op":"remove","path":"/spec/claimRef"}]'
-  ```
-
-### Tailscale Operator
-
-- Ingress の `name` が MagicDNS ホスト名 (`<name>.<tailnet>.ts.net`) になる
-- Ingress ごとに proxy Pod が1つ作成される（複数アプリを別ホスト名で公開可能）
-- 以下の事前条件を満たさないと Ingress が ADDRESS を取得できない:
-  - Tailscale admin で HTTPS Certificates を有効化
-  - ACL に `tag:k8s-operator`（Operator用）と `tag:k8s`（Proxy用）を定義し、`tag:k8s` の owner を `tag:k8s-operator` に設定
-  - `operator-oauth` Secret を `tailscale` namespace に手動作成（`credentials/tailscale/operator-oauth.env` → `./bin/create_secrets.sh`）
-
-### Cloudflare Terraform Provider v5 命名変更
-- `cloudflare_record` → **`cloudflare_dns_record`**
-- DNS レコードの値フィールド: `value` → **`content`**
-- `cloudflare_zone_settings_override` 廃止 → **`cloudflare_zone_setting`**（設定1つにつき1リソース）
-- 新規サービス追加時は `terraform/cloudflare/dns.tf` の `web_subdomains` リストに追加すること
-
-### Ansible ロール変数命名規則
-- ロール変数には必ずロール名プレフィックスを付ける: `rolename_varname`
-- ロール内部変数（`register` など）はダブルアンダースコア: `rolename__varname`
-- `ansible-lint` で検証すること
-
-### Ansible シークレット管理
-- `ansible/inventory/group_vars/workers/secret.yml` に機密変数を記載（gitignore 対象）
-- テンプレートは `workers/secret.yml.example` を参照
-
-### Renovate 自動マージポリシー
-
-Renovate が以下を自動追跡する:
-- YAML ファイル内の Docker イメージタグ
-- `kustomization.yaml` 内の GitHub Release / GitHub raw URL
-
-**non-0.x の minor/patch は自動マージ**。major バージョンアップは手動レビューが必要。
-
-ArgoCD除外アプリ（growi, growi-converter, minecraft, palworld）はRenovateの`ignorePaths`でも追跡対象外。
 
 ## Git コミット規約
 
