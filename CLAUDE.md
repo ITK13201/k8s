@@ -114,7 +114,8 @@ ansible-lint roles/<role>/tasks/main.yml         # lint
 
 ### kustomize helmCharts への namespace 非適用
 - kustomize 5.8.1 では `namespace:` フィールドが `helmCharts:` で生成されるリソースに適用されない
-- 回避策: `kustomization.yaml` 内に種類ごとの JSON6902 パッチを追加する
+- チャートが自身で namespace を設定している場合はパッチ不要（Tailscale Operator、MoneyRabbit v0.3.0+ など）
+- チャートが設定しない場合の回避策: `kustomization.yaml` 内に種類ごとの JSON6902 パッチを追加する
   ```yaml
   patches:
   - patch: '[{"op":"add","path":"/metadata/namespace","value":"<ns>"}]'
@@ -132,6 +133,15 @@ ansible-lint roles/<role>/tasks/main.yml         # lint
   ```bash
   kubectl patch pv <name> --type=json -p='[{"op":"remove","path":"/spec/claimRef"}]'
   ```
+
+### Tailscale Operator
+
+- Ingress の `name` が MagicDNS ホスト名 (`<name>.<tailnet>.ts.net`) になる
+- Ingress ごとに proxy Pod が1つ作成される（複数アプリを別ホスト名で公開可能）
+- 以下の事前条件を満たさないと Ingress が ADDRESS を取得できない:
+  - Tailscale admin で HTTPS Certificates を有効化
+  - ACL に `tag:k8s-operator`（Operator用）と `tag:k8s`（Proxy用）を定義し、`tag:k8s` の owner を `tag:k8s-operator` に設定
+  - `operator-oauth` Secret を `tailscale` namespace に手動作成（`credentials/tailscale/operator-oauth.env` → `./bin/create_secrets.sh`）
 
 ### Cloudflare Terraform Provider v5 命名変更
 - `cloudflare_record` → **`cloudflare_dns_record`**
