@@ -112,7 +112,7 @@ resources:
 helmCharts:
 - name: moneyrabbit
   repo: https://itk13201.github.io/MoneyRabbit
-  version: 0.3.0
+  version: 0.5.0
   releaseName: moneyrabbit
   namespace: moneyrabbit
   valuesFile: values.yaml
