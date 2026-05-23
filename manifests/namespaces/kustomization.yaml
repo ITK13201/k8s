@@ -11,3 +11,5 @@ resources:
 - rss-notifier.yaml
 - monitoring.yaml
 - mailserver.yaml
+- tailscale.yaml
+- moneyrabbit.yaml

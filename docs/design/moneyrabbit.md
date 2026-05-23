@@ -112,7 +112,7 @@ resources:
 helmCharts:
 - name: moneyrabbit
   repo: https://itk13201.github.io/MoneyRabbit
-  version: 0.2.0
+  version: 0.3.0
   releaseName: moneyrabbit
   namespace: moneyrabbit
   valuesFile: values.yaml
@@ -329,5 +329,5 @@ server_setup_k8s_pv_dirs:
 | Tailscale Operator導入 | ⏳ 未実施 |
 | Secret手動作成 | ⏳ 未実施 |
 | Ansible PVディレクトリ追加 | ⏳ 未実施 |
-| マニフェスト作成・ローカル検証 | ⏳ 未実施 |
+| マニフェスト作成・ローカル検証 | ✅ 完了 |
 | 本番デプロイ・動作確認 | ⏳ 未実施 |

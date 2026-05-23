@@ -1,0 +1,35 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: moneyrabbit
+  namespace: moneyrabbit
+spec:
+  ingressClassName: tailscale
+  rules:
+  - http:
+      paths:
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: moneyrabbit-backend
+            port:
+              number: 8080
+      - path: /docs
+        pathType: Prefix
+        backend:
+          service:
+            name: moneyrabbit-backend
+            port:
+              number: 8080
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: moneyrabbit-frontend
+            port:
+              number: 3000
+  tls:
+  - hosts:
+    - moneyrabbit

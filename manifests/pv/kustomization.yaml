@@ -25,3 +25,4 @@ resources:
 - mailserver-state.yaml
 - mailserver-config.yaml
 - mailserver-log.yaml
+- moneyrabbit-mariadb.yaml

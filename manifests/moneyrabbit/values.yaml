@@ -1,0 +1,17 @@
+---
+frontend:
+  image:
+    tag: "1.0.2"
+
+backend:
+  image:
+    tag: "1.0.2"
+  existingSecret: moneyrabbit-secret
+
+mariadb:
+  auth:
+    existingSecret: moneyrabbit-mariadb-secret
+  persistence:
+    enabled: true
+    storageClass: manual
+    size: 20Gi

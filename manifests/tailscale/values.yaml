@@ -1,0 +1,15 @@
+---
+# oauth は空のまま。
+# operator-oauth という名前の Secret を tailscale namespace に事前作成すること。
+# Secret のフィールド: client_id, client_secret
+# 作成手順: credentials/tailscale/operator-oauth.env を作成し ./bin/create_secrets.sh を実行
+oauth:
+  clientId: ""
+  clientSecret: ""
+
+operatorConfig:
+  defaultTags:
+  - tag:k8s-operator
+
+proxyConfig:
+  defaultTags: tag:k8s
