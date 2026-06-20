@@ -7,7 +7,28 @@
 - Terraform で VM が起動済みであること（[docs/terraform.md](terraform.md) を参照）
 - 実行マシンに Ansible がインストール済みであること
 - `ansible/inventory/hosts.yml` の IP アドレスが Terraform output と一致していること
-- VM への SSH 公開鍵認証が通ること
+- 1Password SSH Agent が設定済みで k8s 用 SSH 鍵が登録されていること（後述）
+
+## 1Password SSH Agent のセットアップ
+
+SSH 秘密鍵はファイルではなく 1Password SSH Agent 経由で提供する。
+
+**初回セットアップ（鍵の作成）**
+
+1. 1Password アプリで `新規アイテム > SSH キー > 鍵を生成` → 名前を `k8s-pve` として保存
+2. 生成された公開鍵を各 VM の `~/.ssh/authorized_keys` に登録する（初回は Proxmox コンソールまたはパスワード認証で作業）
+
+```bash
+# 1Password SSH Agent が k8s 鍵を提供しているか確認
+SSH_AUTH_SOCK=~/.1password/agent.sock ssh-add -L
+```
+
+`~/.ssh/config` では以下が設定済み（全ホスト共通）:
+
+```
+Host *
+  IdentityAgent ~/.1password/agent.sock
+```
 
 ## セットアップ
 
@@ -15,7 +36,7 @@
 # Ansible Galaxy コレクションをインストール
 ansible-galaxy collection install -r ansible/requirements.yml
 
-# 接続確認
+# 接続確認（1Password SSH Agent 経由で認証される）
 ansible all -i ansible/inventory/hosts.yml -m ping
 ```
 
