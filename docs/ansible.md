@@ -67,6 +67,22 @@ scp k8s@192.168.1.200:~/.kube/config ~/.kube/config
 | `argocd` | CP のみ | `kubectl apply -k manifests/argocd/` で ArgoCD をデプロイ |
 | `server_setup` | Worker のみ | discord-bot-cli インストール・リポジトリ clone・cron 設定 |
 
+## シークレットの生成（workers.secret.yml）
+
+`ansible/inventory/group_vars/workers/secret.yml` は gitignore 対象のため、1Password CLI で生成する。
+
+```bash
+# 1Password CLI で認証済みであることを確認
+op whoami
+
+# テンプレートからシークレットを生成
+op inject -i ansible/inventory/group_vars/workers/secret.yml.tpl \
+          -o ansible/inventory/group_vars/workers/secret.yml
+```
+
+生成された `secret.yml` はローカルにのみ存在し、git に含まれない。
+テンプレート（`secret.yml.tpl`）は git 管理対象。
+
 ## Dry-run（変更確認）
 
 ```bash
