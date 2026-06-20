@@ -22,6 +22,7 @@
             kubectl
             kustomize
             helm
+            argocd
 
             # Infrastructure
             terraform
