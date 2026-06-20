@@ -19,7 +19,7 @@ Kubernetes Secret
 ```
 
 - `ExternalSecret` マニフェストはリポジトリで管理（GitOps 対応）
-- 1Password vault: `Personal/k8s/<item-name>`
+- 1Password vault: `K8s-Secrets`
 - refreshInterval: 1h（1Password 側の変更が最大1時間でクラスタに反映）
 
 ## ブートストラップ手順（クラスタ再構築時）
@@ -61,7 +61,7 @@ kubectl create secret generic private-repo-creds \
   --from-literal=type=git \
   --from-literal=url=https://github.com/ITK13201/k8s.git \
   --from-literal=username=itk13201 \
-  --from-literal=password=$(op read "op://Personal/k8s/argocd-repo-creds/token") \
+  --from-literal=password=$(op read "op://K8s-Secrets/argocd-repo-creds/token") \
   -n argocd \
   --dry-run=client -o yaml \
   | kubectl label --local -f - argocd.argoproj.io/secret-type=repo-creds -o yaml \
@@ -110,7 +110,7 @@ kubectl annotate externalsecret <name> -n <namespace> \
 
 ### 新しいアプリのシークレットを追加する
 
-1. 1Password の `Personal/k8s/` vault に新しい項目を作成する
+1. 1Password の `K8s-Secrets` vault に新しい項目を作成する
 2. `manifests/<app>/external-secret.yaml` を作成する（既存ファイルを参考に）
 3. `manifests/<app>/kustomization.yaml` の `resources:` に追加する
 4. `git push` → ArgoCD が自動同期

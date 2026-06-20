@@ -266,7 +266,7 @@ oauth:
   clientSecret: "PLACEHOLDER"   # Kustomizeパッチで差し替え（またはESO経由）
 ```
 
-OAuthクライアント情報は1Password Vault `Personal/k8s/tailscale-operator-secret`に保存し、ESOで同期する。
+OAuthクライアント情報は1Password Vault `K8s-Secrets/tailscale-operator-secret`に保存し、ESOで同期する。
 
 ### Namespace追加
 

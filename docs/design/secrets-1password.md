@@ -86,7 +86,7 @@ kubectl create secret generic private-repo-creds \
   --from-literal=type=git \
   --from-literal=url=https://github.com/ITK13201/k8s.git \
   --from-literal=username=itk13201 \
-  --from-literal=password=$(op read "op://Personal/k8s/argocd-repo-creds/token") \
+  --from-literal=password=$(op read "op://K8s-Secrets/k8s/argocd-repo-creds/token") \
   -n argocd \
   --dry-run=client -o yaml \
   | kubectl label --local -f - argocd.argoproj.io/secret-type=repo-creds -o yaml \
@@ -117,7 +117,7 @@ Step 3: ArgoCD sync（またはリトライ後に自動完了）
 ## 1Password Vault 構成
 
 ```
-Personal (vault)
+K8s-Secrets (vault)
 └── k8s/
     ├── growi-secret
     ├── growi-mongodb-secret
@@ -254,7 +254,7 @@ spec:
     onepassword:
       connectHost: http://onepassword-connect.onepassword.svc.cluster.local:8080
       vaults:
-        Personal: 1
+        K8s-Secrets: 1
       auth:
         secretRef:
           connectTokenSecretRef:
@@ -330,14 +330,14 @@ spec:
 ```yaml
 # ansible/inventory/group_vars/workers/secret.yml.tpl（git 管理対象）
 ---
-server_setup_discord_bot_cli_config_token: "{{ op://Personal/ansible-workers-secret/token }}"
+server_setup_discord_bot_cli_config_token: "{{ op://K8s-Secrets/ansible-workers-secret/token }}"
 server_setup_discord_bot_cli_config_channels:
   - name: system
-    id: "{{ op://Personal/ansible-workers-secret/channel_system_id }}"
+    id: "{{ op://K8s-Secrets/ansible-workers-secret/channel_system_id }}"
   - name: nextcloud
-    id: "{{ op://Personal/ansible-workers-secret/channel_nextcloud_id }}"
+    id: "{{ op://K8s-Secrets/ansible-workers-secret/channel_nextcloud_id }}"
   - name: growi
-    id: "{{ op://Personal/ansible-workers-secret/channel_growi_id }}"
+    id: "{{ op://K8s-Secrets/ansible-workers-secret/channel_growi_id }}"
 ```
 
 ### 実行方法
