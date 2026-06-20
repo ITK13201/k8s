@@ -75,7 +75,7 @@ grafana:
     enabled: false
   # Admin credentials from Secret (credentials/monitoring/grafana.env)
   admin:
-    existingSecret: grafana
+    existingSecret: monitoring-grafana
     userKey: GF_SECURITY_ADMIN_USER
     passwordKey: GF_SECURITY_ADMIN_PASSWORD
   # Persistence

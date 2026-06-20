@@ -7,7 +7,7 @@ image:
 auth:
   database: rss_notifier
   username: rss_notifier
-  existingSecret: mariadb-secret
+  existingSecret: rss-notifier-mariadb-secret
 primary:
   name: primary
   containerPorts:

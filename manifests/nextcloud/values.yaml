@@ -36,7 +36,7 @@ externalDatabase:
   type: mysql
   existingSecret:
     enabled: true
-    secretName: mariadb-secret
+    secretName: nextcloud-mariadb-secret
     usernameKey: mariadb-user
     passwordKey: mariadb-password
     hostKey: mariadb-host
@@ -44,7 +44,7 @@ externalDatabase:
 mariadb:
   enabled: true
   auth:
-    existingSecret: mariadb-secret
+    existingSecret: nextcloud-mariadb-secret
   architecture: standalone
   primary:
     resources:
@@ -80,7 +80,7 @@ redis:
   enabled: true
   auth:
     enabled: true
-    existingSecret: redis-secret
+    existingSecret: nextcloud-redis-secret
     existingSecretPasswordKey: redis-password
   master:
     resources:

@@ -6,7 +6,7 @@ image:
   pullPolicy: IfNotPresent
 auth:
   username: minecraft
-  existingSecret: mariadb-secret
+  existingSecret: minecraft-mariadb-secret
 initdbScripts:
   001-init.sql: |
     CREATE DATABASE IF NOT EXISTS `luckperms`;

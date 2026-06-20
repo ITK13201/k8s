@@ -9,7 +9,7 @@ auth:
   rootUser: root
   usernames: ["growi"]
   databases: ["growi"]
-  existingSecret: mongodb-secret
+  existingSecret: growi-mongodb-secret
 replicaCount: 0
 podSecurityContext:
   enabled: true
