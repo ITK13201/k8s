@@ -64,12 +64,17 @@ Terraform state は Cloudflare R2 で管理。SSH 鍵は `~/.ssh/personal/pve/id
 ## 共通コマンド
 
 ```bash
-# YAML フォーマット（.yamlfmt の設定を使用）
+# YAML フォーマット（.yamlfmt 設定: indentless_arrays: true が強制）
 yamlfmt .
 
-# Secret の再生成
+# Secret の再生成（credentials/ 配下のファイルを更新してから実行、secrets/ は直接編集しない）
 ./bin/create_secrets.sh
 ```
+
+## バージョン管理
+
+Renovate が non-0.x マイナー/パッチを PR squash automerge で自動更新する。
+手動管理（Renovate 対象外）: growi, growi-converter, minecraft, palworld
 
 ## Git コミット規約
 
