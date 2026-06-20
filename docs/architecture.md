@@ -7,16 +7,17 @@ ArgoCD が本リポジトリを監視する。`manifests/argocd/application-set.
 ## ディレクトリ構成
 
 ```
-manifests/<app>/          # アプリごとのマニフェスト
-  kustomization.yaml      # エントリポイント（helmCharts ブロックで依存 Helm Chart を宣言）
-manifests/namespaces/     # Namespace 定義
-manifests/pv/             # PersistentVolume 定義（ノードのホストパス /data/k8s/pv/ を使用）
-terraform/                # Proxmox VE 上の VM プロビジョニング（bpg/proxmox プロバイダ）
-ansible/                  # kubeadm による k8s クラスタ構築・ArgoCD デプロイ
-bin/                      # シークレット生成・バックアップ・運用スクリプト（クラスタ構築は Ansible に移行）
-credentials/<ns>/         # .env ファイル（gitignore 対象）
-secrets/<ns>/             # 生成済み Secret YAML
-etc/                      # cron 設定など
+manifests/<app>/              # アプリごとのマニフェスト
+  kustomization.yaml          # エントリポイント（helmCharts ブロックで依存 Helm Chart を宣言）
+  external-secret.yaml        # ExternalSecret CRD（ESO が 1Password から Secret を生成）
+manifests/namespaces/         # Namespace 定義
+manifests/pv/                 # PersistentVolume 定義（ノードのホストパス /data/k8s/pv/ を使用）
+manifests/external-secrets/   # ESO Helm chart + ClusterSecretStore
+manifests/onepassword-connect/ # 1Password Connect Server Helm chart
+terraform/                    # Proxmox VE 上の VM プロビジョニング（bpg/proxmox プロバイダ）
+ansible/                      # kubeadm による k8s クラスタ構築・ArgoCD デプロイ
+bin/                          # バックアップ・運用スクリプト
+etc/                          # cron 設定など
 ```
 
 ## マニフェスト構造

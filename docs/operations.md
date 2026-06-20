@@ -47,10 +47,19 @@ Growi は PV の claimRef 問題があるため、専用スクリプトで更新
    scp k8s@192.168.1.200:~/.kube/config ~/.kube/config
    ```
 
-4. **シークレット適用** — ArgoCD がアプリを同期する前に手元から適用する
+4. **ブートストラップシークレット適用** — ArgoCD がアプリを同期する前に手元から適用する（詳細は [docs/secrets.md](secrets.md) 参照）
 
    ```bash
-   kubectl apply -R -f secrets/
+   # 1Password Connect 認証情報
+   kubectl create secret generic 1password-credentials \
+     --from-file=1password-credentials.json=./1password-credentials.json \
+     -n onepassword
+   kubectl create secret generic onepassword-connect-token \
+     --from-literal=token=<CONNECT_TOKEN> \
+     -n onepassword
+
+   # ArgoCD GitHub PAT
+   # docs/secrets.md のブートストラップ手順を参照
    ```
 
-以降のアプリデプロイは ArgoCD が `master` への push を検知して自動同期する。
+以降のアプリデプロイは ArgoCD が `master` への push を検知して自動同期する。ESO が 1Password から各アプリの Secret を自動生成する。

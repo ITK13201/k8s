@@ -5,18 +5,22 @@
 | アプリ | Namespace | 依存 Helm Chart |
 |--------|-----------|-----------------|
 | ArgoCD | argocd | - |
-| cert-manager | cert-manager | - |
+| 1Password Connect | onepassword | connect |
+| External Secrets Operator | external-secrets | external-secrets |
+| cert-manager | cert-manager | cert-manager |
 | ingress-nginx | ingress-nginx | - |
+| Tailscale Operator | tailscale | tailscale-operator |
 | kubernetes-dashboard | kubernetes-dashboard | - |
 | Growi | growi | MongoDB, Elasticsearch (Bitnami) |
-| Nextcloud | nextcloud | - |
-| Monitoring | monitoring | kube-prometheus-stack（`manifests/monitoring/charts/` にバンドル） |
+| Nextcloud | nextcloud | nextcloud |
+| Monitoring | monitoring | kube-prometheus-stack, Loki, Promtail |
 | Palworld | palworld | - |
 | Minecraft | minecraft | MariaDB (Bitnami) |
 | rss-generator | rss-generator | MariaDB (Bitnami) |
 | rss-notifier | rss-notifier | MariaDB (Bitnami) |
 | growi-converter | growi-converter | - |
 | mailserver | mailserver | docker-mailserver（hostPort 使用、k8s-worker01 固定） |
+| MoneyRabbit | moneyrabbit | moneyrabbit |
 
 ## バージョン固定の注意事項
 

@@ -27,4 +27,8 @@ ansible-lint roles/<role>/tasks/main.yml         # lint
 ## シークレット管理
 
 - `inventory/group_vars/workers/secret.yml` に機密変数を記載（gitignore 対象）
-- テンプレートは `inventory/group_vars/workers/secret.yml.example` を参照
+- `secret.yml` は `op inject` で生成する（詳細は [docs/ansible.md](../docs/ansible.md) 参照）:
+  ```bash
+  op inject -i inventory/group_vars/workers/secret.yml.tpl \
+            -o inventory/group_vars/workers/secret.yml
+  ```
