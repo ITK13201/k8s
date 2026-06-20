@@ -10,6 +10,7 @@ resources:
 - pvc-mongodb.yaml
 - pvc-elasticsearch-master.yaml
 - pvc-elasticsearch-data.yaml
+- external-secret.yaml
 helmCharts:
 - name: mongodb
   repo: oci://registry-1.docker.io/bitnamicharts

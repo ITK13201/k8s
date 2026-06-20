@@ -3,7 +3,7 @@
   hosts: control_plane
   become: true
   roles:
-    - common
-    - containerd
-    - k8s_node
-    - k8s_control_plane
+  - common
+  - containerd
+  - k8s_node
+  - k8s_control_plane

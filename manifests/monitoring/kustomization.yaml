@@ -27,3 +27,4 @@ helmCharts:
   valuesMerge: override
 resources:
 - grafana-pvc.yaml
+- external-secret.yaml

@@ -3,4 +3,4 @@
   hosts: control_plane
   become: true
   roles:
-    - argocd
+  - argocd

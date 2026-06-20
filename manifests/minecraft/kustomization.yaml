@@ -21,3 +21,4 @@ resources:
 - network-policy.yaml
 - minecraft-datadir-pvc.yaml
 - minecraft-backupdir-pvc.yaml
+- external-secret.yaml

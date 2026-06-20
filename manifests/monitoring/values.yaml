@@ -18,11 +18,9 @@ prometheus:
           selector:
             matchLabels:
               target-app: prometheus-server
-
     # Retention settings
     retention: 15d
     retentionSize: 45GB
-
     # Resource limits (適切に調整)
     resources:
       requests:
@@ -31,11 +29,9 @@ prometheus:
       limits:
         cpu: 1000m
         memory: 2Gi
-
     # Scrape interval
     scrapeInterval: 30s
     evaluationInterval: 30s
-
 # Alertmanager configuration
 alertmanager:
   alertmanagerSpec:
@@ -52,7 +48,6 @@ alertmanager:
           selector:
             matchLabels:
               target-app: prometheus-alertmanager
-
     # Resource limits
     resources:
       requests:
@@ -61,7 +56,6 @@ alertmanager:
       limits:
         cpu: 200m
         memory: 256Mi
-
   # Alertmanager configuration (初期はログのみ)
   config:
     global:
@@ -74,26 +68,22 @@ alertmanager:
       receiver: 'null'
     receivers:
     - name: 'null'
-
 # Grafana configuration
 grafana:
   # Skip chown on startup (PV directory already owned by 472:472)
   initChownData:
     enabled: false
-
   # Admin credentials from Secret (credentials/monitoring/grafana.env)
   admin:
     existingSecret: grafana
     userKey: GF_SECURITY_ADMIN_USER
     passwordKey: GF_SECURITY_ADMIN_PASSWORD
-
   # Persistence
   persistence:
     enabled: true
     existingClaim: grafana-pvc
     storageClassName: manual
     size: 10Gi
-
   # Resource limits
   resources:
     requests:
@@ -102,7 +92,6 @@ grafana:
     limits:
       cpu: 500m
       memory: 512Mi
-
   grafana.ini:
     server:
       domain: grafana.i-tk.dev
@@ -111,19 +100,16 @@ grafana:
       cookie_secure: true
       cookie_samesite: lax
       csrf_trusted_origins: grafana.i-tk.dev
-
   # Loki datasource
   additionalDataSources:
-    - name: Loki
-      type: loki
-      url: http://loki:3100
-      access: proxy
-      isDefault: false
-
+  - name: Loki
+    type: loki
+    url: http://loki:3100
+    access: proxy
+    isDefault: false
   # Default dashboards enabled
   defaultDashboardsEnabled: true
   defaultDashboardsTimezone: Asia/Tokyo
-
 # Node Exporter
 prometheus-node-exporter:
   resources:
@@ -133,7 +119,6 @@ prometheus-node-exporter:
     limits:
       cpu: 200m
       memory: 128Mi
-
 # kube-state-metrics
 kube-state-metrics:
   resources:
@@ -143,7 +128,6 @@ kube-state-metrics:
     limits:
       cpu: 200m
       memory: 128Mi
-
 # Default ServiceMonitors and PodMonitors
 defaultRules:
   create: true
@@ -172,34 +156,24 @@ defaultRules:
     nodeExporterRecording: true
     prometheus: true
     prometheusOperator: true
-
 # ServiceMonitor for various components
 kubeApiServer:
   enabled: true
-
 kubelet:
   enabled: true
-
 kubeControllerManager:
   enabled: true
-
 coreDns:
   enabled: true
-
 kubeDns:
   enabled: false
-
 kubeEtcd:
   enabled: true
-
 kubeScheduler:
   enabled: true
-
 kubeProxy:
   enabled: true
-
 kubeStateMetrics:
   enabled: true
-
 nodeExporter:
   enabled: true

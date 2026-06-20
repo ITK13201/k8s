@@ -1,8 +1,8 @@
 ---
 common_timezone: Asia/Tokyo
 common_kernel_modules:
-  - overlay
-  - br_netfilter
+- overlay
+- br_netfilter
 common_sysctl_params:
   net.bridge.bridge-nf-call-iptables: 1
   net.bridge.bridge-nf-call-ip6tables: 1

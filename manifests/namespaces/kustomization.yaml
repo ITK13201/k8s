@@ -13,3 +13,5 @@ resources:
 - mailserver.yaml
 - tailscale.yaml
 - moneyrabbit.yaml
+- onepassword.yaml
+- external-secrets.yaml

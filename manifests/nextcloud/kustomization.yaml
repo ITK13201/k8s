@@ -28,3 +28,4 @@ patches:
 resources:
 - nextcloud-files-pvc.yaml
 - hpa.yaml
+- external-secret.yaml

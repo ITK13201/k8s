@@ -12,3 +12,4 @@ helmCharts:
   includeCRDs: true
 resources:
 - cluster-issuer.yaml
+- external-secret.yaml

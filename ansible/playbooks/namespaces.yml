@@ -3,4 +3,4 @@
   hosts: control_plane
   become: true
   roles:
-    - k8s_namespaces
+  - k8s_namespaces

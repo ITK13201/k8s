@@ -7,6 +7,7 @@ resources:
 - deployment.yaml
 - service.yaml
 - cronjob.yaml
+- external-secret.yaml
 helmCharts:
 - name: mariadb
   repo: oci://registry-1.docker.io/bitnamicharts

@@ -11,16 +11,14 @@
       gpgkey=https://pkgs.k8s.io/core:/stable:/v{{ k8s_version }}/rpm/repodata/repomd.xml.key
       exclude=kubelet kubeadm kubectl cri-tools kubernetes-cni
     mode: '0644'
-
 - name: Install kubeadm, kubelet, and kubectl
   ansible.builtin.dnf:
     name:
-      - kubeadm
-      - kubelet
-      - kubectl
+    - kubeadm
+    - kubelet
+    - kubectl
     state: present
     disable_excludes: kubernetes
-
 - name: Enable and start kubelet
   ansible.builtin.systemd:
     name: kubelet

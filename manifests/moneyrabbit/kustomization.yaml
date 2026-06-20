@@ -4,6 +4,7 @@ kind: Kustomization
 namespace: moneyrabbit
 resources:
 - ingress-tailscale.yaml
+- external-secret.yaml
 helmCharts:
 - name: moneyrabbit
   repo: https://itk13201.github.io/MoneyRabbit

@@ -31,6 +31,9 @@ terraform/cloudflare/backend.hcl
 ansible/inventory/group_vars/all.secret.yml
 ansible/inventory/group_vars/workers/secret.yml
 
+### direnv ###
+.direnv/
+
 ### Developments ###
 *.log
 tmp/
