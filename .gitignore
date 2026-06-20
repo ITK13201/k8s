@@ -37,7 +37,5 @@ ansible/inventory/group_vars/workers/secret.yml
 ### Developments ###
 *.log
 tmp/
-credentials/
-secrets/
 data/
 generated.yaml

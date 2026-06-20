@@ -66,10 +66,9 @@ Terraform state は Cloudflare R2 で管理。SSH 鍵は `~/.ssh/personal/pve/id
 ```bash
 # YAML フォーマット（.yamlfmt 設定: indentless_arrays: true が強制）
 yamlfmt .
-
-# Secret の再生成（credentials/ 配下のファイルを更新してから実行、secrets/ は直接編集しない）
-./bin/create_secrets.sh
 ```
+
+シークレット管理は ESO + 1Password Connect に移行済み。詳細は [docs/secrets.md](docs/secrets.md) を参照。
 
 ## バージョン管理
 
