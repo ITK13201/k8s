@@ -11,5 +11,5 @@ helmCharts:
   version: 0.6.0
   releaseName: moneyrabbit
   namespace: moneyrabbit
-  valuesFile: values.yamls
+  valuesFile: values.yaml
   valuesMerge: override
