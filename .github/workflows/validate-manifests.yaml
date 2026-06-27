@@ -46,9 +46,16 @@ jobs:
 
       - name: Validate manifests
         run: |
+          # ArgoCD ApplicationSet の除外アプリはスキップ
+          skip=(growi growi-converter minecraft palworld)
           failed=()
           for dir in manifests/*/; do
             [ -f "${dir}kustomization.yaml" ] || continue
+            app=$(basename "${dir}")
+            if printf '%s\n' "${skip[@]}" | grep -qx "${app}"; then
+              echo "Skipping ${dir} (not managed by ArgoCD)"
+              continue
+            fi
             echo "::group::${dir}"
             if kustomize build --enable-helm "${dir}" > /dev/null; then
               echo "OK"
