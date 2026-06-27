@@ -64,6 +64,9 @@ Terraform state は Cloudflare R2 で管理。SSH 鍵は `~/.ssh/personal/pve/id
 ## 共通コマンド
 
 ```bash
+# 開発環境（全ツールを提供）
+nix develop  # kubectl, helm, kustomize, argocd, terraform, ansible-lint, yamlfmt が使用可能になる
+
 # YAML フォーマット（.yamlfmt 設定: indentless_arrays: true が強制）
 yamlfmt .
 ```
