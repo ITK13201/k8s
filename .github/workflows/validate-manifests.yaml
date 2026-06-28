@@ -1,71 +1,64 @@
 ---
 name: Validate Manifests
-
 on:
   push:
     branches: [master]
     tags: ["*"]
     paths:
-      - manifests/**
+    - manifests/**
   pull_request:
     branches: [master]
     paths:
-      - manifests/**
-
+    - manifests/**
 jobs:
   validate:
     runs-on: ubuntu-latest
     env:
       DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
     steps:
-      - uses: actions/checkout@v7
-
-      - name: Set up Helm
-        uses: azure/setup-helm@v5
-
-      - name: Install kustomize
-        run: |
-          curl -sL "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv5.8.1/kustomize_v5.8.1_linux_amd64.tar.gz" \
-            | tar xz -C /usr/local/bin/
-
-      # Docker Hub には OCI チャート（bitnami）があり、未認証だとレート制限に引っかかる場合がある。
-      # リポジトリの Secrets に DOCKERHUB_USERNAME / DOCKERHUB_TOKEN を設定すると有効になる。
-      - name: Log in to Docker Hub
-        if: env.DOCKERHUB_USERNAME != ''
-        run: |
-          echo "${{ secrets.DOCKERHUB_TOKEN }}" | helm registry login registry-1.docker.io \
-            --username "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
-
-      - name: Cache Helm charts
-        uses: actions/cache@v6
-        with:
-          path: ~/.cache/helm
-          key: helm-${{ hashFiles('manifests/**/kustomization.yaml') }}
-          restore-keys: |
-            helm-
-
-      - name: Validate manifests
-        run: |
-          # ArgoCD ApplicationSet の除外アプリはスキップ
-          skip=(growi growi-converter minecraft palworld)
-          failed=()
-          for dir in manifests/*/; do
-            [ -f "${dir}kustomization.yaml" ] || continue
-            app=$(basename "${dir}")
-            if printf '%s\n' "${skip[@]}" | grep -qx "${app}"; then
-              echo "Skipping ${dir} (not managed by ArgoCD)"
-              continue
-            fi
-            echo "::group::${dir}"
-            if kustomize build --enable-helm "${dir}" > /dev/null; then
-              echo "OK"
-            else
-              failed+=("${dir}")
-            fi
-            echo "::endgroup::"
-          done
-          if [ ${#failed[@]} -gt 0 ]; then
-            echo "Validation failed:"
-            printf '  - %s\n' "${failed[@]}"
-            exit 1
+    - uses: actions/checkout@v7
+    - name: Set up Helm
+      uses: azure/setup-helm@v5
+    - name: Install kustomize
+      run: |
+        curl -sL "https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv5.8.1/kustomize_v5.8.1_linux_amd64.tar.gz" \
+          | tar xz -C /usr/local/bin/
+    # Docker Hub には OCI チャート（bitnami）があり、未認証だとレート制限に引っかかる場合がある。
+    # リポジトリの Secrets に DOCKERHUB_USERNAME / DOCKERHUB_TOKEN を設定すると有効になる。
+    - name: Log in to Docker Hub
+      if: env.DOCKERHUB_USERNAME != ''
+      run: |
+        echo "${{ secrets.DOCKERHUB_TOKEN }}" | helm registry login registry-1.docker.io \
+          --username "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+    - name: Cache Helm charts
+      uses: actions/cache@v6
+      with:
+        path: ~/.cache/helm
+        key: helm-${{ hashFiles('manifests/**/kustomization.yaml') }}
+        restore-keys: |
+          helm-
+    - name: Validate manifests
+      run: |
+        # ArgoCD ApplicationSet の除外アプリはスキップ
+        skip=(growi growi-converter minecraft palworld)
+        failed=()
+        for dir in manifests/*/; do
+          [ -f "${dir}kustomization.yaml" ] || continue
+          app=$(basename "${dir}")
+          if printf '%s\n' "${skip[@]}" | grep -qx "${app}"; then
+            echo "Skipping ${dir} (not managed by ArgoCD)"
+            continue
           fi
+          echo "::group::${dir}"
+          if kustomize build --enable-helm "${dir}" > /dev/null; then
+            echo "OK"
+          else
+            failed+=("${dir}")
+          fi
+          echo "::endgroup::"
+        done
+        if [ ${#failed[@]} -gt 0 ]; then
+          echo "Validation failed:"
+          printf '  - %s\n' "${failed[@]}"
+          exit 1
+        fi
