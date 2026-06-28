@@ -55,6 +55,16 @@
         "image: (?<depName>\\S*):(?<currentValue>\\S*)"
       ],
       "datasourceTemplate": "docker"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": [
+        "/manifests/.*values\\.ya?ml$/"
+      ],
+      "matchStrings": [
+        "repository: (?<depName>\\S+)\\n\\s+tag: \"(?<currentValue>[^\"]+)\""
+      ],
+      "datasourceTemplate": "docker"
     }
   ]
 }
