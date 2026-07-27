@@ -7,7 +7,7 @@ helmCharts:
   repo: https://nextcloud.github.io/helm/
   releaseName: nextcloud
   namespace: nextcloud
-  version: 9.2.4
+  version: 9.2.5
   valuesFile: values.yaml
   valuesMerge: override
 images:
