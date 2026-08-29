@@ -134,7 +134,6 @@ K8s-Secrets (vault)
     ├── rss-notifier-mariadb-secret
     ├── rss-notifier-secret
     ├── monitoring-grafana
-    ├── mailserver-resend-secret       ← 追加（旧設計書に未記載）
     ├── moneyrabbit-mariadb-secret     ← 追加（旧設計書に未記載）
     ├── moneyrabbit-secret             ← 追加（旧設計書に未記載）
     ├── tailscale-operator-oauth       ← 追加（旧設計書に未記載）
@@ -156,9 +155,6 @@ manifests/
 │   └── namespace.yaml
 ├── growi/
 │   ├── external-secret.yaml    # ExternalSecret CRD（git 管理）
-│   └── ...
-├── mailserver/
-│   ├── external-secret.yaml    # 新規追加
 │   └── ...
 ├── moneyrabbit/
 │   ├── external-secret.yaml    # 新規追加
@@ -192,7 +188,6 @@ bin/create_secrets.sh  ← 廃止
 | rss-notifier | mariadb-secret | credentials/rss-notifier/mariadb-secret.env | rss-notifier-mariadb-secret |
 | rss-notifier | rss-notifier-secret | credentials/rss-notifier/rss-notifier-secret.env | rss-notifier-secret |
 | monitoring | grafana | credentials/monitoring/grafana.env | monitoring-grafana |
-| mailserver | mailserver-resend-secret | credentials/mailserver/mailserver-resend-secret.env | mailserver-resend-secret |
 | moneyrabbit | moneyrabbit-mariadb-secret | credentials/moneyrabbit/moneyrabbit-mariadb-secret.env | moneyrabbit-mariadb-secret |
 | moneyrabbit | moneyrabbit-secret | credentials/moneyrabbit/moneyrabbit-secret.env | moneyrabbit-secret |
 | tailscale | operator-oauth | credentials/tailscale/operator-oauth.env | tailscale-operator-oauth |
@@ -371,7 +366,6 @@ op inject -i ansible/inventory/group_vars/workers/secret.yml.tpl \
 - [ ] rss-generator（mariadb-secret, rss-generator-secret）
 - [ ] rss-notifier（mariadb-secret, rss-notifier-secret）
 - [ ] monitoring（grafana）
-- [ ] mailserver（mailserver-resend-secret）
 - [ ] moneyrabbit（moneyrabbit-mariadb-secret, moneyrabbit-secret）
 - [ ] tailscale（operator-oauth）
 

@@ -147,7 +147,6 @@ kubectl get clustersecretstore
 | rss-notifier-mariadb-secret | rss-notifier | mariadb-secret |
 | rss-notifier-secret | rss-notifier | rss-notifier-secret |
 | monitoring-grafana | monitoring | grafana |
-| mailserver-resend-secret | mailserver | mailserver-resend-secret |
 | moneyrabbit-mariadb-secret | moneyrabbit | moneyrabbit-mariadb-secret |
 | moneyrabbit-secret | moneyrabbit | moneyrabbit-secret |
 | tailscale-operator-oauth | tailscale | operator-oauth |

@@ -143,10 +143,3 @@ terraform -chdir=terraform/cloudflare import \
   'cloudflare_dns_record.web["argocd"]' "<ZONE_ID>/<RECORD_ID>"
 ```
 
-## Resend DKIM 設定（メールサーバ構築後）
-
-Resend でドメイン認証完了後、`terraform.tfvars` に `resend_dkim_txt` を追加して apply する。
-
-```hcl
-resend_dkim_txt = "p=XXXX..."
-```

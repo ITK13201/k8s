@@ -54,7 +54,6 @@ Terraform state は Cloudflare R2 で管理。SSH 鍵は `~/.ssh/personal/pve/id
   - [Prometheus/Grafana 設計](docs/prometheus-grafana-design.md)
   - [Cloudflare Zero Trust 設計](docs/design/cloudflare-zero-trust.md)
   - [Terraform Cloudflare 設計](docs/design/terraform-cloudflare.md)
-  - [メールサーバ設計](docs/design/mailserver.md)（docker-mailserver on k8s）
   - [シークレット管理 1Password 移行設計](docs/design/secrets-1password.md)（ESO + 1Password Connect）
   - [ログ集約設計](docs/design/logging.md)（Grafana Loki + Promtail）
   - [MoneyRabbit デプロイ設計](docs/design/moneyrabbit.md)（家計管理PWAアプリ・Tailscale VPN限定）

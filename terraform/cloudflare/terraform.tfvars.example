@@ -5,6 +5,3 @@ home_ip                 = "REPLACE_WITH_HOME_IP"
 
 # Cloudflare Zero Trust 設定時に使用
 # owner_email = "your@email.com"
-
-# Resend ドメイン認証完了後に設定する
-# resend_dkim_txt = "p=XXXX..."

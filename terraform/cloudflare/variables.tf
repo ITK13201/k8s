@@ -25,9 +25,3 @@ variable "owner_email" {
   description = "Access 認証で許可するメールアドレス（管理者）。Cloudflare Zero Trust 設定時に使用"
   default     = null
 }
-
-variable "resend_dkim_txt" {
-  type        = string
-  description = "Resend ドメイン認証で発行される DKIM TXT レコード値（p=...）。未設定の場合 DKIM レコードはスキップされる"
-  default     = null
-}
