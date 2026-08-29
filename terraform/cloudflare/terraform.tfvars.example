@@ -5,3 +5,12 @@ home_ip                 = "REPLACE_WITH_HOME_IP"
 
 # Cloudflare Zero Trust 設定時に使用
 # owner_email = "your@email.com"
+
+# さくらのレンタルサーバ メール DNS 設定
+sakura_mail_server = "REPLACE_WITH_SAKURA_MAIL_SERVER"
+sakura_spf_txt     = "REPLACE_WITH_SPF_TXT"   # さくらコントロールパネルの SPF 設定値
+sakura_dmarc_rua   = "REPLACE_WITH_DMARC_RUA" # DMARC レポート送信先メールアドレス
+
+# さくら DKIM 設定（さくらコントロールパネルで DKIM を有効化してから追記）
+# sakura_dkim_selector = "default"
+# sakura_dkim_txt      = "v=DKIM1; k=rsa; p=REPLACE_WITH_PUBLIC_KEY"
