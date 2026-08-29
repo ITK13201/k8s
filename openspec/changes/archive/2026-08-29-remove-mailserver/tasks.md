@@ -39,4 +39,4 @@
 ## 7. 最終確認
 
 - [x] 7.1 `grep -r "mailserver\|resend_dkim" manifests/ docs/ CLAUDE.md ansible/ terraform/` を実行し、意図しない残存参照がないことを確認（charts/ 配下は除外可）
-- [ ] 7.2 変更を master にプッシュし、ArgoCD で `k8s-mailserver` Application が削除（pruned）されることを確認
+- [x] 7.2 変更を master にプッシュし、ArgoCD で `k8s-mailserver` Application が削除（pruned）されることを確認
