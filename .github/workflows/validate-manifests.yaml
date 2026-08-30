@@ -30,6 +30,10 @@ jobs:
       run: |
         echo "${{ secrets.DOCKERHUB_TOKEN }}" | helm registry login registry-1.docker.io \
           --username "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+    - name: Log in to GHCR
+      run: |
+        echo "${{ secrets.GITHUB_TOKEN }}" | helm registry login ghcr.io \
+          --username "${{ github.actor }}" --password-stdin
     - name: Cache Helm charts
       uses: actions/cache@v6
       with:
