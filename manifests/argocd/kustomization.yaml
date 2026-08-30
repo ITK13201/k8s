@@ -6,6 +6,7 @@ resources:
 - https://raw.githubusercontent.com/argoproj/argo-cd/v3.5.2/manifests/install.yaml
 - app-project.yaml
 - application-set.yaml
+- external-secret-ghcr-helm.yaml
 patches:
 - path: argocd-cm-patch.yaml
 - path: argocd-cmd-params-cm-patch.yaml
