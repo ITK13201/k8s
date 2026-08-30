@@ -30,10 +30,13 @@ jobs:
       run: |
         echo "${{ secrets.DOCKERHUB_TOKEN }}" | helm registry login registry-1.docker.io \
           --username "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
-    - name: Log in to GHCR
+    - name: Pre-pull GHCR OCI Helm charts
       run: |
         echo "${{ secrets.GITHUB_TOKEN }}" | helm registry login ghcr.io \
           --username "${{ github.actor }}" --password-stdin
+        mkdir -p manifests/gomi-no-hi/charts/gomi-no-hi-0.1.0
+        helm pull oci://ghcr.io/itk13201/gomi-no-hi --version 0.1.0 \
+          --untar --untardir manifests/gomi-no-hi/charts/gomi-no-hi-0.1.0
     - name: Cache Helm charts
       uses: actions/cache@v6
       with:
