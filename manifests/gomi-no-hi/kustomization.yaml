@@ -7,7 +7,7 @@ resources:
 - ingress-tailscale.yaml
 helmCharts:
 - name: gomi-no-hi
-  repo: https://itk13201.github.io/gomi-no-hi
+  repo: oci://ghcr.io/itk13201
   version: 0.1.0
   releaseName: gomi-no-hi
   namespace: gomi-no-hi

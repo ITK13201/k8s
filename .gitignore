@@ -6,9 +6,6 @@
 
 ### Helm ###
 charts/
-# gomi-no-hi チャートはprivate repoのためローカルバンドル（ArgoCD がダウンロード不可）
-!manifests/gomi-no-hi/charts/
-!manifests/gomi-no-hi/charts/**
 temp.yaml
 temp*.yaml
 
