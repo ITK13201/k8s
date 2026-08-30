@@ -8,7 +8,7 @@ resources:
 helmCharts:
 - name: gomi-no-hi
   repo: oci://ghcr.io/itk13201
-  version: 0.1.0
+  version: 0.1.2
   releaseName: gomi-no-hi
   namespace: gomi-no-hi
   valuesFile: values.yaml
