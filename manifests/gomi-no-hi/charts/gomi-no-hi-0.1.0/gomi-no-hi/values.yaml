@@ -1,0 +1,49 @@
+nameOverride: ""
+fullnameOverride: ""
+
+registry:
+  # プロジェクト横断で管理される imagePullSecret（kubernetes.io/dockerconfigjson）の Secret 名
+  existingSecret: ghcr-secret
+
+frontend:
+  image:
+    repository: ""
+    tag: latest
+    pullPolicy: IfNotPresent
+  replicaCount: 1
+  resources: {}
+
+backend:
+  image:
+    repository: ""
+    tag: latest
+    pullPolicy: IfNotPresent
+  replicaCount: 1
+  env:
+    GIN_MODE: release
+  vapid:
+    publicKey: ""
+    privateKey: ""
+    subject: ""
+  # 既存の Opaque Secret 名。設定時はチャートで Secret を作成しない。
+  # Secret には VAPID_PUBLIC_KEY / VAPID_PRIVATE_KEY / VAPID_SUBJECT が必要。
+  existingSecret: ""
+  resources: {}
+
+redis:
+  image:
+    repository: redis
+    tag: 7-alpine
+    pullPolicy: IfNotPresent
+  host: redis
+  port: 6379
+  auth:
+    password: ""
+    # 既存の Opaque Secret 名。設定時はチャートで Secret を作成しない。
+    # Secret には REDIS_PASSWORD が必要。
+    existingSecret: ""
+  persistence:
+    enabled: true
+    size: 1Gi
+    storageClass: ""
+  resources: {}
