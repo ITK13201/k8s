@@ -21,7 +21,7 @@
             # Kubernetes
             kubectl
             kustomize
-            helm
+            kubernetes-helm
             argocd
 
             # Infrastructure

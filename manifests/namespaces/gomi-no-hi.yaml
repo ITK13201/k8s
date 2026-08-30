@@ -1,0 +1,7 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: gomi-no-hi
+  labels:
+    name: gomi-no-hi

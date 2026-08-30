@@ -22,3 +22,4 @@ resources:
 - grafana.yaml
 - loki.yaml
 - moneyrabbit-mariadb.yaml
+- gomi-no-hi-redis.yaml

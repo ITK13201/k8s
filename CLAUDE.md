@@ -57,6 +57,7 @@ Terraform state は Cloudflare R2 で管理。SSH 鍵は `~/.ssh/personal/pve/id
   - [シークレット管理 1Password 移行設計](docs/design/secrets-1password.md)（ESO + 1Password Connect）
   - [ログ集約設計](docs/design/logging.md)（Grafana Loki + Promtail）
   - [MoneyRabbit デプロイ設計](docs/design/moneyrabbit.md)（家計管理PWAアプリ・Tailscale VPN限定）
+  - [gomi-no-hi デプロイ設計](docs/design/gomi-no-hi.md)（ごみ収集日通知PWAアプリ・Tailscale VPN限定）
   - [ファイル整理設計](docs/design/cleanup.md)（Proxmox VE 移行後の不要ファイル・スクリプト整理計画）
 - [インシデント記録](docs/incidents/)（障害・ネットワーク問題の事後分析）
 

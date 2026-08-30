@@ -1,0 +1,28 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: gomi-no-hi
+  namespace: gomi-no-hi
+spec:
+  ingressClassName: tailscale
+  rules:
+  - http:
+      paths:
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: gomi-no-hi-backend
+            port:
+              number: 8080
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: gomi-no-hi-frontend
+            port:
+              number: 80
+  tls:
+  - hosts:
+    - gomi-no-hi

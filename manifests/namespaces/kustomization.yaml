@@ -14,3 +14,4 @@ resources:
 - moneyrabbit.yaml
 - onepassword.yaml
 - external-secrets.yaml
+- gomi-no-hi.yaml
