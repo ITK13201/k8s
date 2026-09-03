@@ -2,11 +2,11 @@
 frontend:
   image:
     repository: ghcr.io/itk13201/gomi-no-hi-frontend
-    tag: "2.0.7"
+    tag: "2.0.8"
 backend:
   image:
     repository: ghcr.io/itk13201/gomi-no-hi-backend
-    tag: "2.0.7"
+    tag: "2.0.8"
   existingSecret: gomi-no-hi-backend-secret
 redis:
   host: gomi-no-hi-redis
