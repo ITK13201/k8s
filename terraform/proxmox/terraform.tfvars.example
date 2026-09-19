@@ -1,26 +1,17 @@
-proxmox_endpoint = "https://192.168.1.100:8006/"
-proxmox_username = "root@pam"
-proxmox_password = "your-proxmox-password"
-proxmox_node     = "pve"
-
-datastore_id = "local-lvm"
-
-vm_user        = "k8s"
-ssh_public_key = "ssh-ed25519 AAAA... your-public-key"
-
-gateway_ip = "192.168.1.1"
-dns_servers = ["8.8.8.8", "192.168.1.1"]
-
-control_plane_ip        = "192.168.1.200/24"
-control_plane_cpu_cores = 2
-control_plane_memory_mb = 8192
-control_plane_disk_gb   = 30
-
-worker_count     = 1
-worker_ips       = ["192.168.1.201/24"]
-worker_cpu_cores = 8
-worker_memory_mb = 32768
-worker_disk_gb   = 150
-
-worker_hdd_storage_by_id = "ata-YOUR-STORAGE-DISK-BY-ID"
-worker_hdd_backup_by_id  = "ata-YOUR-BACKUP-DISK-BY-ID"
+# terraform.tfvars は廃止されました。値は以下に振り分けられています。
+#
+# 1. 秘密値・個人情報（認証情報 / endpoint / IP / by-id / ssh 鍵等）
+#    → env.op の op:// 参照（vault K8s）で供給し、`make tf-proxmox-*` 実行時に
+#      `op run --env-file=terraform/proxmox/env.op` により子プロセスへ注入される。
+#      対象: TF_VAR_proxmox_password / TF_VAR_proxmox_endpoint /
+#            TF_VAR_control_plane_ip / TF_VAR_worker_ips / TF_VAR_gateway_ip /
+#            TF_VAR_worker_hdd_storage_by_id / TF_VAR_worker_hdd_backup_by_id /
+#            TF_VAR_ssh_public_key
+#
+# 2. 非秘密・非個人のデフォルト（サイジング / proxmox_username / datastore_id 等）
+#    → defaults.auto.tfvars（committed、terraform が自動読込）。
+#
+# SSH 秘密鍵は 1Password SSH Agent 経由で提供する（providers.tf の ssh { agent = true }）。
+# tfvars / env.op で秘密鍵パスを扱う必要はない。
+#
+# 値の投入は 1Password 上でユーザーが手動で行う（env.op には実値を書かない）。

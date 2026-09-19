@@ -17,8 +17,10 @@ provider "proxmox" {
   insecure = true
 
   ssh {
-    agent       = false
-    username    = "root"
-    private_key = file(var.proxmox_ssh_private_key_path)
+    # 1Password SSH Agent 経由で認証する（秘密鍵ファイルは扱わない）。
+    # agent_socket は SSH_AUTH_SOCK に依存せず明示する。
+    agent        = true
+    agent_socket = pathexpand("~/.1password/agent.sock")
+    username     = "root"
   }
 }

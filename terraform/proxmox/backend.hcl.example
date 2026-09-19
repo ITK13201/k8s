@@ -1,15 +1,17 @@
-bucket = "tf-state-k8s"
-key    = "proxmox/terraform.tfstate"
-region = "auto"
-endpoints = {
-  s3 = "https://REPLACE_WITH_ACCOUNT_ID.r2.cloudflarestorage.com"
-}
-
-access_key = "REPLACE_WITH_R2_ACCESS_KEY_ID"
-secret_key = "REPLACE_WITH_R2_SECRET_ACCESS_KEY"
-
-skip_credentials_validation = true
-skip_metadata_api_check     = true
-skip_region_validation      = true
-skip_requesting_account_id  = true
-force_path_style            = true
+# このファイルは参考用です。Makefile 運用では backend.hcl は不要になりました。
+#
+# - 非秘密の bucket/key/region/skip_* は Makefile の `-backend-config=key=value` フラグで供給されます
+#   （`make tf-proxmox-init` を参照）。
+# - R2 の認証情報（access_key / secret_key）とエンドポイント（endpoint、account_id を含む個人情報）は
+#   env.op（op:// 参照）から AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY / AWS_ENDPOINT_URL_S3 として
+#   実行時にのみ子プロセスへ注入されます。
+#
+# 参考: Makefile が渡す非秘密バックエンド設定
+# bucket = "tf-state-k8s"
+# key    = "proxmox/terraform.tfstate"
+# region = "auto"
+# skip_credentials_validation = true
+# skip_metadata_api_check     = true
+# skip_region_validation      = true
+# skip_requesting_account_id  = true
+# use_path_style              = true

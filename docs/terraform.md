@@ -15,6 +15,19 @@
 
 ## 前提条件
 
+### 共通（Makefile + 1Password 運用）
+
+Terraform の操作はリポジトリルートの `Makefile` 経由で実行する（`make help` で一覧表示）。
+秘密値・個人情報は 1Password（`op run --env-file`）から実行時にのみ子プロセスへ注入され、
+親シェルやディスクには残らない。
+
+- `op`（1Password CLI）がインストール済みかつサインイン済みであること（`op signin`）。
+- vault `K8s` に必要なアイテム（`terraform-proxmox`・`terraform-cloudflare`・`cloudflare-r2`）が存在し、
+  各フィールドに値が投入済みであること（雛形は本リポジトリの変更で作成、値の投入は手動）。
+- 参照定義は `terraform/proxmox/env.op`・`terraform/cloudflare/env.op`（`op://` 参照のみ・コミット済み）。
+- 非秘密・非個人のデフォルト（サイジング・`proxmox_username`・`datastore_id` 等）は
+  `terraform/<workspace>/defaults.auto.tfvars`（コミット済み・`terraform` が自動読込）。
+
 ### Proxmox VE 側の設定（手動・初回のみ）
 
 1. `local` ストレージで `snippets` コンテンツを有効化する
@@ -33,35 +46,28 @@
 3. 発行された **Access Key ID** と **Secret Access Key** を控える
 4. Cloudflare ダッシュボード右上のアカウント ID を確認する
 
-### backend.hcl の作成
+### 1Password への値投入（初回のみ）
 
-```bash
-cp terraform/proxmox/backend.hcl.example terraform/proxmox/backend.hcl
-# backend.hcl を編集して ACCOUNT_ID・ACCESS_KEY・SECRET_KEY を設定
-```
-
-### terraform.tfvars の作成
-
-```bash
-# terraform.tfvars は既に作成済み
-# REPLACE_WITH_PROXMOX_PASSWORD と ssh_public_key を手動で編集する
-```
+vault `K8s` の `terraform-proxmox`・`cloudflare-r2` アイテムに実値を投入する
+（R2 の access/secret key・endpoint、proxmox パスワード・endpoint・各種 IP・by-id・SSH 鍵等）。
+参照先フィールドは `terraform/proxmox/env.op` を参照。backend の bucket/key/region 等の非秘密値は
+`Makefile` の `-backend-config` フラグで供給されるため `backend.hcl` は不要。
 
 ### 初期化
 
 ```bash
-# プロバイダーと R2 バックエンドを初期化
-terraform -chdir=terraform/proxmox init -backend-config=backend.hcl
+# プロバイダーと R2 バックエンドを初期化（op 経由で認証情報を注入）
+make tf-proxmox-init
 ```
 
 ## VM のプロビジョニング
 
 ```bash
 # 変更内容を確認
-terraform -chdir=terraform/proxmox plan
+make tf-proxmox-plan
 
 # VM を作成
-terraform -chdir=terraform/proxmox apply
+make tf-proxmox-apply
 ```
 
 `apply` が完了すると以下のリソースが作成される:
@@ -73,7 +79,7 @@ terraform -chdir=terraform/proxmox apply
 
 ```bash
 # IP アドレスを確認
-terraform -chdir=terraform/proxmox output -json
+make tf-proxmox-output
 
 # 出力された IP を ansible/inventory/hosts.yml に反映する
 ```
@@ -81,7 +87,7 @@ terraform -chdir=terraform/proxmox output -json
 ## VM の削除
 
 ```bash
-terraform -chdir=terraform/proxmox destroy
+make tf-proxmox-destroy
 ```
 
 ## トラブルシューティング
@@ -115,31 +121,29 @@ Proxmox のコンソールから直接ログインして状態を確認する。
 
 ## セットアップ
 
-```bash
-cp terraform/cloudflare/backend.hcl.example terraform/cloudflare/backend.hcl
-# backend.hcl を編集（key は cloudflare/terraform.tfstate、R2 の認証情報を設定）
-
-cp terraform/cloudflare/terraform.tfvars.example terraform/cloudflare/terraform.tfvars
-# terraform.tfvars を編集（cloudflare_dns_api_token, cloudflare_r2_api_token, cloudflare_account_id, home_ip）
-```
+vault `K8s` の `terraform-cloudflare`・`cloudflare-r2` アイテムに実値を投入する
+（DNS/R2 API トークン・account_id・home_ip・さくらメール設定・DKIM、R2 の access/secret key・endpoint）。
+参照先フィールドは `terraform/cloudflare/env.op` を参照。`backend.hcl`・`terraform.tfvars` は不要。
 
 ## 初期化・適用
 
 ```bash
-terraform -chdir=terraform/cloudflare init -backend-config=backend.hcl
-terraform -chdir=terraform/cloudflare plan
-terraform -chdir=terraform/cloudflare apply
+make tf-cloudflare-init
+make tf-cloudflare-plan
+make tf-cloudflare-apply
 ```
 
 ## 既存リソースの import（初回のみ）
 
+`import` も R2 バックエンド認証が必要なため `op run --env-file` 経由で実行する。
+
 ```bash
 # R2 バケット
-terraform -chdir=terraform/cloudflare import \
+op run --env-file=terraform/cloudflare/env.op -- terraform -chdir=terraform/cloudflare import \
   'cloudflare_r2_bucket.tf_state' "<ACCOUNT_ID>/tf-state-k8s/default"
 
 # 既存 DNS レコード（zone_id と record_id は Cloudflare API または dashboard から取得）
-terraform -chdir=terraform/cloudflare import \
+op run --env-file=terraform/cloudflare/env.op -- terraform -chdir=terraform/cloudflare import \
   'cloudflare_dns_record.web["argocd"]' "<ZONE_ID>/<RECORD_ID>"
 ```
 

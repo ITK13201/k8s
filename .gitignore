@@ -31,6 +31,10 @@ terraform/cloudflare/backend.hcl
 ansible/inventory/group_vars/all.secret.yml
 ansible/inventory/group_vars/workers/secret.yml
 
+### op run env files ###
+# `env.op` は op:// 参照のみでコミット可。実体化された `.env` は誤コミット防止のため除外する。
+*.env
+
 ### direnv ###
 .direnv/
 
