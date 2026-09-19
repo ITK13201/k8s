@@ -23,3 +23,4 @@ resources:
 - loki.yaml
 - moneyrabbit-mariadb.yaml
 - gomi-no-hi-redis.yaml
+- calendarrabbit-mysql.yaml

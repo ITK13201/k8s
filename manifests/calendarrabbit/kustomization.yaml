@@ -1,0 +1,15 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: calendarrabbit
+resources:
+- external-secret.yaml
+- ingress-tailscale.yaml
+helmCharts:
+- name: calendarrabbit
+  repo: oci://ghcr.io/itk13201
+  version: 0.1.2
+  releaseName: calendarrabbit
+  namespace: calendarrabbit
+  valuesFile: values.yaml
+  valuesMerge: override

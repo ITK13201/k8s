@@ -24,6 +24,7 @@ server_setup_k8s_pv_dirs:
 - /mnt/hdd/data/k8s/pv/rss-notifier/mariadb-secondary
 - /mnt/hdd/data/k8s/pv/moneyrabbit/mariadb
 - /mnt/hdd/data/k8s/pv/gomi-no-hi/redis
+- /mnt/hdd/data/k8s/pv/calendarrabbit/mysql
 # HDD backup (/mnt/hdd-backup/)
 - /mnt/hdd-backup/backups/k8s/pv/growi-backup/backup
 - /mnt/hdd-backup/backups/k8s/pv/growi-backup/attachments
