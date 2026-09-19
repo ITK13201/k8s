@@ -32,33 +32,38 @@ Host *
 
 ## セットアップ
 
+運用コマンドはリポジトリルートの `Makefile` 経由で実行する（`make help` で一覧表示）。
+Ansible ターゲットは `ansible/` ディレクトリ内で実行される（`ansible.cfg` の相対パス設定のため）。
+
 ```bash
 # Ansible Galaxy コレクションをインストール
 ansible-galaxy collection install -r ansible/requirements.yml
 
 # 接続確認（1Password SSH Agent 経由で認証される）
-ansible all -i ansible/inventory/hosts.yml -m ping
+make ansible-ping
 ```
 
 ## k8s クラスタの構築
 
 ```bash
 # コントロールプレーン＋ワーカーを一括セットアップ
-ansible-playbook -i ansible/inventory/hosts.yml ansible/playbooks/site.yml
+make ansible-site
 
 # コントロールプレーンのみ
-ansible-playbook -i ansible/inventory/hosts.yml ansible/playbooks/control_plane.yml
+make ansible-control-plane
 
 # ワーカーのみ（コントロールプレーン構築済みの場合）
-ansible-playbook -i ansible/inventory/hosts.yml ansible/playbooks/workers.yml
+make ansible-workers
 ```
 
 ## クラスタの確認
 
 ```bash
-# コントロールプレーンに SSH してノード状態を確認
-ssh k8s@<control_plane_ip>
-kubectl get nodes
+# コントロールプレーンに SSH（1Password SSH Agent 経由・秘密鍵ファイル未使用）
+make ssh-cp
+
+# 手元から直接ノード状態を確認（既存 kubeconfig を使用）
+make k-nodes
 ```
 
 正常時の出力例:
@@ -70,10 +75,11 @@ k8s-worker01  Ready    <none>          3m    v1.32.x
 
 ## kubeconfig の取得
 
-`site.yml` 完了後、手元のマシンで kubectl を使えるようにするため kubeconfig を取得する。
+`site.yml` 完了後、手元のマシンで kubectl を使えるようにするため kubeconfig を取得する
+（1Password SSH Agent 経由で control plane から取得。接続先は `CP_HOST` で上書き可能）。
 
 ```bash
-scp k8s@192.168.1.200:~/.kube/config ~/.kube/config
+make kubeconfig
 ```
 
 ## ロールごとの責務
@@ -91,14 +97,11 @@ scp k8s@192.168.1.200:~/.kube/config ~/.kube/config
 ## シークレットの生成（workers.secret.yml）
 
 `ansible/inventory/group_vars/workers/secret.yml` は gitignore 対象のため、1Password CLI で生成する。
+`make ansible-secret` は `op` サインインを前提とし（未サインイン時は明確なメッセージで失敗）、
+テンプレートから `op inject` で生成する。
 
 ```bash
-# 1Password CLI で認証済みであることを確認
-op whoami
-
-# テンプレートからシークレットを生成
-op inject -i ansible/inventory/group_vars/workers/secret.yml.tpl \
-          -o ansible/inventory/group_vars/workers/secret.yml
+make ansible-secret
 ```
 
 生成された `secret.yml` はローカルにのみ存在し、git に含まれない。
@@ -107,7 +110,7 @@ op inject -i ansible/inventory/group_vars/workers/secret.yml.tpl \
 ## Dry-run（変更確認）
 
 ```bash
-ansible-playbook -i ansible/inventory/hosts.yml ansible/playbooks/site.yml --check
+cd ansible && ansible-playbook playbooks/site.yml --check
 ```
 
 ## トラブルシューティング

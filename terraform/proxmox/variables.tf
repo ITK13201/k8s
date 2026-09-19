@@ -27,11 +27,6 @@ variable "datastore_id" {
   description = "Proxmox datastore ID for VM disks"
 }
 
-variable "proxmox_ssh_private_key_path" {
-  type        = string
-  description = "Path to SSH private key for Proxmox host access"
-}
-
 # VM user
 variable "vm_user" {
   type        = string
