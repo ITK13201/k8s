@@ -11,7 +11,7 @@ backend:
   env:
     allowedOrigins: "*"
   secret:
-    existingSecret: calendarrabbit-backend-secret
+    existingSecret: calendarrabbit-secret
 mysql:
   image:
     repository: mariadb
