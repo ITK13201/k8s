@@ -3,11 +3,11 @@ fullnameOverride: calendarrabbit
 frontend:
   image:
     repository: ghcr.io/itk13201/calendarrabbit-frontend
-    tag: "0.2.0"
+    tag: "1.0.0"
 backend:
   image:
     repository: ghcr.io/itk13201/calendarrabbit-backend
-    tag: "0.2.0"
+    tag: "1.0.0"
   env:
     llmProvider: deepseek
     allowedOrigins: "*"
