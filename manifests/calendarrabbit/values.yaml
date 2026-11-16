@@ -16,7 +16,7 @@ backend:
 mysql:
   image:
     repository: mariadb
-    tag: "11.8"
+    tag: "13.0"
   secret:
     existingSecret: calendarrabbit-mysql-secret
   persistence:
